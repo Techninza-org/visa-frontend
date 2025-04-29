@@ -49,20 +49,24 @@ export default function Header() {
 
         {/* Auth Section */}
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            className="bg-gradient-to-r from-amber-400 to-amber-600 text-white backdrop-blur-lg hover:bg-amber-600/50 border border-amber-500/20 px-4 py-2 rounded-xl sm:ml-4"
-          >
-            Client Portal
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="md:hidden text-amber-500 hover:bg-amber-500/10"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            <Menu className="h-6 w-6" />
-          </Button>
+          <a href="/pages/login">
+            <Button
+              variant="ghost"
+              className="bg-gradient-to-r from-amber-400 to-amber-600 text-white backdrop-blur-lg hover:bg-amber-600/50 border border-amber-500/20 px-4 py-2 rounded-xl sm:ml-4"
+            >
+              Client Portal
+            </Button>
+          </a>
+          <a href="/pages/login">
+            <Button
+              variant="outline"
+              size="icon"
+              className="md:hidden text-amber-500 hover:bg-amber-500/10"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
+          </a>
         </div>
 
         {/* Mobile Menu */}
