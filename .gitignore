@@ -1,0 +1,33 @@
+# Node modules
+node_modules/
+
+# Build output
+.next/
+out/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependency directories
+.pnpm/
+.package-lock.json
+yarn.lock
+
+# Optional npm cache directory
+.npm/
+
+# Vercel deployment files
+.vercel/
+
+
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/
