@@ -1,7 +1,6 @@
-
 "use client";
 import { useState } from "react";
-
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -11,6 +10,7 @@ export default function RegisterPage() {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -22,13 +22,16 @@ export default function RegisterPage() {
     setSuccess("");
 
     try {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -36,6 +39,7 @@ export default function RegisterPage() {
       }
 
       setSuccess("Registration successful!");
+      router.push("/pages/login");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -48,10 +52,15 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-lg">
-        <h2 className="text-3xl font-bold text-center text-gray-800">Create Account</h2>
+        <h2 className="text-3xl font-bold text-center text-gray-800">
+          Create Account
+        </h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="name" className="block mb-1 text-sm font-medium text-gray-700">
+            <label
+              htmlFor="name"
+              className="block mb-1 text-sm font-medium text-gray-700"
+            >
               Full Name
             </label>
             <input
@@ -65,7 +74,10 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label htmlFor="email" className="block mb-1 text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block mb-1 text-sm font-medium text-gray-700"
+            >
               Email Address
             </label>
             <input
@@ -79,7 +91,10 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block mb-1 text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block mb-1 text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -100,9 +115,14 @@ export default function RegisterPage() {
           </button>
         </form>
         {error && <p className="text-sm text-center text-red-600">{error}</p>}
-        {success && <p className="text-sm text-center text-green-600">{success}</p>}
+        {success && (
+          <p className="text-sm text-center text-green-600">{success}</p>
+        )}
         <p className="text-sm text-center text-gray-600">
-          Already have an account? <a href="/login" className="text-blue-600 hover:underline">Login</a>
+          Already have an account?{" "}
+          <a href="/login" className="text-blue-600 hover:underline">
+            Login
+          </a>
         </p>
       </div>
     </div>

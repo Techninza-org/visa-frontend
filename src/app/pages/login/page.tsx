@@ -1,39 +1,47 @@
 "use client";
+
 import { useState } from "react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     try {
-      const response = await fetch("https://eziotravels.com/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Invalid email or password");
       }
 
       const data = await response.json();
-      console.log("Login successful:", data);
-      window.location.href = '/pages/dashboard';
-      // Redirect or handle successful login
+
+      // ✅ Save token in cookie
+      Cookies.set("auth_token", data.token, { expires: 7 }); // expires in 7 days
+
+      router.push("/pages/dashboard");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("Something went wrong");
       }
-      setError("Something went wrong");
     }
   };
 
@@ -43,7 +51,10 @@ export default function Login() {
         <h2 className="text-3xl font-bold text-center text-gray-800">Login</h2>
         <form className="space-y-4" onSubmit={handleLogin}>
           <div>
-            <label htmlFor="email" className="block mb-1 text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block mb-1 text-sm font-medium text-gray-700"
+            >
               Email Address
             </label>
             <input
@@ -57,7 +68,10 @@ export default function Login() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block mb-1 text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block mb-1 text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -79,7 +93,10 @@ export default function Login() {
           </button>
         </form>
         <p className="text-sm text-center text-gray-600">
-          Don’t have an account? <a href="/pages/ragister" className="text-blue-600 hover:underline">Sign up</a>
+          Don’t have an account?{" "}
+          <a href="/pages/ragister" className="text-blue-600 hover:underline">
+            Sign up
+          </a>
         </p>
       </div>
     </div>
