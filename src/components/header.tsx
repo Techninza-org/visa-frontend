@@ -15,7 +15,7 @@ export default function Header() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = Cookies.get("auth_token");
+    const token = Cookies.get("token");
     setIsLoggedIn(!!token);
   }, []);
 
@@ -27,22 +27,22 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-amber-500/30 bg-white/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:px-8">
+    <header className="fixed top-0 z-50 w-full border-b border-amber-500/30 bg-gray-50 backdrop-blur-xl">
+      <div className="mx-auto flex h-22 max-w-7xl items-center justify-between px-4 md:px-8">
         {/* Logo Section */}
         <div className="flex items-center gap-3">
           <Image
-            src="/logo2.png"
+            src="/visalogo.jpeg"
             alt="Global Visa Solutions"
-            width={72}
-            height={40}
-            className="h-12 w-18 transition-opacity hover:opacity-80"
+            width={80}
+            height={50}
+            className="h-20 w-36 transition-opacity hover:opacity-80"
           />
-          <span className="hidden bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-lg font-bold text-transparent md:block">
+          {/* <span className="hidden bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-lg font-bold text-transparent md:block">
             AXE VISA
             <br />
             TECHNOLOGY
-          </span>
+          </span> */}
         </div>
 
         {/* Desktop Navigation */}
@@ -72,7 +72,7 @@ export default function Header() {
                   variant="ghost"
                   className="bg-gradient-to-r from-amber-400 to-amber-600 text-white backdrop-blur-lg hover:bg-amber-600/50 border border-amber-500/20 px-4 py-2 rounded-xl"
                 >
-                  Client Portal
+                  Login
                 </Button>
               </a>
               <a href="/pages/login">

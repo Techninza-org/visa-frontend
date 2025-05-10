@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
   CardContent,
@@ -19,11 +19,8 @@ export function UserProfile() {
         <div className="flex flex-col md:flex-row gap-6 items-start">
           <div className="flex-shrink-0">
             <Avatar className="h-24 w-24">
-              <AvatarImage
-                src="/placeholder.svg?height=96&width=96"
-                alt="User"
-              />
-              <AvatarFallback>JD</AvatarFallback>
+              <AvatarImage src="/business.jpg" alt="User" />
+              {/* <AvatarFallback>JD</AvatarFallback> */}
             </Avatar>
           </div>
           <div className="space-y-4 flex-1">

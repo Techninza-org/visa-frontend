@@ -1,26 +1,25 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Cookies from "js-cookie";
-
 import { ModalWrapper } from "@/components/modals/modal-wrapper";
 
 interface PassportModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => void;
-  kycId: string;
+  userId: string; // <-- Now passing userId as prop
 }
 
 export function PassportModal({
   isOpen,
   onClose,
   onSubmit,
-  kycId,
+  userId,
 }: PassportModalProps) {
   interface FormData {
     kycId: string;
@@ -35,7 +34,6 @@ export function PassportModal({
     birthPlace: string;
     gender: string;
   }
-  console.log(kycId);
 
   const [formData, setFormData] = useState<FormData>({
     kycId: "",
@@ -62,7 +60,49 @@ export function PassportModal({
     adharBackImg: null,
     panCardImg: null,
   });
-  const token = Cookies.get("auth_token");
+
+  const token = Cookies.get("token");
+  const user = Cookies.get("user");
+  const json = user ? JSON.parse(user) : {};
+  const id = userId || json._id || "";
+  console.log(id, "userid");
+
+  useEffect(() => {
+    const fetchKycId = async () => {
+      console.log("Fetching KYC ID...");
+      if (!id || !isOpen) {
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/user/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        // console.log("Response status:", response.status);
+
+        const userdetails = await response.json();
+        // console.log("Result:", userdetails);
+
+        if (response.ok) {
+          setFormData((prev) => ({
+            ...prev,
+            kycId: userdetails.kycId || "", // Assuming this is the path
+          }));
+        } else {
+          console.error("Failed to fetch user:", userdetails);
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err.message || err);
+      }
+    };
+
+    fetchKycId();
+  }, [userId, isOpen, token, id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
@@ -73,10 +113,9 @@ export function PassportModal({
     }
   };
 
-  // Removed unused handleSelectChange function
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitting...");
 
     const data = new FormData();
     data.append("kycId", formData.kycId);
@@ -90,25 +129,31 @@ export function PassportModal({
     if (files.panCardImg) data.append("panCardImg", files.panCardImg);
 
     try {
-      const response = await fetch("http://localhost:4000/api/passport/apply", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`, // Use token from Cookies
-        },
-        body: data,
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/passport/apply/${formData.kycId}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: data,
+        }
+      );
+      console.log("Response status:", response.status);
 
       const result = await response.json();
+      // console.log("Result:", result);
+
       if (response.ok) {
         alert("Passport info submitted successfully!");
         onSubmit();
         onClose();
       } else {
-        console.error(result);
+        console.error("Failed to submit:", result);
         alert("Failed to submit: " + result.message);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("Error submitting data:", err.message || err);
       alert("An error occurred while submitting.");
     }
   };
@@ -121,7 +166,7 @@ export function PassportModal({
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {["kycId", "firstName", "lastName", "dateOfBirth"].map((field) => (
+          {["firstName", "lastName", "dateOfBirth"].map((field) => (
             <div key={field} className="space-y-2">
               <Label htmlFor={field} className="text-sm font-medium capitalize">
                 {field.replace(/([A-Z])/g, " $1")}
@@ -139,10 +184,6 @@ export function PassportModal({
           ))}
         </div>
 
-        {/* Existing Fields (Passport Number, Country, Dates, etc.) */}
-        {/* ... retain your previous passport fields here unchanged ... */}
-
-        {/* File Inputs */}
         {[
           { label: "User Image", name: "userImg" },
           { label: "Aadhar Front", name: "adharFrontImg" },

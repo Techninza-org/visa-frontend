@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,9 +22,15 @@ interface VisaModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit?: () => void; // Optional callback
+  userId: string;
 }
 
-export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
+export function VisaModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  userId,
+}: VisaModalProps) {
   const [formData, setFormData] = useState({
     passportId: "",
     visaType: "",
@@ -45,7 +51,48 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
   });
 
   // Or retrieve token from elsewhere
-  const token = Cookies.get("auth_token");
+  const token = Cookies.get("token");
+  const user = Cookies.get("user");
+  const json = user ? JSON.parse(user) : {};
+  const id = userId || json._id || "";
+  console.log(id, "userid");
+
+  useEffect(() => {
+    const fetchKycId = async () => {
+      console.log("Fetching KYC ID...");
+      if (!id || !isOpen) {
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/user/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        // console.log("Response status:", response.status);
+
+        const userdetails = await response.json();
+        // console.log("Result:", userdetails);
+
+        if (response.ok) {
+          setFormData((prev) => ({
+            ...prev,
+            passportId: userdetails.applypassportId || "", // Assuming this is the path
+          }));
+        } else {
+          console.error("Failed to fetch user:", userdetails);
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err.message || err);
+      }
+    };
+
+    fetchKycId();
+  }, [userId, isOpen, token, id]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -84,13 +131,16 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
     if (files.invitation) payload.append("invitation", files.invitation);
 
     try {
-      const res = await fetch("http://localhost:4000/api/visa/apply", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: payload,
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/visa/apply/${formData.passportId}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: payload,
+        }
+      );
 
       const result = await res.json();
       if (res.ok) {
@@ -114,13 +164,13 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
       size="large"
     >
       {/* Header */}
-      <div className="mb-6 flex items-center p-4 bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg border border-purple-100">
-        <div className="mr-4 bg-purple-100 p-2 rounded-full">
-          <Stamp className="h-6 w-6 text-purple-600" />
+      <div className="mb-6 flex items-center p-4 bg-gradient-to-r from-amber-50 to-amber-50 rounded-lg border border-amber-100">
+        <div className="mr-4 bg-white p-2 rounded-full">
+          <Stamp className="h-6 w-6 text-black" />
         </div>
         <div>
-          <h3 className="font-medium text-purple-800">Visa Application</h3>
-          <p className="text-sm text-purple-700">
+          <h3 className="font-medium text-black">Visa Application</h3>
+          <p className="text-sm text-gray-800">
             Complete your visa application details
           </p>
         </div>
@@ -130,7 +180,7 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-5">
           {/* Passport ID */}
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="passportId">Passport ID</Label>
             <Input
               id="passportId"
@@ -139,7 +189,7 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
               onChange={handleChange}
               required
             />
-          </div>
+          </div> */}
 
           {/* Visa Type & Country */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

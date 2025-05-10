@@ -36,9 +36,9 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative flex h-[600px] items-center justify-center mb-10">
-          <div className="absolute inset-0 z-0 h-[600px] opacity-60">
+          <div className="absolute inset-0 z-0 h-[600px]">
             <Image
-              src="/hero-bg.svg"
+              src="/hero2.jpeg"
               alt="Hero Background"
               layout="fill"
               objectFit="cover"

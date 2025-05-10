@@ -18,19 +18,11 @@ interface KycModalProps {
 export function KycModal({ isOpen, onClose, onSubmit }: KycModalProps) {
   const [formData, setFormData] = useState({
     firstName: "",
-    lastName: "",
+    email: "",
+    country: "",
+    nationality: "",
     address: "",
     pincode: "",
-  });
-
-  const [files, setFiles] = useState<{
-    adharFrontImg: File | null;
-    adharBackImg: File | null;
-    panCardImg: File | null;
-  }>({
-    adharFrontImg: null,
-    adharBackImg: null,
-    panCardImg: null,
   });
 
   const handleChange = (
@@ -40,28 +32,18 @@ export function KycModal({ isOpen, onClose, onSubmit }: KycModalProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: string
-  ) => {
-    const file = e.target.files?.[0] || null;
-    setFiles((prev) => ({ ...prev, [field]: file }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const token = Cookies.get("auth_token");
+    const token = Cookies.get("token");
     const data = new FormData();
 
     data.append("firstName", formData.firstName);
-    data.append("lastName", formData.lastName);
+    data.append("email", formData.email);
+    data.append("country", formData.country);
+    data.append("nationality", formData.nationality);
     data.append("address", formData.address);
     data.append("pincode", formData.pincode);
-
-    if (files.adharFrontImg) data.append("adharFrontImg", files.adharFrontImg);
-    if (files.adharBackImg) data.append("adharBackImg", files.adharBackImg);
-    if (files.panCardImg) data.append("panCardImg", files.panCardImg);
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/kyc/submit`, {
@@ -75,11 +57,11 @@ export function KycModal({ isOpen, onClose, onSubmit }: KycModalProps) {
       if (!res.ok) throw new Error("Failed to submit KYC");
 
       const result = await res.json();
-      console.log("Response from KYC submission:", result);
+      // console.log("Response from KYC submission:", result);
 
       const kycId = result.data._id;
 
-      console.log("KYC ID received:", kycId);
+      // console.log("KYC ID received:", kycId);
 
       if (onSubmit) onSubmit(kycId);
 
@@ -110,11 +92,34 @@ export function KycModal({ isOpen, onClose, onSubmit }: KycModalProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lastName">Last Name</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="space-y-2">
+            <Label htmlFor="nationality">Nationality</Label>
+            <Input
+              id="nationality"
+              type="text"
+              name="nationality"
+              value={formData.nationality}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="country">Country of Residence</Label>
+            <Input
+              id="country"
+              name="country"
+              value={formData.country}
               onChange={handleChange}
               required
             />
@@ -142,23 +147,6 @@ export function KycModal({ isOpen, onClose, onSubmit }: KycModalProps) {
             required
           />
         </div>
-
-        {[
-          { label: "Aadhar Front Image", name: "adharFrontImg" },
-          { label: "Aadhar Back Image", name: "adharBackImg" },
-          { label: "PAN Card Image", name: "panCardImg" },
-        ].map(({ label, name }) => (
-          <div className="space-y-2" key={name}>
-            <Label htmlFor={name}>{label}</Label>
-            <Input
-              id={name}
-              type="file"
-              accept="image/png, image/jpeg, application/pdf"
-              onChange={(e) => handleFileChange(e, name)}
-              required
-            />
-          </div>
-        ))}
 
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button type="button" variant="outline" onClick={onClose}>

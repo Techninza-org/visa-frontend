@@ -5,22 +5,22 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-white/90 backdrop-blur-xl supports-[backdrop-filter]:bg-white/90 text-gray-800 py-8 md:py-12 border border-amber-500/10 rounded-2xl">
+    <footer className="bg-gray-50 backdrop-blur-xl  text-gray-800 py-8 md:py-12 border border-amber-500/10 rounded-2xl">
       <div className="container max-w-7xl mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-8 md:gap-12">
           <div className="sm:col-span-2">
             <div className="flex items-center gap-3 mb-4">
               <Image
-                src="/logo2.png"
+                src="/visalogo.jpeg"
                 alt="Axe Visa Technology"
-                width={48}
-                height={48}
-                className="h-14 w-20"
+                width={80}
+                height={50}
+                className="h-20 w-36"
               />
-              <span className="text-2xl font-bold hidden bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent md:block">
+              {/* <span className="text-2xl font-bold hidden bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent md:block">
                 AXE VISA <br />
                 Technology
-              </span>
+              </span> */}
             </div>
             <p className="text-gray-800 mb-6 max-w-md">
               Your trusted partner for seamless visa solutions and global

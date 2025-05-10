@@ -3,6 +3,7 @@ import { useState } from "react";
 import Head from "next/head";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { Button } from "@/components/ui/button";
 
 export default function USVisaIndiaPassport() {
   const [activeTab, setActiveTab] = useState("tourist");
@@ -78,7 +79,7 @@ export default function USVisaIndiaPassport() {
             <div className="bg-white rounded-lg p-4 shadow-lg">
               <div className="flex space-x-2 overflow-x-auto pb-2">
                 {visaTypes.map((type) => (
-                  <button
+                  <Button
                     key={type.id}
                     onClick={() => setActiveTab(type.id)}
                     className={`px-4 py-2 rounded-md whitespace-nowrap ${
@@ -88,7 +89,7 @@ export default function USVisaIndiaPassport() {
                     }`}
                   >
                     {type.name}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -262,9 +263,9 @@ export default function USVisaIndiaPassport() {
                 </table>
               </div>
               <a href="/pages/dashboard">
-                <button className="mt-4 w-full bg-black text-white py-3 rounded-md hover:bg-gray-700 font-medium">
+                <Button className="mt-4 w-full bg-black text-white py-3 rounded-md hover:bg-gray-700 font-medium">
                   Apply Now
-                </button>
+                </Button>
               </a>
 
               <p className="text-gray-500 text-xs mt-2">
@@ -322,9 +323,9 @@ export default function USVisaIndiaPassport() {
                     </span>
                   </li>
                 </ul>
-                <button className="mt-4 w-full border border-black text-black py-2 rounded-md hover:bg-blue-50 font-medium">
+                <Button className="mt-4 w-full border border-black text-black py-2 rounded-md hover:bg-blue-50 font-medium">
                   Select Standard
-                </button>
+                </Button>
               </div>
 
               {/* Premium Package */}
@@ -370,9 +371,9 @@ export default function USVisaIndiaPassport() {
                     </span>
                   </li>
                 </ul>
-                <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 font-medium">
+                <Button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 font-medium">
                   Select Premium
-                </button>
+                </Button>
               </div>
 
               {/* Schedule Appointments */}
@@ -405,9 +406,9 @@ export default function USVisaIndiaPassport() {
                     </span>
                   </li>
                 </ul>
-                <button className="mt-4 w-full border border-black text-black py-2 rounded-md hover:bg-blue-50 font-medium">
+                <Button className="mt-4 w-full border border-black text-black py-2 rounded-md hover:bg-blue-50 font-medium">
                   Select Appointment Service
-                </button>
+                </Button>
               </div>
             </div>
           </div>

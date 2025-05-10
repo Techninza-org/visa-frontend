@@ -5,6 +5,7 @@ import type React from "react";
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface ModalWrapperProps {
   isOpen: boolean;
@@ -54,13 +55,13 @@ export function ModalWrapper({
       >
         <div className="sticky top-0 z-10 flex items-center justify-between p-5 border-b bg-white/95 backdrop-blur-sm">
           <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-          <button
+          <Button
             onClick={onClose}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
             aria-label="Close"
           >
             <X className="h-5 w-5 text-gray-500" />
-          </button>
+          </Button>
         </div>
         <div className="overflow-auto p-6 flex-grow">{children}</div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import Cookies from "js-cookie";
 
 import { useState } from "react";
 import {
@@ -15,23 +16,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { FileUpload } from "@/components/file-upload";
 
 export function KycForm({ onSubmit }: { onSubmit: () => void }) {
   const [formData, setFormData] = useState({
     firstName: "",
-    lastName: "",
+    email: "",
+    nationality: "",
+    country: "",
     address: "",
-    pincode: "",
+    // pincode: "",
     mobileNo: "",
   });
 
-  const [documents, setDocuments] = useState({
-    aadharFront: null,
-    aadharBack: null,
-    panFront: null,
-    panBack: null,
-  });
+  console.log("getting cookies");
+
+  const allCookies = Cookies.get();
+  console.log("All Cookies:", allCookies);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -40,23 +40,19 @@ export function KycForm({ onSubmit }: { onSubmit: () => void }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (name: string, file: File | null) => {
-    setDocuments((prev) => ({ ...prev, [name]: file }));
-  };
+  // Removed unused handleFileChange function
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Validate form
     if (
       !formData.firstName ||
-      !formData.lastName ||
-      !formData.address ||
-      !formData.pincode ||
-      !formData.mobileNo ||
-      !documents.aadharFront ||
-      !documents.aadharBack ||
-      !documents.panFront ||
-      !documents.panBack
+      !formData.email ||
+      !formData.nationality ||
+      !formData.country ||
+      !formData.address
+      // !formData.pincode ||
+      // !formData.mobileNo
     ) {
       alert("Please fill all required fields and upload all documents");
       return;
@@ -65,32 +61,29 @@ export function KycForm({ onSubmit }: { onSubmit: () => void }) {
     // Prepare form data for API
     const formDataToSubmit = new FormData();
     formDataToSubmit.append("firstName", formData.firstName);
-    formDataToSubmit.append("lastName", formData.lastName);
+    formDataToSubmit.append("email", formData.email);
+    formDataToSubmit.append("nationality", formData.nationality);
+    formDataToSubmit.append("country", formData.country);
     formDataToSubmit.append("address", formData.address);
-    formDataToSubmit.append("pincode", formData.pincode);
-    formDataToSubmit.append("mobileNo", formData.mobileNo);
-    formDataToSubmit.append("adharFrontImg", documents.aadharFront as File);
-    formDataToSubmit.append("adharBackImg", documents.aadharBack as File);
-    formDataToSubmit.append("panCardImg", documents.panFront as File);
+    // formDataToSubmit.append("pincode", formData.pincode);
+    // formDataToSubmit.append("mobileNo", formData.mobileNo);
+
+    // Get all stored cookies
+
+    const token = Cookies.get("token");
+    console.log(token, "uysrgfuyegsryugfyu");
 
     try {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
-
-      if (!token) {
-        alert("Authentication token not found. Please log in.");
-        return;
-      }
-
-      const response = await fetch("http://localhost:6000/api/kyc/submit", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formDataToSubmit,
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/kyc/submit`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formDataToSubmit,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to submit KYC form");
@@ -106,12 +99,12 @@ export function KycForm({ onSubmit }: { onSubmit: () => void }) {
   };
 
   return (
-    <div className="flex items-center justify-center ml-96">
-      <div className="max-w-7xl mx-auto p-4">
+    <div className="flex items-center justify-center mt-20">
+      <div className="w-full mx-auto p-4">
         <h1 className="text-3xl font-bold mb-6 text-center">
           KYC Verification
         </h1>
-        <Card className="max-w-7xl mx-auto">
+        <Card className="text-center w-2/3 mx-auto">
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
             <CardDescription>
@@ -119,10 +112,10 @@ export function KycForm({ onSubmit }: { onSubmit: () => void }) {
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 w-2/3 mx-auto mt-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName">Name</Label>
                   <Input
                     id="firstName"
                     name="firstName"
@@ -132,11 +125,11 @@ export function KycForm({ onSubmit }: { onSubmit: () => void }) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="email">Email</Label>
                   <Input
-                    id="lastName"
-                    name="lastName"
-                    value={formData.lastName}
+                    id="email"
+                    name="email"
+                    value={formData.email}
                     onChange={handleChange}
                     required
                   />
@@ -156,69 +149,32 @@ export function KycForm({ onSubmit }: { onSubmit: () => void }) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="pincode">Pincode</Label>
+                  <Label htmlFor="country">Country Of Residence</Label>
                   <Input
-                    id="pincode"
-                    name="pincode"
-                    value={formData.pincode}
+                    id="country"
+                    name="country"
+                    value={formData.country}
                     onChange={handleChange}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="mobileNo">Mobile Number</Label>
+                  <Label htmlFor="nationality">Nationality</Label>
                   <Input
-                    id="mobileNo"
-                    name="mobileNo"
-                    value={formData.mobileNo}
+                    id="nationality"
+                    name="nationality"
+                    value={formData.nationality}
                     onChange={handleChange}
                     required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Document Upload</h3>
-
-                <div className="space-y-2">
-                  <Label>Aadhar Card (Front)</Label>
-                  <FileUpload
-                    onFileChange={(file) =>
-                      handleFileChange("aadharFront", file)
-                    }
-                    accept="image/*"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Aadhar Card (Back)</Label>
-                  <FileUpload
-                    onFileChange={(file) =>
-                      handleFileChange("aadharBack", file)
-                    }
-                    accept="image/*"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>PAN Card (Front)</Label>
-                  <FileUpload
-                    onFileChange={(file) => handleFileChange("panFront", file)}
-                    accept="image/*"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>PAN Card (Back)</Label>
-                  <FileUpload
-                    onFileChange={(file) => handleFileChange("panBack", file)}
-                    accept="image/*"
                   />
                 </div>
               </div>
             </CardContent>
-            <CardFooter>
-              <Button type="submit" className="w-full">
+            <CardFooter className="justify-center text-center mt-5">
+              <Button
+                type="submit"
+                className="w-42 bg-gradient-to-r from-amber-400 to-amber-600 hover:bg-amber-600/90 border border-amber-500/20"
+              >
                 Submit KYC
               </Button>
             </CardFooter>

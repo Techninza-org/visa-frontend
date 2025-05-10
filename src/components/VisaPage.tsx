@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import CountryCard from "@/components/CountryCard";
+import { Button } from "@/components/ui/button";
 
 const visaData = [
   {
@@ -59,7 +60,7 @@ const VisaPage = () => {
       {/* Filters */}
       <div className="flex flex-wrap gap-3 justify-center mb-10 mt-16">
         {["All", "Instant", "In a week", "In a month"].map((filter) => (
-          <button
+          <Button
             key={filter}
             onClick={() => setSelectedFilter(filter)}
             className={`px-6 py-2 text-sm font-medium rounded-full transition-all duration-200 border border-amber-400 ${
@@ -69,7 +70,7 @@ const VisaPage = () => {
             }`}
           >
             {filter}
-          </button>
+          </Button>
         ))}
       </div>
 

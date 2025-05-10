@@ -15,6 +15,7 @@ import { VisaModal } from "@/components/modals/visa-modal";
 import { ApplyModal } from "@/components/modals/apply-modal";
 import { PaymentModal } from "@/components/modals/payment-modal";
 import { ApprovalModal } from "@/components/modals/approval-modal";
+import { SelectPassportModal } from "./modals/select-passport-modal";
 
 export function ProcessButtons() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -43,15 +44,6 @@ export function ProcessButtons() {
     return approvedSteps.includes(step);
   };
 
-  const isStepEnabled = (step: string) => {
-    const steps = ["kyc", "passport", "visa", "apply", "payment"];
-    const currentIndex = steps.indexOf(step);
-
-    if (currentIndex === 0) return true;
-
-    return isStepApproved(steps[currentIndex - 1]);
-  };
-
   return (
     <>
       <div className="flex flex-wrap gap-4">
@@ -70,6 +62,23 @@ export function ProcessButtons() {
         </Button>
 
         <Button
+          variant={isStepApproved("select-passport") ? "default" : "outline"}
+          className={`flex items-center gap-2 ${
+            isStepApproved("select-passport")
+              ? "bg-yellow-600 hover:bg-white text-black"
+              : ""
+          }`}
+          onClick={() => handleOpenModal("select-passport")}
+          // disabled={!isStepEnabled("select-passport")}
+        >
+          {isStepApproved("select-passport") && (
+            <CheckCircle className="h-4 w-4" />
+          )}
+          <Passport className="h-4 w-4" />
+          Passport
+        </Button>
+
+        {/* <Button
           variant={isStepApproved("passport") ? "default" : "outline"}
           className={`flex items-center gap-2 ${
             isStepApproved("passport")
@@ -82,7 +91,7 @@ export function ProcessButtons() {
           {isStepApproved("passport") && <CheckCircle className="h-4 w-4" />}
           <Passport className="h-4 w-4" />
           Passport
-        </Button>
+        </Button> */}
 
         <Button
           variant={isStepApproved("visa") ? "default" : "outline"}
@@ -92,7 +101,6 @@ export function ProcessButtons() {
               : ""
           }`}
           onClick={() => handleOpenModal("visa")}
-          disabled={!isStepEnabled("visa")}
         >
           {isStepApproved("visa") && <CheckCircle className="h-4 w-4" />}
           <Stamp className="h-4 w-4" />
@@ -100,18 +108,18 @@ export function ProcessButtons() {
         </Button>
 
         <Button
-          variant={isStepApproved("apply") ? "default" : "outline"}
+          variant={isStepApproved("preview") ? "default" : "outline"}
           className={`flex items-center gap-2 ${
-            isStepApproved("apply")
+            isStepApproved("preview")
               ? "bg-yellow-600 hover:bg-white text-black"
               : ""
           }`}
-          onClick={() => handleOpenModal("apply")}
-          disabled={!isStepEnabled("apply")}
+          onClick={() => handleOpenModal("preview")}
+          // disabled={!isStepEnabled("preview")}
         >
-          {isStepApproved("apply") && <CheckCircle className="h-4 w-4" />}
+          {isStepApproved("preview") && <CheckCircle className="h-4 w-4" />}
           <FileText className="h-4 w-4" />
-          Apply
+          Preview
         </Button>
 
         <Button
@@ -122,7 +130,7 @@ export function ProcessButtons() {
               : ""
           }`}
           onClick={() => handleOpenModal("payment")}
-          disabled={!isStepEnabled("payment")}
+          // disabled={!isStepEnabled("payment")}
         >
           {isStepApproved("payment") && <CheckCircle className="h-4 w-4" />}
           <CreditCard className="h-4 w-4" />
@@ -136,6 +144,15 @@ export function ProcessButtons() {
           isOpen={true}
           onClose={handleCloseModal}
           onSubmit={() => handleSubmitForm("kyc")}
+        />
+      )}
+
+      {activeModal === "select-passport" && (
+        <SelectPassportModal
+          isOpen={true}
+          onClose={handleCloseModal}
+          onSubmit={() => handleSubmitForm("select-passport")}
+          kycId="some-kyc-id" // Replace "some-kyc-id" with the actual KYC ID value
         />
       )}
 
@@ -156,11 +173,11 @@ export function ProcessButtons() {
         />
       )}
 
-      {activeModal === "apply" && (
+      {activeModal === "preview" && (
         <ApplyModal
           isOpen={true}
           onClose={handleCloseModal}
-          onSubmit={() => handleSubmitForm("apply")}
+          onSubmit={() => handleSubmitForm("preview")}
         />
       )}
 

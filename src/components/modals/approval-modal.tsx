@@ -62,6 +62,7 @@ export function ApprovalModal({
 
   // In a real application, this would be replaced with actual admin functionality
   const handleAdminApprove = () => {
+    console.log("Approval granted");
     onApprove();
   };
 
