@@ -7,9 +7,13 @@ import Cookies from "js-cookie"; // npm install js-cookie
 export default function AddPassportModal({
   isOpen,
   onClose,
-}: {
+}: // onSubmit,
+// kycId,
+{
   isOpen: boolean;
   onClose: () => void;
+  onSubmit: () => void;
+  kycId: string;
 }) {
   const [formData, setFormData] = useState({
     passportNumber: "",

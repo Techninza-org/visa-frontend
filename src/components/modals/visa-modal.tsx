@@ -87,7 +87,7 @@ export function VisaModal({
           console.error("Failed to fetch user:", userdetails);
         }
       } catch (err) {
-        console.error("Error fetching user:", err.message || err);
+        console.error("Error fetching user:", err || err);
       }
     };
 

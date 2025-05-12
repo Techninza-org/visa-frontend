@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 // import { Image } from "lucide-react";
+import Image from "next/image";
 
 interface KycData {
   visaType: string;
@@ -29,6 +30,14 @@ interface KycData {
   travelPurpose: string;
   accommodation: string;
   hasInvitation: string;
+  documents: {
+    photo: string;
+    bankStatement: string;
+    invitation: string;
+  };
+  photo: string;
+  bankStatement: string;
+  invitation: string;
   status: string;
 }
 
@@ -57,7 +66,7 @@ export default function TrackStatusPage() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [visaId, token]);
 
   return (
     <div className="flex ml-8 p-8 bg-gray-50 min-h-screen">
@@ -207,7 +216,7 @@ export default function TrackStatusPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
                       <div>
                         <p className="text-xs text-gray-500 mb-1">User Image</p>
-                        <img
+                        <Image
                           src={`http://localhost:4000/${visaData.documents.photo}`}
                           alt="User"
                           className="w-full h-40 object-cover rounded border"
@@ -217,7 +226,7 @@ export default function TrackStatusPage() {
                         <p className="text-xs text-gray-500 mb-1">
                           Adhar Front
                         </p>
-                        <img
+                        <Image
                           src={`http://localhost:4000/${visaData.documents.bankStatement}`}
                           alt="Adhar Front"
                           className="w-full h-40 object-cover rounded border"
@@ -225,7 +234,7 @@ export default function TrackStatusPage() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Adhar Back</p>
-                        <img
+                        <Image
                           src={`http://localhost:4000/${visaData.documents.invitation}`}
                           alt="Adhar Back"
                           className="w-full h-40 object-cover rounded border"

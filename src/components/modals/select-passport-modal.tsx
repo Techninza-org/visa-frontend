@@ -64,6 +64,7 @@ export function SelectPassportModal({
       {/* Passport Modal */}
       {isPassportModalOpen && (
         <PassportModal
+          userId=""
           isOpen={isPassportModalOpen}
           onClose={handlePassportClose}
           onSubmit={onSubmit}

@@ -29,25 +29,57 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { jwtDecode } from "jwt-decode";
 
+interface Profile {
+  name: string;
+}
+
+interface App {
+  firstName: string;
+  createdAt: string;
+  status: string;
+  _id: string;
+}
+
+interface Passport {
+  firstName: string;
+  dateOfBirth: string;
+  status: string;
+  _id: string;
+}
+
+interface Visa {
+  country: string;
+  dateOfBirth: string;
+  visaType: string;
+  travelDate: Date;
+  returnDate: Date;
+  status: string;
+  _id: string;
+}
+
 export default function ClientDashboard() {
   // const userName = "John Doe"; // Can be dynamically passed later
   const [applications, setApplications] = useState([]);
   const [passportapplications, setPassportapplications] = useState([]);
   const [visaApplications, setVisaapplications] = useState([]);
-  const [userProdile, setUserprofile] = useState([]);
+  const [userProdile, setUserprofile] = useState<Profile>();
 
   const token = Cookies.get("token") || "";
+
+  interface JwtPayload {
+    _id: string;
+  }
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const decoded = jwtDecode(token);
-        console.log(decoded, "i");
+        // console.log(decoded, "i");
 
-        const id = decoded._id; // or decoded._id based on your backend
+        const { _id } = decoded as JwtPayload; // or decoded._id based on your backend
 
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}profile/${id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}profile/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -83,7 +115,7 @@ export default function ClientDashboard() {
     };
 
     fetchVisa();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     const fetchPassports = async () => {
@@ -103,7 +135,7 @@ export default function ClientDashboard() {
     };
 
     fetchPassports();
-  }, []);
+  }, [token]);
 
   // const getPassStatusColor = (status: string) => {
   //   switch (status.toLowerCase()) {
@@ -138,7 +170,7 @@ export default function ClientDashboard() {
     };
 
     fetchKYCs();
-  }, []);
+  }, [token]);
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -163,7 +195,7 @@ export default function ClientDashboard() {
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
               <p className="text-muted-foreground">
-                Welcome back, {userProdile.name}
+                Welcome back, {userProdile?.name}
               </p>
             </div>
             <Link href="/pages/dashboard/client/applications">
@@ -258,7 +290,7 @@ export default function ClientDashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {applications.map((app: any, idx: number) => (
+                  {applications.map((app: App, idx: number) => (
                     <div
                       key={idx}
                       className="grid grid-cols-3 gap-4 rounded-md border p-4"
@@ -364,7 +396,7 @@ export default function ClientDashboard() {
                       No applications found.
                     </p>
                   ) : (
-                    passportapplications.map((passport, idx) => (
+                    passportapplications.map((passport: Passport, idx) => (
                       <div
                         key={idx}
                         className="grid grid-cols-1 sm:grid-cols-3 gap-4 rounded-lg border border-black p-4 hover:shadow-md transition duration-200 bg-white"
@@ -422,7 +454,7 @@ export default function ClientDashboard() {
                       No applications found.
                     </p>
                   ) : (
-                    visaApplications.map((visaApplications, visa) => (
+                    visaApplications.map((visaApplications: Visa, visa) => (
                       <div
                         key={visa}
                         className="grid grid-cols-1 sm:grid-cols-6 gap-4 rounded-lg border border-black p-4 hover:shadow-md transition duration-200 bg-white"

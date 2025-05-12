@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { KycLayout } from "@/components/kyc-layout";
 import { KycForm } from "@/components/kyc-form";
-import { KycPending } from "@/components/kyc-pending";
+import KycPending from "@/components/kyc-pending";
 
 export default function KycPage() {
   const router = useRouter();

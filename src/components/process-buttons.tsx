@@ -162,6 +162,7 @@ export function ProcessButtons() {
           onClose={handleCloseModal}
           onSubmit={() => handleSubmitForm("passport")}
           kycId="some-kyc-id" // Replace "some-kyc-id" with the actual KYC ID value
+          userId="userId"
         />
       )}
 
@@ -170,6 +171,7 @@ export function ProcessButtons() {
           isOpen={true}
           onClose={handleCloseModal}
           onSubmit={() => handleSubmitForm("visa")}
+          userId="userId"
         />
       )}
 

@@ -12,6 +12,7 @@ interface PassportModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => void;
+  kycId: string;
   userId: string; // <-- Now passing userId as prop
 }
 
