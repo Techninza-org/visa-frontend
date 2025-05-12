@@ -56,7 +56,7 @@ export default function VisaRequirements() {
   const [selectedCountry, setSelectedCountry] = useState("Malaysia");
 
   return (
-    <div className=" bg-yellow-500/5 p-8 hover:border-amber-500/30 transition-all text-gray-800 text-black mt-10 rounded-2xl border border-amber-500/30 shadow-md">
+    <div className=" bg-yellow-500/5 p-8 hover:border-amber-500/30 transition-all text-gray-800  mt-10 rounded-2xl border border-amber-500/30 shadow-md">
       <h1 className="text-5xl font-bold mb-6 text-center pt-20 text-black">
         Visa Requirements
       </h1>

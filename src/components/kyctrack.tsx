@@ -1,6 +1,6 @@
+"use client"
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-// import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import {
   Card,
   CardContent,
@@ -9,6 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { useSearchParams } from "next/navigation";
 
 interface KycData {
@@ -60,6 +62,30 @@ export default function TrackKYC() {
   }, [kycId, token]);
 
   return (
+    <Tabs defaultValue="active" className="mt-8">
+    <TabsList className="border-b border-gray-200">
+      <TabsTrigger
+        value="active"
+        className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
+      >
+        Active Applications
+      </TabsTrigger>
+      <TabsTrigger
+        value="completed"
+        className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
+      >
+        Completed
+      </TabsTrigger>
+      <TabsTrigger
+        value="kyc"
+        className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
+      >
+        KYC Details
+      </TabsTrigger>
+    </TabsList>
+
+    {/* ...Active and Completed TabsContent (unchanged)... */}
+  
     <TabsContent value="kyc">
       {loading && (
         <p className="text-gray-600 text-sm mt-4">Loading KYC details...</p>
@@ -138,5 +164,6 @@ export default function TrackKYC() {
         </Card>
       )}
     </TabsContent>
+    </Tabs>
   );
 }
