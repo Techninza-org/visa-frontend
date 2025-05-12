@@ -97,7 +97,7 @@ export function PassportModal({
           console.error("Failed to fetch user:", userdetails);
         }
       } catch (err) {
-        console.error("Error fetching user:", err.message || err);
+        console.error("Error fetching user:", err || err);
       }
     };
 
@@ -152,8 +152,8 @@ export function PassportModal({
         console.error("Failed to submit:", result);
         alert("Failed to submit: " + result.message);
       }
-    } catch (err: any) {
-      console.error("Error submitting data:", err.message || err);
+    } catch (err) {
+      console.error("Error submitting data:", err || err);
       alert("An error occurred while submitting.");
     }
   };
