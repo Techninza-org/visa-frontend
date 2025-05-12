@@ -118,7 +118,7 @@ export function ApprovalModal({
       </div>
 
       {/* Admin actions - in a real app, this would only be visible to admins */}
-      <div className="border-t pt-5 mt-6">
+      {/* <div className="border-t pt-5 mt-6">
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
           <p className="text-sm font-medium text-gray-800 mb-1">
             Admin Actions
@@ -148,7 +148,7 @@ export function ApprovalModal({
           Note: In a production environment, this section would only be visible
           to administrators.
         </p>
-      </div>
+      </div> */}
     </ModalWrapper>
   );
 }
