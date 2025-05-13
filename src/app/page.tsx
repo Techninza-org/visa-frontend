@@ -8,6 +8,9 @@ import { SelectTrigger } from "@/components/ui/select";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import AddOnServices from "@/components/addservices";
+import TrustedBy from "@/components/trustedby";
+import HowItWorks from "@/components/visaworks";
 import Image from "next/image";
 import {
   Award,
@@ -22,7 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import LocationForm from "@/components/LocationForm";
 import VisaPage from "@/components/VisaPage";
-import VisaRequirements from "@/components/VisaRequirements";
+// import VisaRequirements from "@/components/VisaRequirements";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { cn } from "@/lib/utils";
@@ -110,9 +113,16 @@ export default function Home() {
         <section className="bg-white">
           <VisaPage />
         </section>
+        <section className="bg-white">
+          <AddOnServices />
+        </section>
 
-        <section className="py-20 px-4 max-w-7xl mx-auto">
-          <VisaRequirements />
+        <section className="bg-white">
+          <TrustedBy />
+        </section>
+
+        <section className="bg-gray-50">
+          <HowItWorks />
         </section>
 
         {/* Services */}

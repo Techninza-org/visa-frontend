@@ -75,6 +75,14 @@ export default function Header() {
                   Login
                 </Button>
               </a>
+              <a href="/pages/ragister">
+                <Button
+                  variant="ghost"
+                  className="bg-gradient-to-r from-amber-400 to-amber-600 text-white backdrop-blur-lg hover:bg-amber-600/50 border border-amber-500/20 px-4 py-2 rounded-xl"
+                >
+                  Sign Up
+                </Button>
+              </a>
               <a href="/pages/login">
                 <Button
                   variant="outline"
