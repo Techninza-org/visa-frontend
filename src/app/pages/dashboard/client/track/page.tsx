@@ -89,130 +89,27 @@ export default function TrackStatusPage() {
               value="active"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
-              Kyc Details
+              Active Applications
             </TabsTrigger>
-            {/* <TabsTrigger
+            <TabsTrigger
               value="completed"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
               Completed
-            </TabsTrigger> */}
-            {/* <TabsTrigger
+            </TabsTrigger>
+            <TabsTrigger
               value="kyc"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
-              Visa Details
-            </TabsTrigger> */}
+              KYC Details
+            </TabsTrigger>
           </TabsList>
 
           {/* ...Active and Completed TabsContent (unchanged)... */}
-
-          <TabsContent value="active">
-            {loading && (
-              <p className="text-gray-600 text-sm mt-4">
-                Loading KYC details...
-              </p>
-            )}
-            {error && (
-              <p className="text-red-500 text-sm mt-4">Error: {error}</p>
-            )}
-            {visaData && (
-              <Card className="mt-8 shadow-xl rounded-2xl border border-gray-200 bg-white">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-gray-800">
-                    kyc Details
-                  </CardTitle>
-                  <CardDescription className="text-gray-600">
-                    Personal Kyc verification information
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Existing fields */}
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Full Name
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {visaData.data.firstName}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Email</p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {visaData.data.email}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Country
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {visaData.data.country}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        nationality
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {visaData.data.nationality}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Address
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800 capitalize">
-                        {visaData.data.address}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Pincode
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {visaData.data.pincode}
-                      </p>
-                    </div>
-                    {/* <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Has Invitation
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {visaData.hasInvitation}
-                      </p>
-                    </div> */}
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Status
-                      </p>
-                      <span
-                        className={`inline-block mt-1 px-3 py-1 text-sm font-medium rounded-full ${
-                          visaData.data.status === "pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-green-100 text-green-800"
-                        }`}
-                      >
-                        {visaData.data.status}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Reason For Rejection
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800 whitespace-pre-line">
-                        {visaData.reason}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Document Images Section */}
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
         </Tabs>
+        <Suspense fallback={<div>Loading...</div>}>
+          <TrackKYC />
+        </Suspense>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-// import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import {
   Card,
   CardContent,
@@ -10,6 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { useSearchParams } from "next/navigation";
 
 interface KycData {
@@ -139,5 +140,6 @@ export default function TrackKYC() {
         </Card>
       )}
     </TabsContent>
+    </Tabs>
   );
 }

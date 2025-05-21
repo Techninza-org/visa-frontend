@@ -1,8 +1,6 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import VisaTrackDetails from "@/components/visatrack";
+import { Suspense } from "react";
 import {
   Card,
   CardContent,
@@ -43,32 +41,6 @@ interface KycData {
 }
 
 export default function TrackStatusPage() {
-  const [visaData, setVisaData] = useState<KycData | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const searchParams = useSearchParams();
-  const visaId = searchParams.get("visa_id");
-  console.log(visaId);
-
-  const token = Cookies.get("token");
-
-  useEffect(() => {
-    setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/visa/visa/${visaId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Failed to fetch KYC data");
-        const json = await res.json();
-        setVisaData(json);
-        console.log(setVisaData);
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [visaId, token]);
-
   return (
     <div className="flex ml-8 p-8 bg-gray-50 min-h-screen">
       <DashboardSidebar userRole="client" />
@@ -90,25 +62,25 @@ export default function TrackStatusPage() {
               value="active"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
-              Visa Details
+              Active Applications
             </TabsTrigger>
-            {/* <TabsTrigger
+            <TabsTrigger
               value="completed"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
               Completed
-            </TabsTrigger> */}
-            {/* <TabsTrigger
+            </TabsTrigger>
+            <TabsTrigger
               value="kyc"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
               Visa Details
-            </TabsTrigger> */}
+            </TabsTrigger>
           </TabsList>
 
           {/* ...Active and Completed TabsContent (unchanged)... */}
 
-          <TabsContent value="active">
+          <TabsContent value="kyc">
             {loading && (
               <p className="text-gray-600 text-sm mt-4">
                 Loading KYC details...
@@ -124,7 +96,7 @@ export default function TrackStatusPage() {
                     Visa Details
                   </CardTitle>
                   <CardDescription className="text-gray-600">
-                    Personal Visa verification information
+                    Personal passport verification information
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -183,7 +155,7 @@ export default function TrackStatusPage() {
                         Has Invitation
                       </p>
                       <p className="text-lg font-semibold text-gray-800">
-                        {visaData.hasInvitation === "true" ? "No" : "Yes"}
+                        {visaData.hasInvitation}
                       </p>
                     </div>
                     <div>
@@ -199,14 +171,6 @@ export default function TrackStatusPage() {
                       >
                         {visaData.status}
                       </span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Reason for Rejection
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {visaData.reason || "no reason"}
-                      </p>
                     </div>
                   </div>
 
@@ -225,11 +189,9 @@ export default function TrackStatusPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
                       <div>
                         <p className="text-xs text-gray-500 mb-1">User Image</p>
-                        <img
-                          src={`${process.env.NEXT_PUBLIC_API_URL_IMAGE}/${visaData.documents.photo}`}
+                        <Image
+                          src={`http://localhost:4000/${visaData.documents.photo}`}
                           alt="User"
-                          width={100}
-                          height={100}
                           className="w-full h-40 object-cover rounded border"
                         />
                       </div>
@@ -237,22 +199,18 @@ export default function TrackStatusPage() {
                         <p className="text-xs text-gray-500 mb-1">
                           Adhar Front
                         </p>
-                        <img
-                          src={`${process.env.NEXT_PUBLIC_API_URL_IMAGE}/${visaData.documents.bankStatement}`}
+                        <Image
+                          src={`http://localhost:4000/${visaData.documents.bankStatement}`}
                           alt="Adhar Front"
                           className="w-full h-40 object-cover rounded border"
-                          width={100}
-                          height={100}
                         />
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Adhar Back</p>
-                        <img
-                          src={`${process.env.NEXT_PUBLIC_API_URL_IMAGE}/${visaData.documents.invitation}`}
+                        <Image
+                          src={`http://localhost:4000/${visaData.documents.invitation}`}
                           alt="Adhar Back"
                           className="w-full h-40 object-cover rounded border"
-                          width={100}
-                          height={100}
                         />
                       </div>
                       {/* <div>
