@@ -21,16 +21,10 @@ import Cookies from "js-cookie";
 interface VisaModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: () => void; // Optional callback
-  userId: string;
+  onSubmit?: () => void;
 }
 
-export function VisaModal({
-  isOpen,
-  onClose,
-  onSubmit,
-  userId,
-}: VisaModalProps) {
+export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
   const [formData, setFormData] = useState({
     passportId: "",
     visaType: "",
@@ -50,49 +44,44 @@ export function VisaModal({
     invitation: null as File | null,
   });
 
-  // Or retrieve token from elsewhere
   const token = Cookies.get("token");
-  const user = Cookies.get("user");
-  const json = user ? JSON.parse(user) : {};
-  const id = userId || json._id || "";
-  console.log(id, "userid");
+  const cookieUser = Cookies.get("user");
+  console.log("Cookies:", cookieUser);
+
+  const userId = cookieUser ? JSON.parse(cookieUser)._id : undefined;
+  console.log("User ID:", userId);
 
   useEffect(() => {
     const fetchKycId = async () => {
-      console.log("Fetching KYC ID...");
-      if (!id || !isOpen) {
-        return;
-      }
+      if (!userId || !isOpen) return;
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/user/${id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/user/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        // console.log("Response status:", response.status);
 
-        const userdetails = await response.json();
-        // console.log("Result:", userdetails);
+        const userDetails = await response.json();
 
         if (response.ok) {
           setFormData((prev) => ({
             ...prev,
-            passportId: userdetails.applypassportId || "", // Assuming this is the path
+            passportId: userDetails.applypassportId,
           }));
         } else {
-          console.error("Failed to fetch user:", userdetails);
+          console.error("Failed to fetch user:", userDetails);
         }
       } catch (err) {
-        console.error("Error fetching user:", err || err);
+        console.error("Error fetching user:", err);
       }
     };
 
     fetchKycId();
-  }, [userId, isOpen, token, id]);
+  }, [userId, isOpen, token]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -124,6 +113,7 @@ export function VisaModal({
     payload.append("travelPurpose", formData.visitPurpose);
     payload.append("accommodation", formData.accommodationDetails);
     payload.append("hasInvitation", formData.hasInvitation);
+    payload.append("userId", userId);
 
     if (files.photo) payload.append("photo", files.photo);
     if (files.bankStatement)
@@ -163,7 +153,6 @@ export function VisaModal({
       title="Visa Application"
       size="large"
     >
-      {/* Header */}
       <div className="mb-6 flex items-center p-4 bg-gradient-to-r from-amber-50 to-amber-50 rounded-lg border border-amber-100">
         <div className="mr-4 bg-white p-2 rounded-full">
           <Stamp className="h-6 w-6 text-black" />
@@ -176,22 +165,8 @@ export function VisaModal({
         </div>
       </div>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-5">
-          {/* Passport ID */}
-          {/* <div className="space-y-2">
-            <Label htmlFor="passportId">Passport ID</Label>
-            <Input
-              id="passportId"
-              name="passportId"
-              value={formData.passportId}
-              onChange={handleChange}
-              required
-            />
-          </div> */}
-
-          {/* Visa Type & Country */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-2">
               <Label htmlFor="visaType">Visa Type</Label>
@@ -232,7 +207,6 @@ export function VisaModal({
             </div>
           </div>
 
-          {/* Dates & Entry */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-2">
               <Label htmlFor="entryType">Entry Type</Label>
@@ -290,7 +264,6 @@ export function VisaModal({
             </div>
           </div>
 
-          {/* Purpose & Accommodation */}
           <div className="space-y-2">
             <Label htmlFor="visitPurpose">Purpose of Visit</Label>
             <Textarea
@@ -313,7 +286,6 @@ export function VisaModal({
             />
           </div>
 
-          {/* Invitation Yes/No */}
           <div className="space-y-2">
             <Label htmlFor="hasInvitation">
               Do you have an Invitation Letter?
@@ -333,10 +305,8 @@ export function VisaModal({
             </Select>
           </div>
 
-          {/* File Upload */}
           <div className="space-y-2">
             <Label>Upload Supporting Documents</Label>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {["photo", "bankStatement", "invitation"].map((key) => (
                 <div key={key} className="space-y-1">
@@ -350,7 +320,7 @@ export function VisaModal({
                   />
                   {files[key as keyof typeof files] && (
                     <p className="text-xs text-green-600 flex items-center gap-1">
-                      <FileCheck2 className="w-4 h-4" />{" "}
+                      <FileCheck2 className="w-4 h-4" />
                       {files[key as keyof typeof files]?.name}
                     </p>
                   )}
@@ -360,14 +330,13 @@ export function VisaModal({
           </div>
         </div>
 
-        {/* Footer */}
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <Button
             type="submit"
-            className="bg-gradient-to-r from-purple-600 to-violet-600 text-white"
+            className="bg-gradient-to-r from-amber-400 to-amber-600 hover:bg-amber-600/90 border border-amber-500/20 text-white"
           >
             Submit Visa Application
           </Button>

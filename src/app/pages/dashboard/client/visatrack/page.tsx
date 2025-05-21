@@ -30,6 +30,7 @@ interface KycData {
   travelPurpose: string;
   accommodation: string;
   hasInvitation: string;
+  reason: string;
   documents: {
     photo: string;
     bankStatement: string;
@@ -89,25 +90,25 @@ export default function TrackStatusPage() {
               value="active"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
-              Active Applications
+              Visa Details
             </TabsTrigger>
-            <TabsTrigger
+            {/* <TabsTrigger
               value="completed"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
               Completed
-            </TabsTrigger>
-            <TabsTrigger
+            </TabsTrigger> */}
+            {/* <TabsTrigger
               value="kyc"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
               Visa Details
-            </TabsTrigger>
+            </TabsTrigger> */}
           </TabsList>
 
           {/* ...Active and Completed TabsContent (unchanged)... */}
 
-          <TabsContent value="kyc">
+          <TabsContent value="active">
             {loading && (
               <p className="text-gray-600 text-sm mt-4">
                 Loading KYC details...
@@ -123,7 +124,7 @@ export default function TrackStatusPage() {
                     Visa Details
                   </CardTitle>
                   <CardDescription className="text-gray-600">
-                    Personal passport verification information
+                    Personal Visa verification information
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -182,7 +183,7 @@ export default function TrackStatusPage() {
                         Has Invitation
                       </p>
                       <p className="text-lg font-semibold text-gray-800">
-                        {visaData.hasInvitation}
+                        {visaData.hasInvitation === "true" ? "No" : "Yes"}
                       </p>
                     </div>
                     <div>
@@ -198,6 +199,14 @@ export default function TrackStatusPage() {
                       >
                         {visaData.status}
                       </span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">
+                        Reason for Rejection
+                      </p>
+                      <p className="text-lg font-semibold text-gray-800">
+                        {visaData.reason || "no reason"}
+                      </p>
                     </div>
                   </div>
 
@@ -216,9 +225,11 @@ export default function TrackStatusPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
                       <div>
                         <p className="text-xs text-gray-500 mb-1">User Image</p>
-                        <Image
-                          src={`http://localhost:4000/${visaData.documents.photo}`}
+                        <img
+                          src={`${process.env.NEXT_PUBLIC_API_URL_IMAGE}/${visaData.documents.photo}`}
                           alt="User"
+                          width={100}
+                          height={100}
                           className="w-full h-40 object-cover rounded border"
                         />
                       </div>
@@ -226,18 +237,22 @@ export default function TrackStatusPage() {
                         <p className="text-xs text-gray-500 mb-1">
                           Adhar Front
                         </p>
-                        <Image
-                          src={`http://localhost:4000/${visaData.documents.bankStatement}`}
+                        <img
+                          src={`${process.env.NEXT_PUBLIC_API_URL_IMAGE}/${visaData.documents.bankStatement}`}
                           alt="Adhar Front"
                           className="w-full h-40 object-cover rounded border"
+                          width={100}
+                          height={100}
                         />
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Adhar Back</p>
-                        <Image
-                          src={`http://localhost:4000/${visaData.documents.invitation}`}
+                        <img
+                          src={`${process.env.NEXT_PUBLIC_API_URL_IMAGE}/${visaData.documents.invitation}`}
                           alt="Adhar Back"
                           className="w-full h-40 object-cover rounded border"
+                          width={100}
+                          height={100}
                         />
                       </div>
                       {/* <div>

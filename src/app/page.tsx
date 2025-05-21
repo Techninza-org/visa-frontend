@@ -58,12 +58,12 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4 items-center mt-20 bg-gradient-to-r from-white px-6 rounded-2xl">
                 <LocationForm />
                 <a href="/pages/detailspage">
-                  <Button
+                  {/* <Button
                     className="bg-gradient-to-r from-amber-400 to-amber-600 hover:bg-amber-600/90 border border-amber-500/20 px-8 py-6 rounded-xl text-lg sm:ml-4 text-white"
                     size="lg"
                   >
                     Check Visa
-                  </Button>
+                  </Button> */}
                 </a>
               </div>
             </div>

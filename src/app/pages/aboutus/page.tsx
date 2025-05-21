@@ -7,7 +7,7 @@ export default function AboutPage() {
   return (
     <main className="bg-white text-black min-h-screen">
       <Headers />
-      <section className="max-w-7xl mx-auto px-6 py-20">
+      <section className="max-w-7xl mx-auto px-6 py-20 mt-10">
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
             About Us
@@ -21,7 +21,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <Image
-              src="/about-visa.jpg"
+              src="/business-people-team-free-photo.jpg"
               alt="Visa and Passport Services"
               width={600}
               height={400}

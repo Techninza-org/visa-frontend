@@ -14,12 +14,12 @@ import { PassportModal } from "@/components/modals/passport-modal";
 import { VisaModal } from "@/components/modals/visa-modal";
 import { ApplyModal } from "@/components/modals/apply-modal";
 import { PaymentModal } from "@/components/modals/payment-modal";
-import { ApprovalModal } from "@/components/modals/approval-modal";
+// import { ApprovalModal } from "@/components/modals/approval-modal";
 import { SelectPassportModal } from "./modals/select-passport-modal";
 
 export function ProcessButtons() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
-  const [approvalModal, setApprovalModal] = useState<string | null>(null);
+  // const [approvalModal, setApprovalModal] = useState<string | null>(null);
   const [approvedSteps, setApprovedSteps] = useState<string[]>([]);
 
   const handleOpenModal = (modalName: string) => {
@@ -32,13 +32,13 @@ export function ProcessButtons() {
 
   const handleSubmitForm = (formType: string) => {
     handleCloseModal();
-    setApprovalModal(formType);
+    // setApprovalModal(formType);
   };
 
-  const handleApprove = (step: string) => {
-    setApprovedSteps([...approvedSteps, step]);
-    setApprovalModal(null);
-  };
+  // const handleApprove = (step: string) => {
+  //   setApprovedSteps([...approvedSteps, step]);
+  //   // setApprovalModal(null);
+  // };
 
   const isStepApproved = (step: string) => {
     return approvedSteps.includes(step);
@@ -192,14 +192,14 @@ export function ProcessButtons() {
       )}
 
       {/* Approval Modals */}
-      {approvalModal && (
+      {/* {approvalModal && (
         <ApprovalModal
           isOpen={true}
           formType={approvalModal}
           onClose={() => setApprovalModal(null)}
           onApprove={() => handleApprove(approvalModal)}
         />
-      )}
+      )} */}
     </>
   );
 }

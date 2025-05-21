@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 // import { DashboardSidebar } from "@/components/dashboard-sidebar";
@@ -60,7 +61,7 @@ export default function TrackKYC() {
   }, [kycId, token]);
 
   return (
-    <TabsContent value="kyc">
+    <TabsContent value="active">
       {loading && (
         <p className="text-gray-600 text-sm mt-4">Loading KYC details...</p>
       )}

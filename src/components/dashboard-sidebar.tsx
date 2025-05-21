@@ -44,11 +44,11 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       label: "Applications",
       href: "/pages/dashboard/client/applications",
     },
-    {
-      icon: Clock,
-      label: "Track Status",
-      href: "/pages/dashboard/client/track",
-    },
+    // {
+    //   icon: Clock,
+    //   label: "Track Status",
+    //   href: "/pages/dashboard/client/track",
+    // },
     {
       icon: CreditCard,
       label: "Payments",

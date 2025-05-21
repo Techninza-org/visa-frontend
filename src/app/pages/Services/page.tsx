@@ -3,6 +3,7 @@
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { ShieldCheck, Clock, Globe2, Users } from "lucide-react";
+import Link from "next/link";
 
 const services = [
   {
@@ -20,6 +21,21 @@ const services = [
   {
     title: "Student Visa Support",
     desc: "We assist Indian students in applying to universities abroad with proper student visa documentation and embassy interview preparation.",
+  },
+];
+
+const additionalservices = [
+  {
+    title: "Travel Insurance",
+    desc: "Protect your travel plans with our comprehensive insurance packages covering medical emergencies, trip cancellations, and more.",
+  },
+  {
+    title: "Acoommodation Booking",
+    desc: "We help you find the best accommodation options worldwide, from hotels to hostels, ensuring a comfortable stay.",
+  },
+  {
+    title: "Flight Booking",
+    desc: "Book your flights with us for the best deals and personalized service, ensuring a smooth travel experience.",
   },
 ];
 
@@ -50,7 +66,7 @@ export default function ServicesPage() {
   return (
     <main className="bg-white text-black min-h-screen">
       <Header />
-      <section className="max-w-7xl mx-auto px-6 py-20">
+      <section className="max-w-7xl mx-auto px-6 py-20 mt-10">
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
             Our Services
@@ -73,6 +89,30 @@ export default function ServicesPage() {
               </h3>
               <p className="text-gray-700">{service.desc}</p>
             </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-24 mb-16">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+            Additional services
+          </h1>
+          {/* <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+            Complete visa and passport solutions trusted by thousands of
+            travelers, students, and professionals across India.
+          </p> */}
+        </div>
+
+        {/* Additional services */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          {additionalservices.map((service) => (
+            <Link key={service.title} href={service.link || "#"}>
+              <div className="bg-gray-50 p-6 rounded-xl border border-amber-300 hover:shadow-md transition cursor-pointer">
+                <h3 className="text-2xl font-semibold text-amber-600 mb-2">
+                  {service.title}
+                </h3>
+                <p className="text-gray-700">{service.desc}</p>
+              </div>
+            </Link>
           ))}
         </div>
 

@@ -24,7 +24,7 @@ export default function ContactPage() {
   return (
     <main className="bg-white text-black min-h-screen">
       <Headers />
-      <section className="max-w-7xl mx-auto px-6 py-20">
+      <section className="max-w-7xl mx-auto px-6 py-20 mt-10">
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
             Contact Us

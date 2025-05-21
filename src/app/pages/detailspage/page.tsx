@@ -1,13 +1,18 @@
 "use client";
-import { useState } from "react";
 import Head from "next/head";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function USVisaIndiaPassport() {
   const [activeTab, setActiveTab] = useState("tourist");
 
+  const searchParams = useSearchParams();
+  const [visaResult, setVisaResult] = useState<any>(null);
+  const [source, setSource] = useState("");
+  const [destination, setDestination] = useState("");
   const visaTypes = [
     { id: "tourist", name: "Tourist Visa" },
     { id: "business", name: "Business Visa" },
@@ -53,13 +58,32 @@ export default function USVisaIndiaPassport() {
     },
   ];
 
+  useEffect(() => {
+    const data = searchParams.get("data");
+    const source = searchParams.get("source");
+    const destination = searchParams.get("destination");
+    if (data) {
+      try {
+        setVisaResult(JSON.parse(data));
+        setSource(source || "");
+
+        setDestination(destination || "");
+      } catch (err) {
+        console.error("Invalid JSON:", err);
+      }
+    }
+  }, [searchParams]);
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 mt-20">
       <Head>
-        <title>US Visa for Indian Passport Holders | Abu Dhabi Embassy</title>
+        <title>
+          {JSON.stringify(source, null, 2)} for Indian Passport Holders |{" "}
+          {JSON.stringify(source, null, 2)}
+        </title>
         <meta
           name="description"
-          content="Apply for US visa from India through Abu Dhabi embassy. Get information on requirements, fees, and application process."
+          content="Apply for US visa from India through your embassy. Get information on requirements, fees, and application process."
         />
       </Head>
 
@@ -71,10 +95,11 @@ export default function USVisaIndiaPassport() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              US Visa for Indian Passport Holders
+              {JSON.stringify(visaResult, null, 2)} for{" "}
+              {JSON.stringify(source, null, 2)} Holders
             </h1>
             <p className="text-lg md:text-xl mb-6">
-              Applying through US Embassy in Abu Dhabi, United Arab Emirates
+              Applying through US Embassy in {JSON.stringify(source, null, 2)} ,
             </p>
             <div className="bg-white rounded-lg p-4 shadow-lg">
               <div className="flex space-x-2 overflow-x-auto pb-2">
@@ -105,12 +130,13 @@ export default function USVisaIndiaPassport() {
             {/* Visa Overview */}
             <section className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                US {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Visa
+                {JSON.stringify(destination, null, 2)}{" "}
+                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Visa
                 Overview
               </h2>
               <p className="text-gray-600 mb-4">
-                The United States {activeTab} visa allows Indian passport
-                holders to visit the US for{" "}
+                The {JSON.stringify(destination, null, 2)} {activeTab} visa
+                allows Indian passport holders to visit the US for{" "}
                 {activeTab === "tourist"
                   ? "tourism, vacation, or visiting family and friends"
                   : activeTab === "business"
@@ -164,7 +190,7 @@ export default function USVisaIndiaPassport() {
                   {activeTab === "tourist"
                     ? "Proof of sufficient funds, travel itinerary, and ties to India (employment, property, family)"
                     : activeTab === "business"
-                    ? "Letter from employer, invitation from US company, and details of business activities"
+                    ? "Letter from employer, invitation, and details of business activities"
                     : activeTab === "student"
                     ? "Form I-20, SEVIS fee receipt, academic transcripts, and proof of financial support"
                     : activeTab === "work"
@@ -215,7 +241,8 @@ export default function USVisaIndiaPassport() {
                 </h3>
                 <ul className="list-disc pl-5 space-y-1 text-gray-600">
                   <li>
-                    Passport (valid for at least 6 months after the U.S. stay)
+                    Passport (valid for at least 6 months after the{" "}
+                    {JSON.stringify(source, null, 2)})
                   </li>
                   <li>DS-160 confirmation page</li>
                   <li>Application fee payment receipt</li>
@@ -424,21 +451,20 @@ export default function USVisaIndiaPassport() {
           <div className="max-w-7xl mx-auto space-y-4">
             {[
               {
-                question: "How early should I apply for my US visa?",
+                question: "How early should I apply for my visa?",
                 answer:
                   "We recommend applying at least 2-3 months before your intended travel date to account for processing times and potential delays.",
               },
               {
-                question:
-                  "Can I apply for a US visa while in UAE on a visit visa?",
+                question: "Can I apply for  while in on a visit visa?",
                 answer:
-                  "Yes, Indian passport holders can apply for a US visa from Abu Dhabi even if they are in UAE on a visit visa, as long as they have legal status in the country.",
+                  "Yes, Indian passport holders can apply for your country even if they are on a visit visa, as long as they have legal status in the country.",
               },
               {
                 question:
                   "What is the visa validity for Indian passport holders?",
                 answer:
-                  "US tourist and business visas for Indians are typically issued for 10 years with multiple entries. Student and work visas are issued for the duration of your program or employment.",
+                  "Country and business visas for Indians are typically issued for 10 years with multiple entries. Student and work visas are issued for the duration of your program or employment.",
               },
               {
                 question: "Do I need to submit my original documents?",

@@ -71,15 +71,7 @@ export default function RegisterPage() {
   return (
     <div>
       <Header />
-      <div className="min-h-screen w-full bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] flex items-center justify-center px-4">
-        <Link
-          href="/"
-          className="absolute left-4 top-4 md:left-8 md:top-8 flex items-center gap-2 text-white"
-        >
-          <Plane className="h-6 w-6 text-[#f6d365]" />
-          <span className="font-bold text-xl">Axe Visa</span>
-        </Link>
-
+      <div className="min-h-screen w-full bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] flex items-center justify-center px-4 mt-10">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-3xl font-bold text-white">Create an account</h1>
@@ -146,6 +138,21 @@ export default function RegisterPage() {
                   type="password"
                   className="bg-white/10 border border-white/20 placeholder-gray-300 text-white"
                   value={form.password}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-white">
+                  Referral Code
+                </Label>
+                <Input
+                  id="referral"
+                  name="referral"
+                  type="text"
+                  placeholder="Optional"
+                  className="bg-white/10 border border-white/20 placeholder-gray-300 text-white"
+                  value={form.referral}
                   onChange={handleChange}
                 />
               </div>

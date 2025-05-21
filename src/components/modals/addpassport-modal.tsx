@@ -175,7 +175,7 @@ export default function AddPassportModal({
             </button>
             <button
               type="submit"
-              className="px-6 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold hover:shadow-lg transition"
+              className="px-6 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 hover:bg-amber-600/90 border border-amber-500/20 text-white font-semibold hover:shadow-lg transition"
             >
               Submit
             </button>

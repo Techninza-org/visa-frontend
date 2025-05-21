@@ -1,15 +1,15 @@
 import React from "react";
-import Image from "next/image";
+// import Image from "next/image";
 
 const TrustedBy = () => {
   const companies = [
-    { name: "Facebook", logo: "/logos/facebook.svg" },
-    { name: "LinkedIn", logo: "/logos/linkedin.svg" },
+    { name: "Facebook", logo: "/facebooklogo.webp" },
+    { name: "LinkedIn", logo: "/LinkedIn_logo_initials.png" },
     { name: "Equinix", logo: "/logos/equinix.svg" },
-    { name: "Google", logo: "/logos/google.svg" },
+    { name: "Google", logo: "/Google_Icons-09-512.webp" },
     { name: "BCC", logo: "/logos/bcc.svg" },
     { name: "Expedia", logo: "/logos/expedia.svg" },
-    { name: "OnePlus", logo: "/logos/oneplus.svg" },
+    { name: "OnePlus", logo: "/oneplus.png" },
     // Duplicates as shown in your screenshot
     // { name: "Equinix", logo: "/logos/equinix.svg" },
     // { name: "Google", logo: "/logos/google.svg" },
@@ -35,14 +35,14 @@ const TrustedBy = () => {
             className="flex flex-col items-center justify-center"
           >
             <div className="relative h-12 w-32 mb-2">
-              <Image
+              <img
                 src={company.logo}
                 alt={company.name}
-                fill
+                width={50}
                 className="object-contain"
               />
             </div>
-            <span className="text-sm text-gray-600">{company.name}</span>
+            {/* <span className="text-sm text-gray-600">{company.name}</span> */}
           </div>
         ))}
       </div>
