@@ -1,6 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
-import VisaTrackDetails from "@/components/visatrack";
-import { Suspense } from "react";
 import {
   Card,
   CardContent,
@@ -9,38 +10,78 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import {
-//   CheckCircle2,
-//   Clock,
-//   FileText,
-//   AlertCircle,
-//   CheckCheck,
-// } from "lucide-react";
+// import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-// import { Image } from "lucide-react";
-import Image from "next/image";
+import Cookies from "js-cookie";
 
 interface KycData {
-  visaType: string;
+  _id: string;
+  passportId: string;
   country: string;
-  travelDate: Date;
-  returnDate: Date;
+  visaType: string;
+  travelDate: string; // ISO date string
+  returnDate: string; // ISO date string
   travelPurpose: string;
   accommodation: string;
-  hasInvitation: string;
-  reason: string;
+  hasInvitation: boolean;
+  isApproved: boolean;
+  status: string;
   documents: {
     photo: string;
     bankStatement: string;
     invitation: string;
   };
-  photo: string;
-  bankStatement: string;
-  invitation: string;
-  status: string;
+  createdAt: string;
+  updatedAt: string;
+  priority: boolean;
+  expertId: string;
 }
 
 export default function TrackStatusPage() {
+  const [visaData, setVisaData] = useState({});
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const searchParams = useSearchParams();
+  const visaId = searchParams.get("visa_id");
+
+  const token = Cookies.get("token");
+
+  useEffect(() => {
+    if (!visaId) {
+      setError("Visa ID is missing in the URL");
+      return;
+    }
+
+    const fetchVisaData = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/visa/visaapplications/${visaId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to fetch visa details");
+
+        const data: KycData = await res.json();
+        setVisaData(data);
+        console.log(data, "sfdhghd");
+      } catch (err: any) {
+        setError(err.message || "Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVisaData();
+  }, [visaId, token]);
+
   return (
     <div className="flex ml-8 p-8 bg-gray-50 min-h-screen">
       <DashboardSidebar userRole="client" />
@@ -62,28 +103,16 @@ export default function TrackStatusPage() {
               value="active"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
-              Active Applications
-            </TabsTrigger>
-            <TabsTrigger
-              value="completed"
-              className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
-            >
-              Completed
-            </TabsTrigger>
-            <TabsTrigger
-              value="kyc"
-              className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
-            >
               Visa Details
             </TabsTrigger>
           </TabsList>
 
-          {/* ...Active and Completed TabsContent (unchanged)... */}
+          {/* You can add other tab contents here */}
 
-          <TabsContent value="kyc">
+          <TabsContent value="active">
             {loading && (
               <p className="text-gray-600 text-sm mt-4">
-                Loading KYC details...
+                Loading visa details...
               </p>
             )}
             {error && (
@@ -101,63 +130,28 @@ export default function TrackStatusPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Existing fields */}
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Country
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {visaData.country}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Travel Date
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {new Date(visaData.travelDate).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Return Date
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {new Date(visaData.returnDate).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        visa Type
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {visaData.visaType}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Travel Purpose
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800 capitalize">
-                        {visaData.travelPurpose}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Accommodation
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {visaData.accommodation}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Has Invitation
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {visaData.hasInvitation}
-                      </p>
-                    </div>
+                    <DetailItem label="Country" value={visaData.country} />
+                    <DetailItem
+                      label="Travel Date"
+                      value={new Date(visaData.travelDate).toLocaleDateString()}
+                    />
+                    <DetailItem
+                      label="Return Date"
+                      value={new Date(visaData.returnDate).toLocaleDateString()}
+                    />
+                    <DetailItem label="Visa Type" value={visaData.visaType} />
+                    <DetailItem
+                      label="Travel Purpose"
+                      value={visaData.travelPurpose}
+                    />
+                    <DetailItem
+                      label="Accommodation"
+                      value={visaData.accommodation}
+                    />
+                    <DetailItem
+                      label="Has Invitation"
+                      value={visaData.hasInvitation ? "Yes" : "No"}
+                    />
                     <div>
                       <p className="text-sm font-medium text-gray-500">
                         Status
@@ -174,54 +168,24 @@ export default function TrackStatusPage() {
                     </div>
                   </div>
 
-                  {/* <div>
-                    <p className="text-sm font-medium text-gray-500">Address</p>
-                    <p className="text-lg font-semibold text-gray-800 whitespace-pre-line">
-                      {visaData.address}
-                    </p>
-                  </div> */}
-
-                  {/* Document Images Section */}
                   <div>
                     <p className="text-sm font-medium text-gray-500">
                       Documents
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-                      <div>
-                        <p className="text-xs text-gray-500 mb-1">User Image</p>
-                        <Image
-                          src={`http://localhost:4000/${visaData.documents.photo}`}
-                          alt="User"
-                          className="w-full h-40 object-cover rounded border"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500 mb-1">
-                          Adhar Front
-                        </p>
-                        <Image
-                          src={`http://localhost:4000/${visaData.documents.bankStatement}`}
-                          alt="Adhar Front"
-                          className="w-full h-40 object-cover rounded border"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500 mb-1">Adhar Back</p>
-                        <Image
-                          src={`http://localhost:4000/${visaData.documents.invitation}`}
-                          alt="Adhar Back"
-                          className="w-full h-40 object-cover rounded border"
-                        />
-                      </div>
-                      {/* <div>
-                        <p className="text-xs text-gray-500 mb-1">PAN Card</p>
-                        <img
-                          src={`http://localhost:4000/${visaData.panCardImg}`}
-                          alt="PAN Card"
-                          className="w-full h-40 object-cover rounded border"
-                        />
-                      </div> */}
-                    </div>
+                    {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                      <DocumentImage
+                        label="User Image"
+                        src={visaData?.documents.photo}
+                      />
+                      <DocumentImage
+                        label="Bank Statement"
+                        src={visaData?.documents.bankStatement}
+                      />
+                      <DocumentImage
+                        label="Invitation"
+                        src={visaData?.documents.invitation}
+                      />
+                    </div> */}
                   </div>
                 </CardContent>
               </Card>
@@ -232,3 +196,25 @@ export default function TrackStatusPage() {
     </div>
   );
 }
+
+// Helper component for rendering detail items
+const DetailItem = ({ label, value }: { label: string; value: string }) => (
+  <div>
+    <p className="text-sm font-medium text-gray-500">{label}</p>
+    <p className="text-lg font-semibold text-gray-800">{value}</p>
+  </div>
+);
+
+// Helper component for rendering document images
+const DocumentImage = ({ label, src }: { label: string; src: string }) => (
+  <div>
+    <p className="text-xs text-gray-500 mb-1">{label}</p>
+    <img
+      src={`http://localhost:4000/${src}`}
+      alt={label}
+      width={300}
+      height={160}
+      className="w-full h-40 object-cover rounded border"
+    />
+  </div>
+);

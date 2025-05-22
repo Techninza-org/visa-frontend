@@ -55,7 +55,7 @@ export default function Home() {
                 Simplify Your Global Journey
               </h1>
 
-              <div className="flex flex-col sm:flex-row gap-4 items-center mt-20 bg-gradient-to-r from-white px-6 rounded-2xl">
+              <div className="flex flex-col sm:flex-row gap-4 items-center mt-20 bg-white px-6 rounded-2xl">
                 <LocationForm />
                 <a href="/pages/detailspage">
                   {/* <Button

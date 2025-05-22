@@ -1,16 +1,48 @@
-import { Suspense } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
-import TrackPassportDetails from "@/components/TrackPassportDetails";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+
+interface KycData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  country: string;
+  nationality: string;
+  address: string;
+  pincode: string;
+  dateOfBirth: string; // changed to string for serialization compatibility
+  status: string;
+  userImg: string;
+  adharFrontImage: string;
+  adharBackImage: string;
+  panCardImg: string;
+  createdAt: string;
+}
 
 export default function TrackStatusPage() {
-  const [passData, setPassData] = useState<KycData | null>(null);
+  const [passData, setPassData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const searchParams = useSearchParams();
   const passportId = searchParams.get("pass_id");
   const token = Cookies.get("token");
 
+  // console.log(passData.firstName, "passportId");
+
   useEffect(() => {
+    if (!passportId || !token) return;
     setLoading(true);
     fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/admin/passport/getpassport/${passportId}`,
@@ -24,6 +56,7 @@ export default function TrackStatusPage() {
         if (!res.ok) throw new Error("Failed to fetch KYC data");
         const json = await res.json();
         setPassData(json.data);
+        console.log("Fetched passport:", json.data);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -50,9 +83,9 @@ export default function TrackStatusPage() {
               value="active"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
-              Active Applications
+              Passport Details
             </TabsTrigger>
-            <TabsTrigger
+            {/* <TabsTrigger
               value="completed"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
@@ -62,13 +95,15 @@ export default function TrackStatusPage() {
               value="kyc"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
             >
-              passport Details
-            </TabsTrigger>
+              Passport Details
+            </TabsTrigger> */}
           </TabsList>
 
-          {/* ...Active and Completed TabsContent (unchanged)... */}
+          <TabsContent value="completed" className="py-6 text-gray-600">
+            No completed applications available.
+          </TabsContent>
 
-          <TabsContent value="kyc">
+          <TabsContent value="active">
             {loading && (
               <p className="text-gray-600 text-sm mt-4">
                 Loading KYC details...
@@ -89,7 +124,6 @@ export default function TrackStatusPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Existing fields */}
                     <div>
                       <p className="text-sm font-medium text-gray-500">
                         Full Name
@@ -153,7 +187,6 @@ export default function TrackStatusPage() {
                     </p>
                   </div>
 
-                  {/* Document Images Section */}
                   <div>
                     <p className="text-sm font-medium text-gray-500">
                       Documents
@@ -161,9 +194,11 @@ export default function TrackStatusPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
                       <div>
                         <p className="text-xs text-gray-500 mb-1">User Image</p>
-                        <Image
-                          src={`http://localhost:4000/${passData?.userImg}`}
+                        <img
+                          src={`http://localhost:4000/${passData.userImg}`}
                           alt="User"
+                          width={200}
+                          height={160}
                           className="w-full h-40 object-cover rounded border"
                         />
                       </div>
@@ -171,25 +206,31 @@ export default function TrackStatusPage() {
                         <p className="text-xs text-gray-500 mb-1">
                           Adhar Front
                         </p>
-                        <Image
-                          src={`http://localhost:4000/${passData.adharFrontImage}`}
+                        <img
+                          src={`http://localhost:4000/${passData.adharFrontimg}`}
                           alt="Adhar Front"
+                          width={200}
+                          height={160}
                           className="w-full h-40 object-cover rounded border"
                         />
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Adhar Back</p>
-                        <Image
+                        <img
                           src={`http://localhost:4000/${passData.adharBackImage}`}
                           alt="Adhar Back"
+                          width={200}
+                          height={160}
                           className="w-full h-40 object-cover rounded border"
                         />
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">PAN Card</p>
-                        <Image
+                        <img
                           src={`http://localhost:4000/${passData.panCardImg}`}
                           alt="PAN Card"
+                          width={200}
+                          height={160}
                           className="w-full h-40 object-cover rounded border"
                         />
                       </div>

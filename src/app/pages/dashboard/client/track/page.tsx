@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import {
@@ -21,6 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSearchParams } from "next/navigation";
 // import { Image } from "lucide-react";
 import Image from "next/image";
+import TrackKYC from "@/components/kyctrack";
 
 interface KycData {
   visaType: string;
@@ -84,7 +85,7 @@ export default function TrackStatusPage() {
         </div>
 
         <Tabs defaultValue="active" className="mt-8">
-          <TabsList className="border-b border-gray-200">
+          {/* <TabsList className="border-b border-gray-200">
             <TabsTrigger
               value="active"
               className="px-6 py-2 text-lg font-semibold text-gray-700 hover:text-gray-900"
@@ -103,7 +104,7 @@ export default function TrackStatusPage() {
             >
               KYC Details
             </TabsTrigger>
-          </TabsList>
+          </TabsList> */}
 
           {/* ...Active and Completed TabsContent (unchanged)... */}
         </Tabs>
