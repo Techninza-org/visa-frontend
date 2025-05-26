@@ -20,7 +20,8 @@ export default function Header() {
   }, []);
 
   const handleLogout = () => {
-    Cookies.remove("auth_token");
+    Cookies.remove("token");
+    Cookies.remove("user")
     setIsLoggedIn(false);
     setDropdownOpen(false);
     router.push("/");

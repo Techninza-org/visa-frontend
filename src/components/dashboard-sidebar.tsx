@@ -17,7 +17,7 @@ import {
   // Plane,
   Home,
   FileText,
-  Clock,
+  
   CreditCard,
   Settings,
   LogOut,
@@ -26,6 +26,7 @@ import {
   Briefcase,
   CheckSquare,
   MessageSquare,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -41,14 +42,19 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
     { icon: Home, label: "Dashboard", href: "/pages/dashboard" },
     {
       icon: FileText,
-      label: "Applications",
-      href: "/pages/dashboard/client/applications",
+      label: "Visa Applications",
+      href: "/pages/dashboard/client/visa-applications",
     },
-    // {
-    //   icon: Clock,
-    //   label: "Track Status",
-    //   href: "/pages/dashboard/client/track",
-    // },
+    {
+      icon: FileText,
+      label: "Passport Applications",
+      href: "/pages/dashboard/client/passport-applications",
+    },
+    {
+      icon: Clock,
+      label: "Docs",
+      href: "/pages/dashboard/client/docs",
+    },
     {
       icon: CreditCard,
       label: "Payments",

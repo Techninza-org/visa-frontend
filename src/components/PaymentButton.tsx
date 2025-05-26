@@ -26,7 +26,7 @@ const PaymentButton = ({
       disabled={isProcessing}
       className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700"
     >
-      {isProcessing ? "Processing..." : "Pay with Razorpay"}
+      {isProcessing ? "Processing..." : "Pay"}
     </button>
   );
 };

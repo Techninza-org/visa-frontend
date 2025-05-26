@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import Cookies from "js-cookie";
+
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import {
   Card,
@@ -9,41 +12,54 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import Cookies from "js-cookie";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
-interface KycData {
+// Type definition for the API data
+interface VisaApplication {
   _id: string;
-  passportId: string;
-  country: string;
-  visaType: string;
-  travelDate: string; // ISO date string
-  returnDate: string; // ISO date string
+  user: string;
+  fullName: string;
+  dob: string;
+  nationality: string;
+  passportNumber: string;
+  passportIssueDate: string;
+  passportExpiryDate: string;
+  destinationCountry: string;
   travelPurpose: string;
-  accommodation: string;
-  hasInvitation: boolean;
-  isApproved: boolean;
-  status: string;
-  documents: {
-    photo: string;
-    bankStatement: string;
-    invitation: string;
-  };
+  travelDate: string;
+  travelDurationInDays: number;
+  email: string;
+  phone: string;
+  address: string;
+  employmentStatus: string;
+  applicationStatus: string;
+  expert: string | null;
+  priority: string;
+  assignedAt: string | null;
+  deadline: string | null;
   createdAt: string;
   updatedAt: string;
-  priority: boolean;
-  expertId: string;
+  documents: {
+    passportScan: string;
+    photo: string;
+    bankStatement: string;
+    itrOrSalarySlip: string;
+    travelHistory: string;
+  };
 }
 
 export default function TrackStatusPage() {
-  const [visaData, setVisaData] = useState({});
+  const [visaData, setVisaData] = useState<VisaApplication | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+
   const searchParams = useSearchParams();
   const visaId = searchParams.get("visa_id");
-
   const token = Cookies.get("token");
 
   useEffect(() => {
@@ -58,7 +74,7 @@ export default function TrackStatusPage() {
         setError("");
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/admin/visa/visaapplications/${visaId}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/user/visa-application/${visaId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -69,9 +85,8 @@ export default function TrackStatusPage() {
 
         if (!res.ok) throw new Error("Failed to fetch visa details");
 
-        const data: KycData = await res.json();
-        setVisaData(data);
-        console.log(data, "sfdhghd");
+        const data = await res.json();
+        setVisaData(data.application);
       } catch (err: any) {
         setError(err.message || "Something went wrong");
       } finally {
@@ -107,8 +122,6 @@ export default function TrackStatusPage() {
             </TabsTrigger>
           </TabsList>
 
-          {/* You can add other tab contents here */}
-
           <TabsContent value="active">
             {loading && (
               <p className="text-gray-600 text-sm mt-4">
@@ -125,67 +138,80 @@ export default function TrackStatusPage() {
                     Visa Details
                   </CardTitle>
                   <CardDescription className="text-gray-600">
-                    Personal passport verification information
+                    Personal application and document details
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <DetailItem label="Country" value={visaData.country} />
+                    <DetailItem label="Full Name" value={visaData.fullName} />
+                    <DetailItem
+                      label="Date of Birth"
+                      value={new Date(visaData.dob).toLocaleDateString()}
+                    />
+                    <DetailItem label="Nationality" value={visaData.nationality} />
+                    <DetailItem
+                      label="Passport Number"
+                      value={visaData.passportNumber}
+                    />
+                    <DetailItem
+                      label="Passport Issue Date"
+                      value={new Date(visaData.passportIssueDate).toLocaleDateString()}
+                    />
+                    <DetailItem
+                      label="Passport Expiry Date"
+                      value={new Date(visaData.passportExpiryDate).toLocaleDateString()}
+                    />
+                    <DetailItem
+                      label="Destination Country"
+                      value={visaData.destinationCountry}
+                    />
+                    <DetailItem label="Travel Purpose" value={visaData.travelPurpose} />
                     <DetailItem
                       label="Travel Date"
                       value={new Date(visaData.travelDate).toLocaleDateString()}
                     />
                     <DetailItem
-                      label="Return Date"
-                      value={new Date(visaData.returnDate).toLocaleDateString()}
+                      label="Travel Duration"
+                      value={`${visaData.travelDurationInDays} days`}
                     />
-                    <DetailItem label="Visa Type" value={visaData.visaType} />
+                    <DetailItem label="Email" value={visaData.email} />
+                    <DetailItem label="Phone" value={visaData.phone} />
+                    <DetailItem label="Address" value={visaData.address} />
                     <DetailItem
-                      label="Travel Purpose"
-                      value={visaData.travelPurpose}
-                    />
-                    <DetailItem
-                      label="Accommodation"
-                      value={visaData.accommodation}
+                      label="Employment Status"
+                      value={visaData.employmentStatus}
                     />
                     <DetailItem
-                      label="Has Invitation"
-                      value={visaData.hasInvitation ? "Yes" : "No"}
+                      label="Application Status"
+                      value={visaData.applicationStatus}
                     />
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Status
-                      </p>
-                      <span
-                        className={`inline-block mt-1 px-3 py-1 text-sm font-medium rounded-full ${
-                          visaData.status === "pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-green-100 text-green-800"
-                        }`}
-                      >
-                        {visaData.status}
-                      </span>
-                    </div>
+                    <DetailItem label="Priority" value={visaData.priority} />
                   </div>
 
                   <div>
-                    <p className="text-sm font-medium text-gray-500">
-                      Documents
-                    </p>
-                    {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                    <p className="text-sm font-medium text-gray-500">Documents</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                       <DocumentImage
-                        label="User Image"
-                        src={visaData?.documents.photo}
+                        label="Passport Scan"
+                        src={visaData.documents.passportScan}
+                      />
+                      <DocumentImage
+                        label="Photo"
+                        src={visaData.documents.photo}
                       />
                       <DocumentImage
                         label="Bank Statement"
-                        src={visaData?.documents.bankStatement}
+                        src={visaData.documents.bankStatement}
                       />
                       <DocumentImage
-                        label="Invitation"
-                        src={visaData?.documents.invitation}
+                        label="ITR / Salary Slip"
+                        src={visaData.documents.itrOrSalarySlip}
                       />
-                    </div> */}
+                      <DocumentImage
+                        label="Travel History"
+                        src={visaData.documents.travelHistory}
+                      />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -197,7 +223,7 @@ export default function TrackStatusPage() {
   );
 }
 
-// Helper component for rendering detail items
+// Reusable detail item
 const DetailItem = ({ label, value }: { label: string; value: string }) => (
   <div>
     <p className="text-sm font-medium text-gray-500">{label}</p>
@@ -205,15 +231,13 @@ const DetailItem = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-// Helper component for rendering document images
+// Reusable document image viewer
 const DocumentImage = ({ label, src }: { label: string; src: string }) => (
   <div>
     <p className="text-xs text-gray-500 mb-1">{label}</p>
     <img
-      src={`http://localhost:4000/${src}`}
+      src={`${process.env.NEXT_PUBLIC_API_URL_IMAGE}${src}`} // Update this URL as needed
       alt={label}
-      width={300}
-      height={160}
       className="w-full h-40 object-cover rounded border"
     />
   </div>

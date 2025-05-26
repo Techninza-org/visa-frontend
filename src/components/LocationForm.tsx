@@ -42,7 +42,7 @@ export default function LocationForm() {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/auth/get-visa-requirements",
+        `${process.env.NEXT_PUBLIC_API_URL}/public/check-visa`,
         {
           source,
           destination,

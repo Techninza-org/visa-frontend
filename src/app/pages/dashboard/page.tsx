@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ProcessButtons } from "@/components/process-buttons";
-import PaymentButton from "@/components/PaymentButton";
+
 import {
   Tooltip,
   TooltipContent,
@@ -30,6 +30,10 @@ import {
 } from "@/components/ui/tooltip";
 
 import { FileText, Clock, CreditCard, Users } from "lucide-react";
+
+import VisaTable from "@/components/dashboar-components/VisaTable";
+import Passport from "@/components/dashboar-components/PassPortTable";
+import PassportTable from "@/components/dashboar-components/PassPortTable";
 
 interface Profile {
   name: string;
@@ -58,6 +62,19 @@ interface Visa {
   status: string;
   _id: string;
 }
+
+// types/index.ts (or in the same file)
+export interface VisaApplication {
+  _id: string;
+  fullName: string;
+  destinationCountry: string;
+  travelDate: string;
+  travelDurationInDays: number;
+  applicationStatus: string;
+  priority: string;
+  [key: string]: any;
+}
+
 
 interface JwtPayload {
   _id: string;
@@ -167,35 +184,19 @@ export default function ClientDashboard() {
     });
   };
 
-  // useEffect(() => {
-  //   const fetchUserProfile = async () => {
-  //     try {
-  //       const decoded = jwtDecode(token) as JwtPayload;
-  //       const res = await axios.get(
-  //         `${process.env.NEXT_PUBLIC_API_URL}profile/${decoded._id}`,
-  //         {
-  //           headers: { Authorization: `Bearer ${token}` },
-  //         }
-  //       );
-  //       setUserProfile(res.data);
-  //     } catch (error) {
-  //       console.error("Failed to fetch user profile", error);
-  //     }
-  //   };
 
-  //   if (token) fetchUserProfile();
-  // }, [token]);
 
   useEffect(() => {
     const fetchVisa = async () => {
       try {
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/visa/allapplications`,
+          `${process.env.NEXT_PUBLIC_API_URL}/user/visa-application`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setVisaApplications(res.data);
+        console.log("Visa Applications:", res.data.applications);
+        setVisaApplications(res.data.applications);
       } catch (error) {
         console.error("Failed to fetch visa applications", error);
       }
@@ -204,16 +205,20 @@ export default function ClientDashboard() {
     fetchVisa();
   }, [token]);
 
+
+
   useEffect(() => {
     const fetchPassports = async () => {
       try {
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/passport/passports`,
+          `${process.env.NEXT_PUBLIC_API_URL}/user/passport-application`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setPassportApplications(res.data.data);
+
+        console.log("Passport Applications:", res.data.applications);
+        setPassportApplications(res.data.applications);
       } catch (error) {
         console.error("Failed to fetch passport applications", error);
       }
@@ -244,6 +249,10 @@ export default function ClientDashboard() {
     whatsAppMessage
   )}`;
 
+
+
+
+
   return (
     <div>
       <Header />
@@ -261,7 +270,7 @@ export default function ClientDashboard() {
           </div>
 
           {/* Dashboard Cards */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6 border border-gray-200 rounded-md p-4">
+          {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6 border border-gray-200 rounded-md p-4">
             {[
               {
                 title: "Total Applications",
@@ -314,7 +323,7 @@ export default function ClientDashboard() {
                 </CardContent>
               </Card>
             ))}
-          </div>
+          </div> */}
 
           {/* Tabs Section */}
           <Tabs defaultValue="allkycs" className="mt-6">
@@ -387,7 +396,7 @@ export default function ClientDashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {passportApplications.length === 0 ? (
+                  {/* {passportApplications.length === 0 ? (
                     <p className="text-center text-muted-foreground">
                       No applications found.
                     </p>
@@ -428,7 +437,9 @@ export default function ClientDashboard() {
                         </div>
                       </div>
                     ))
-                  )}
+                  )} */}
+                  
+                <PassportTable data={passportApplications} token={token} />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -442,61 +453,17 @@ export default function ClientDashboard() {
                     All your submitted visa applications
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {visaApplications.length === 0 ? (
-                    <p className="text-center text-muted-foreground">
-                      No applications found.
-                    </p>
-                  ) : (
-                    visaApplications.map((visa, idx) => (
-                      <div
-                        key={idx}
-                        className="grid grid-cols-3 gap-4 border p-4 rounded-md"
-                      >
-                        <div>
-                          <h3 className="font-medium">
-                            {visa.country} ({visa.visaType})
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            Travel:{" "}
-                            {new Date(visa.travelDate).toLocaleDateString()} -{" "}
-                            {new Date(visa.returnDate).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <div>
-                          <h3 className="font-medium">Status</h3>
-                          <p
-                            className={`text-sm ${getStatusColor(visa.status)}`}
-                          >
-                            {visa.status.charAt(0).toUpperCase() +
-                              visa.status.slice(1)}
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-end gap-5">
-                          <PaymentButton
-                            token={token}
-                            currentUser={visa._id}
-                            totalAmount={999}
-                            productId="product_123"
-                            selectedAddressId={{ id: "addr_789" }}
-                          />
+                <CardContent className="overflow-x-auto">
 
-                          <Button variant="outline" size="sm" asChild>
-                            <Link
-                              href={`/pages/dashboard/client/visatrack?visa_id=${visa._id}`}
-                            >
-                              View
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
-                    ))
-                  )}
+                  <VisaTable data={visaApplications} token={token} />
+
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="visapack" className="space-y-4">
+
+
+            {/* <TabsContent value="visapack" className="space-y-4">
               <Card>
                 <CardHeader>
                   <CardTitle>Approved Visa Applications</CardTitle>
@@ -556,7 +523,7 @@ export default function ClientDashboard() {
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            </TabsContent> */}
           </Tabs>
           <ProcessButtons />
         </div>
