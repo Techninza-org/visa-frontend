@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import {
   Sidebar,
@@ -14,162 +16,212 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import {
-  // Plane,
   Home,
   FileText,
-  
   CreditCard,
   Settings,
   LogOut,
-  Users,
-  BarChart,
-  Briefcase,
-  CheckSquare,
-  MessageSquare,
   Clock,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+
 
 interface DashboardSidebarProps {
   userRole: "client" | "admin" | "expert";
 }
 
 export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
+  const router = useRouter();
   const pathname = usePathname();
+   const handleLogout = () => {
+    Cookies.remove("token");
+    Cookies.remove("user");
+    router.push("/");
+  };
+
+
+  if (userRole !== "client") {
+    // Only show sidebar for clients
+    return null;
+  }
 
   const clientMenuItems = [
-    { icon: Home, label: "Dashboard", href: "/pages/dashboard" },
     {
-      icon: FileText,
-      label: "Visa Applications",
-      href: "/pages/dashboard/client/visa-applications",
+      icon: Home,
+      label: "Dashboard",
+      href: "/pages/dashboard",
+      badge: null,
+      description: "Overview & quick stats",
     },
     {
       icon: FileText,
-      label: "Passport Applications",
+      label: "Visa",
+      href: "/pages/dashboard/client/visa-applications",
+      badge: "3",
+      description: "Track your visa progress",
+    },
+    {
+      icon: FileText,
+      label: "Passport",
       href: "/pages/dashboard/client/passport-applications",
+      badge: "1",
+      description: "Passport renewals & new apps",
     },
     {
       icon: Clock,
-      label: "Docs",
+      label: "Documents",
       href: "/pages/dashboard/client/docs",
+      badge: null,
+      description: "Upload & manage files",
     },
     {
       icon: CreditCard,
       label: "Payments",
       href: "/pages/dashboard/client/payments",
+      badge: null,
+      description: "Billing & transactions",
     },
     {
       icon: Settings,
       label: "Settings",
       href: "/pages/dashboard/client/settings",
+      badge: null,
+      description: "Account preferences",
     },
   ];
 
-  const adminMenuItems = [
-    { icon: Home, label: "Dashboard", href: "/dashboard/admin" },
-    {
-      icon: FileText,
-      label: "Applications",
-      href: "/dashboard/admin/applications",
-    },
-    { icon: Users, label: "Users", href: "/dashboard/admin/users" },
-    { icon: Briefcase, label: "Experts", href: "/dashboard/admin/experts" },
-    { icon: CreditCard, label: "Payments", href: "/dashboard/admin/payments" },
-    { icon: BarChart, label: "Reports", href: "/dashboard/admin/reports" },
-    { icon: Settings, label: "Settings", href: "/dashboard/admin/settings" },
-  ];
-
-  const expertMenuItems = [
-    { icon: Home, label: "Dashboard", href: "/dashboard/expert" },
-    {
-      icon: FileText,
-      label: "Assigned Cases",
-      href: "/dashboard/expert/cases",
-    },
-    {
-      icon: CheckSquare,
-      label: "Document Review",
-      href: "/dashboard/expert/documents",
-    },
-    {
-      icon: MessageSquare,
-      label: "Messages",
-      href: "/dashboard/expert/messages",
-    },
-    { icon: Settings, label: "Settings", href: "/dashboard/expert/settings" },
-  ];
-
-  const menuItems =
-    userRole === "client"
-      ? clientMenuItems
-      : userRole === "admin"
-      ? adminMenuItems
-      : expertMenuItems;
+  const roleInfo = {
+    name: "John Doe",
+    email: "john@example.com",
+    roleLabel: "Client",
+    avatarFallback: "JD",
+    badgeColor: "bg-blue-100 text-blue-800",
+  };
 
   return (
     <SidebarProvider>
-      <Sidebar className="bg-gray-100">
-        <SidebarHeader className=" p-4">
-          <Link href="/" className="flex items-center gap-2">
-            {/* <Plane className="h-6 w-6" /> */}
+      <Sidebar className="bg-gradient-to-b from-slate-50 to-white border-r border-slate-200 shadow-sm w-64 hidden md:flex">
+        <SidebarHeader className="p-4 border-b border-slate-100">
+          <Link href="/" className="flex items-center justify-center w-full">
             <Image
               src="/visalogo.jpeg"
               alt="Axe Visa Logo"
-              width={48}
-              height={48}
-              className="h-20 w-36"
+              width={144}
+              height={80}
+              className="h-16 w-auto object-contain transition-transform duration-200 hover:scale-105"
             />
-            {/* <Image src="/logo.png" alt="Axe Visa Logo" className="h-6" /> */}
-            {/* <span className="font-bold text-xl">Axe Visa</span> */}
           </Link>
         </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            {menuItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton asChild isActive={pathname === item.href}>
-                  <Link href={item.href}>
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.label}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+
+        <SidebarContent className="px-3 py-4 overflow-y-auto max-h-[calc(100vh-200px)]">
+          <div className="mb-4">
+            <Badge
+              variant="secondary"
+              className={`${roleInfo.badgeColor} text-xs font-medium px-2 py-1 mb-3`}
+            >
+              {roleInfo.roleLabel}
+            </Badge>
+          </div>
+
+          <SidebarMenu className="space-y-2">
+            {clientMenuItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive}
+                    className={`group relative rounded-xl transition-all duration-200 hover:shadow-sm  py-5 ${
+                      isActive
+                        ? "bg-gradient-to-r from-amber-400 to-amber-600  text-white shadow-md"
+                        : "hover:bg-slate-100 text-slate-700 hover:text-slate-900"
+                    }`}
+                  >
+                    <Link
+                      href={item.href}
+                      className="flex items-center justify-between w-full p-3"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`p-2 rounded-lg transition-colors duration-200 ${
+                            isActive
+                              ? "bg-white/20"
+                              : "bg-slate-200 group-hover:bg-slate-300"
+                          }`}
+                        >
+                          <item.icon className="h-4 w-4" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-medium text-sm">
+                            {item.label}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {item.badge && (
+                          <Badge
+                            variant="secondary"
+                            className={`text-xs px-2 py-0.5 min-w-[20px] h-5 flex items-center justify-center ${
+                              isActive
+                                ? "bg-white/20 text-white"
+                                : "bg-blue-100 text-blue-600"
+                            }`}
+                          >
+                            {item.badge}
+                          </Badge>
+                        )}
+                        <ChevronRight
+                          className={`h-4 w-4 transition-transform duration-200 opacity-0 group-hover:opacity-100 ${
+                            isActive
+                              ? "opacity-100 translate-x-0"
+                              : "group-hover:translate-x-1"
+                          }`}
+                        />
+                      </div>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
           </SidebarMenu>
         </SidebarContent>
-        <SidebarFooter className="p-4">
-          <div className="flex items-center gap-4">
-            <Avatar>
-              <AvatarImage
-                src="/placeholder.svg?height=40&width=40"
-                alt="User"
-              />
-              <AvatarFallback>
-                {userRole === "client"
-                  ? "CL"
-                  : userRole === "admin"
-                  ? "AD"
-                  : "EX"}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-              {/* <span className="text-sm font-medium">
-                {userRole === "client"
-                  ? "John Doe"
-                  : userRole === "admin"
-                  ? "Admin User"
-                  : "Visa Expert"}
-              </span> */}
-              {/* <span className="text-xs text-muted-foreground capitalize">
-                {userRole}
-              </span> */}
+
+        <SidebarFooter className="p-4 border-t border-slate-100 bg-slate-50/50">
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-white shadow-sm border border-slate-200 hover:shadow-md transition-shadow duration-200 w-full overflow-hidden">
+            <div className="relative shrink-0">
+              <Avatar className="h-10 w-10 ring-2 ring-white shadow-sm">
+                <AvatarImage
+                  src="/placeholder.svg?height=40&width=40"
+                  alt="User"
+                />
+                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold text-sm">
+                  {roleInfo.avatarFallback}
+                </AvatarFallback>
+              </Avatar>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
             </div>
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/pages/login">
-                <LogOut className="h-5 w-5" />
-              </Link>
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <p className="text-sm font-semibold text-slate-900 truncate">
+                {roleInfo.name}
+              </p>
+              <p className="text-xs text-slate-500 truncate">
+                {roleInfo.email}
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+               onClick={handleLogout}
+              asChild
+              className="h-6 w-6 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors duration-200"
+            >
+            
+                <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+             
             </Button>
           </div>
         </SidebarFooter>

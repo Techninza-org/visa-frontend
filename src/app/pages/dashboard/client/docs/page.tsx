@@ -198,17 +198,22 @@ export default function TrackStatusPage() {
   ];
 
   return (
-    <>
+     <div className="min-h-screen flex flex-col">
     <Header />
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-21">
-      <DashboardSidebar userRole="client" />
+     <div className="flex flex-1 pt-[4.5rem] bg-gray-50">
+      {/* Sidebar */}
+
+
+     <div className="hidden lg:block w-64 border-r border-gray-200 bg-white">
+          <DashboardSidebar userRole="client" />
+        </div>
 
       <div className="flex-1 ml-8 p-8">
         {/* Header Section */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-2">
+              <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">
                 Document Management
               </h1>
               <p className="text-lg text-gray-600 flex items-center">
@@ -219,7 +224,7 @@ export default function TrackStatusPage() {
 
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2">
+                <Button className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl duration-200 flex items-center gap-2 space-x-2 hover:from-amber-500 hover:to-amber-700 transition-colors">
                   <Upload className="w-5 h-5" />
                   <span>Upload Document</span>
                 </Button>
@@ -409,6 +414,6 @@ export default function TrackStatusPage() {
         </Dialog>
       </div>
     </div>
-    </>
+  </div>
   );
 }

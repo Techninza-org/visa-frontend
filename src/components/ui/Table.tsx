@@ -17,32 +17,42 @@ const Table = <T extends { _id?: string | number }>({
   data,
 }: TableProps<T>) => {
   return (
-    <div className="overflow-x-auto rounded-md border border-gray-200">
-      <table className="min-w-full text-sm text-left">
-        <thead className="bg-gray-100 text-gray-700">
+    <div className="overflow-x-auto rounded-lg border border-gray-300 shadow-sm">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-white sticky top-0 z-10 shadow-sm">
           <tr>
             {columns.map((col) => (
-              <th key={col.key} className="px-4 py-2 border border-gray-200">
+              <th
+                key={col.key}
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider select-none"
+              >
                 {col.label}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white divide-y divide-gray-100">
           {data.length === 0 ? (
             <tr>
               <td
                 colSpan={columns.length}
-                className="text-center py-4 text-muted-foreground"
+                className="text-center py-8 text-gray-400 italic"
               >
                 No data found.
               </td>
             </tr>
           ) : (
             data.map((item, idx) => (
-              <tr key={item._id ?? idx} className="border-b border-gray-200 hover:bg-gray-50">
+              <tr
+                key={item._id ?? idx}
+                className="hover:bg-indigo-50 transition-colors duration-200"
+              >
                 {columns.map((col) => (
-                  <td key={col.key} className="px-4 py-2 border border-gray-200">
+                  <td
+                    key={col.key}
+                    className="px-6 py-4 whitespace-nowrap text-gray-700"
+                  >
                     {col.render ? col.render(item) : (item as any)[col.key]}
                   </td>
                 ))}

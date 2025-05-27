@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Menu, User } from "lucide-react";
+import { Menu, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -21,30 +21,25 @@ export default function Header() {
 
   const handleLogout = () => {
     Cookies.remove("token");
-    Cookies.remove("user")
+    Cookies.remove("user");
     setIsLoggedIn(false);
     setDropdownOpen(false);
     router.push("/");
   };
 
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-amber-500/30 bg-gray-50 backdrop-blur-xl">
-      <div className="mx-auto flex h-22 max-w-7xl items-center justify-between px-4 md:px-8">
-        {/* Logo Section */}
-        <div className="flex items-center gap-3">
+    <header className="fixed top-0 z-50 w-full border-b border-amber-300/30 bg-white/80 backdrop-blur-lg">
+      <div className="mx-auto flex h-20 max-w-[95%] items-center justify-between px-4 md:px-8">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2">
           <Image
             src="/visalogo.jpeg"
             alt="Global Visa Solutions"
-            width={80}
-            height={50}
-            className="h-20 w-36 transition-opacity hover:opacity-80"
+            width={100}
+            height={60}
+            className="h-auto  object-contain transition-opacity hover:opacity-90"
           />
-          {/* <span className="hidden bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-lg font-bold text-transparent md:block">
-            AXE VISA
-            <br />
-            TECHNOLOGY
-          </span> */}
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex md:gap-8">
@@ -57,7 +52,7 @@ export default function Header() {
             <Link
               key={item.name}
               href={item.link}
-              className="text-sm font-medium text-black/70 transition-all hover:text-amber-500 hover:underline hover:underline-offset-4"
+              className="text-sm font-medium text-gray-700 hover:text-amber-500 transition-colors"
             >
               {item.name}
             </Link>
@@ -68,37 +63,29 @@ export default function Header() {
         <div className="flex items-center gap-4">
           {!isLoggedIn ? (
             <>
-              <a href="/pages/login">
-                <Button
-                  variant="ghost"
-                  className="bg-gradient-to-r from-amber-400 to-amber-600 text-white backdrop-blur-lg hover:bg-amber-600/50 border border-amber-500/20 px-4 py-2 rounded-xl"
-                >
+              <Link href="/pages/login">
+                <Button className="bg-amber-500 text-white hover:bg-amber-600 transition rounded-xl px-4 py-2">
                   Login
                 </Button>
-              </a>
-              <a href="/pages/ragister">
-                <Button
-                  variant="ghost"
-                  className="bg-gradient-to-r from-amber-400 to-amber-600 text-white backdrop-blur-lg hover:bg-amber-600/50 border border-amber-500/20 px-4 py-2 rounded-xl"
-                >
+              </Link>
+              <Link href="/pages/ragister">
+                <Button className="bg-gray-100 text-amber-600 border border-amber-500 hover:bg-amber-50 transition rounded-xl px-4 py-2">
                   Sign Up
                 </Button>
-              </a>
-              <a href="/pages/login">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="md:hidden text-amber-500 hover:bg-amber-500/10"
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                >
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </a>
+              </Link>
+              <Button
+                variant="outline"
+                size="icon"
+                className="md:hidden text-amber-600 hover:bg-amber-100"
+                onClick={() => setMobileMenuOpen(true)}
+              >
+                <Menu className="h-6 w-6" />
+              </Button>
             </>
           ) : (
             <div className="relative">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="hover:bg-amber-100"
@@ -106,18 +93,15 @@ export default function Header() {
                 <User className="h-6 w-6 text-amber-600" />
               </Button>
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-36 bg-white border rounded-xl shadow-lg z-50">
-                  <a href="/pages/dashboard">
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
-                    >
+                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                  <Link href="/pages/dashboard">
+                    <span className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 cursor-pointer">
                       Dashboard
-                    </button>
-                  </a>
+                    </span>
+                  </Link>
                   <button
                     onClick={handleLogout}
-                    className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                   >
                     Logout
                   </button>
@@ -126,41 +110,65 @@ export default function Header() {
             </div>
           )}
         </div>
+      </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="absolute left-0 top-20 w-full bg-white shadow-md md:hidden border-t border-amber-500/30">
-            <div className="flex flex-col space-y-6 p-8">
-              {["Home", "Services", "About", "Testimonials", "Contact"].map(
-                (item) => (
-                  <Link
-                    key={item}
-                    href={`#${item.toLowerCase()}`}
-                    className="text-lg font-medium text-black/80 hover:text-amber-500"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item}
-                  </Link>
-                )
-              )}
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute top-0 left-0 w-full h-screen bg-white z-40 flex flex-col shadow-lg">
+          <div className="flex justify-between items-center px-4 py-4 border-b border-gray-200">
+            <Image src="/visalogo.jpeg" alt="Logo" width={100} height={40} />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-amber-600 hover:bg-amber-100"
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          </div>
+          <nav className="flex flex-col px-6 py-4 space-y-4">
+            {[
+              { name: "Home", link: "/" },
+              { name: "Services", link: "/pages/Services" },
+              { name: "About", link: "/pages/aboutus" },
+              { name: "Contact", link: "/pages/contact" },
+            ].map((item) => (
+              <Link
+                key={item.name}
+                href={item.link}
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-lg text-gray-700 font-medium hover:text-amber-500"
+              >
+                {item.name}
+              </Link>
+            ))}
+
+            <div className="mt-6">
               {!isLoggedIn ? (
-                <a href="/pages/login">
-                  <Button className="mt-4 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20">
-                    Client Login
-                  </Button>
-                </a>
+                <>
+                  <Link href="/pages/login">
+                    <Button className="w-full mb-2 bg-amber-500 text-white hover:bg-amber-600">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/pages/ragister">
+                    <Button className="w-full bg-gray-100 text-amber-600 hover:bg-amber-50">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
               ) : (
                 <Button
-                  className="mt-4 bg-red-100 text-red-600 hover:bg-red-200"
+                  className="w-full bg-red-100 text-red-600 hover:bg-red-200"
                   onClick={handleLogout}
                 >
                   Logout
                 </Button>
               )}
             </div>
-          </div>
-        )}
-      </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
