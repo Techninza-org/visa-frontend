@@ -28,7 +28,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
-
 interface DashboardSidebarProps {
   userRole: "client" | "admin" | "expert";
 }
@@ -36,12 +35,11 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
-   const handleLogout = () => {
+  const handleLogout = () => {
     Cookies.remove("token");
     Cookies.remove("user");
     router.push("/");
   };
-
 
   if (userRole !== "client") {
     // Only show sidebar for clients
@@ -86,8 +84,9 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
     },
     {
       icon: Settings,
-      label: "Settings",
-      href: "/pages/dashboard/client/settings",
+      label: "Support ",
+      href: "/pages/dashboard/client/support",
+      
       badge: null,
       description: "Account preferences",
     },
@@ -103,15 +102,15 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
 
   return (
     <SidebarProvider>
-      <Sidebar className="bg-gradient-to-b from-slate-50 to-white border-r border-slate-200 shadow-sm w-64 hidden md:flex">
-        <SidebarHeader className="p-4 border-b border-slate-100">
+      <Sidebar className="bg-gradient-to-b from-slate-50 to-white border-r z-10 border-slate-200 shadow-sm w-64 hidden md:flex">
+        <SidebarHeader className="p-4 border-b border-slate-200">
           <Link href="/" className="flex items-center justify-center w-full">
             <Image
               src="/visalogo.jpeg"
               alt="Axe Visa Logo"
               width={144}
               height={80}
-              className="h-16 w-auto object-contain transition-transform duration-200 hover:scale-105"
+              className="h-18 w-auto object-contain transition-transform duration-200 hover:scale-105"
             />
           </Link>
         </SidebarHeader>
@@ -215,13 +214,11 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
             <Button
               variant="ghost"
               size="icon"
-               onClick={handleLogout}
+              onClick={handleLogout}
               asChild
               className="h-6 w-6 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors duration-200"
             >
-            
-                <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-             
+              <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
             </Button>
           </div>
         </SidebarFooter>

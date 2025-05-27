@@ -38,6 +38,8 @@ import {
 import VisaTable from "@/components/dashboar-components/VisaTable";
 import PassportTable from "@/components/dashboar-components/PassPortTable";
 import { Badge } from "@/components/ui/badge";
+import { ProgressIndicator } from "@radix-ui/react-progress";
+import { DashboardHeader } from "@/components/dashboard-header";
 
 interface Passport {
   firstName: string;
@@ -147,10 +149,10 @@ export default function ClientDashboard() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Fixed Header */}
-      <Header />
+      <DashboardHeader />
 
       {/* Main Content Area */}
-      <div className="flex flex-1 pt-[4.5rem] bg-gray-50">
+      <div className="flex flex-1  bg-gray-50">
         {/* Sidebar */}
         <div className="hidden lg:block w-64 border-r border-gray-200 bg-white">
           <DashboardSidebar userRole="client" />
@@ -252,7 +254,7 @@ export default function ClientDashboard() {
           {/* Recent Activities & Upcoming Renewals */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
             {/* Recent Activities */}
-            <Card>
+            <Card  className="border border-gray-300">
               <CardHeader>
                 <CardTitle>Recent Activities</CardTitle>
                 <CardDescription>Your latest travel document activities</CardDescription>
@@ -271,17 +273,21 @@ export default function ClientDashboard() {
                         <p className="text-sm font-medium text-gray-900 truncate">{activity.action}</p>
                         <p className="text-sm text-gray-500">{activity.date}</p>
                       </div>
-                      <Badge
-                        variant={
+                        <span
+                        className={`inline-block px-2 py-0.5 rounded text-xs font-semibold
+                          ${
                           activity.status === "completed" ||
                           activity.status === "approved" ||
                           activity.status === "verified"
-                            ? "default"
-                            : "secondary"
-                        }
-                      >
+                            ? "bg-green-100 text-green-700"
+                            : activity.status === "pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-gray-200 text-gray-700"
+                          }
+                        `}
+                        >
                         {activity.status}
-                      </Badge>
+                        </span>
                     </div>
                   ))}
                 </div>
@@ -289,7 +295,7 @@ export default function ClientDashboard() {
             </Card>
 
             {/* Upcoming Renewals */}
-            <Card>
+            <Card  className="border border-gray-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertCircle className="h-5 w-5 text-orange-500" />
@@ -318,7 +324,7 @@ export default function ClientDashboard() {
                         <div className="flex justify-between text-sm text-gray-600">
                           <span>Expires: {renewal.expiryDate}</span>
                         </div>
-                        <Progress value={Math.max(0, 100 - (renewal.daysLeft / 365) * 100)} className="h-2" />
+                        <Progress value={Math.max(0, 100 - (renewal.daysLeft / 365) * 100)} className="h-2 bg-black" />
                       </div>
                     </div>
                   ))}

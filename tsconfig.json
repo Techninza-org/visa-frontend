@@ -34,7 +34,7 @@
     "next-env.d.ts",
     "src/app/pages/login/page.tsx",
     ".next/types/**/*.ts"
-  ],
+, "src/app/pages/dashboard/client/payments/page.tsx"  ],
   "exclude": [
     "node_modules",
     ".next"

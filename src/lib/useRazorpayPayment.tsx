@@ -23,15 +23,16 @@ export const useRazorpayPayment = ({
     setIsProcessing(true);
 
     try {
-      const res = await loadRazorpayScript();
-      if (!res) {
-        alert("Failed to load payment gateway.");
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        alert("Failed to load Razorpay SDK.");
         setIsProcessing(false);
         return;
       }
 
-      const amountToPay = totalAmount * 100;
+      const amountToPay = totalAmount * 100; // Razorpay expects in paise
 
+      // Step 1: Create Razorpay Order from backend
       const orderRes = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/web/create-razorpay-order`,
         {
@@ -40,13 +41,14 @@ export const useRazorpayPayment = ({
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ amount: amountToPay.toFixed(2) }),
+          body: JSON.stringify({ amount: amountToPay }),
         }
       );
 
       const orderData = await orderRes.json();
       if (!orderData?.order?.id) throw new Error("Order creation failed");
 
+      // Step 2: Configure Razorpay options
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
         amount: amountToPay,
@@ -56,19 +58,17 @@ export const useRazorpayPayment = ({
         order_id: orderData.order.id,
         handler: async function (response) {
           try {
+            // Step 3: Verify Razorpay Signature
             const formBody = new URLSearchParams();
             formBody.append("razorpay_order_id", response.razorpay_order_id);
-            formBody.append(
-              "razorpay_payment_id",
-              response.razorpay_payment_id
-            );
+            formBody.append("razorpay_payment_id", response.razorpay_payment_id);
             formBody.append("razorpay_signature", response.razorpay_signature);
             formBody.append("amount", amountToPay.toString());
             formBody.append("currency", "INR");
             formBody.append("product_id", productId);
 
             const verifyRes = await fetch(
-              `${process.env.NEXT_PUBLIC_BASE_URL}/web/verify-payment`,
+              `${process.env.NEXT_PUBLIC_BASE_URL}/user/verify-payment`,
               {
                 method: "POST",
                 headers: {
@@ -87,34 +87,32 @@ export const useRazorpayPayment = ({
               throw new Error("Payment verification failed");
             }
 
-            // Final order creation
-            await fetch(
-              `${process.env.NEXT_PUBLIC_BASE_URL}/web/create-order`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                  paymentMode: "razorpay",
-                  paymentOrderId: response.razorpay_payment_id,
-                  orderStatus: "SUCCESS",
-                  addressId: selectedAddressId.id,
-                  gst: 49.0,
-                  discount: 50.0,
-                  couponCode: "NEWUSER50",
-                  totalAmount: totalAmount,
-                  notes: "Ring the bell on arrival",
-                }),
-              }
-            );
+            // Step 4: Final Order Creation
+            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/create-order`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                paymentMode: "razorpay",
+                paymentOrderId: response.razorpay_payment_id,
+                orderStatus: "SUCCESS",
+                addressId: selectedAddressId, // Ensure this is just the ID, not an object
+                gst: 49.0,
+                discount: 50.0,
+                couponCode: "NEWUSER50",
+                totalAmount,
+                notes: "Ring the bell on arrival",
+              }),
+            });
 
+            // Clear cart and redirect
             localStorage.setItem("cartItems", JSON.stringify([]));
             router.push("/order/success");
           } catch (error) {
-            console.error("Payment processing error:", error);
-            alert("Something went wrong while processing your payment.");
+            console.error("Payment verification error:", error);
+            alert("Something went wrong during payment verification.");
           } finally {
             setIsProcessing(false);
           }

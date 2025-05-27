@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Table from "../ui/Table";
 import PaymentButton from "../PaymentButton";
+import DataTable from "../DataTable";
 
 interface PassportProps {
   data: VisaApplication[];
@@ -70,7 +71,7 @@ const PassportTable: React.FC<PassportProps> = ({ data, token }) => {
     },
   ];
 
-  return <Table<VisaApplication> columns={columns} data={data} />;
+  return <DataTable<VisaApplication> columns={columns} data={data} />;
 };
 
 export default PassportTable;

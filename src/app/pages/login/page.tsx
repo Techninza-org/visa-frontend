@@ -34,7 +34,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/public/user-login`,
+        `${process.env.NEXT_PUBLIC_API_URL}/public/user-login-register`,
         {
           method: "POST",
           headers: {

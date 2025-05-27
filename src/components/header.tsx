@@ -68,11 +68,11 @@ export default function Header() {
                   Login
                 </Button>
               </Link>
-              <Link href="/pages/ragister">
+              {/* <Link href="/pages/ragister">
                 <Button className="bg-gray-100 text-amber-600 border border-amber-500 hover:bg-amber-50 transition rounded-xl px-4 py-2">
                   Sign Up
                 </Button>
-              </Link>
+              </Link> */}
               <Button
                 variant="outline"
                 size="icon"

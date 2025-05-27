@@ -18,6 +18,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import Header from "@/components/header";
 
 // Type definition for the API data
 interface VisaApplication {
@@ -97,10 +98,18 @@ export default function TrackStatusPage() {
     fetchVisaData();
   }, [visaId, token]);
 
+
   return (
-    <div className="flex ml-8 p-8 bg-gray-50 min-h-screen">
-      <DashboardSidebar userRole="client" />
-      <div className="flex-1">
+     <div className="min-h-screen flex flex-col">
+          {/* Fixed Header */}
+          <Header />
+   {/* Main Content Area */}
+      <div className="flex flex-1 pt-[4.5rem] bg-gray-50">
+        {/* Sidebar */}
+        <div className="hidden lg:block w-64 border-r border-gray-200 bg-white">
+          <DashboardSidebar userRole="client" />
+        </div>
+     <div className="flex-1 p-4 md:p-6 lg:p-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-800 tracking-tight">
@@ -218,6 +227,7 @@ export default function TrackStatusPage() {
             )}
           </TabsContent>
         </Tabs>
+      </div>
       </div>
     </div>
   );

@@ -1,20 +1,28 @@
 "use client";
 
 import React from "react";
-
 import { VisaApplication } from "@/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Table from "../ui/Table";
 import PaymentButton from "../PaymentButton";
-
+import DataTable from "../DataTable";
 
 interface VisaTableProps {
   data: VisaApplication[];
+  currentPage?: number;
+  rowsPerPage?: number;
+
   token: string;
 }
 
-const VisaTable: React.FC<VisaTableProps> = ({ data, token }) => {
+const VisaTable: React.FC<VisaTableProps> = ({
+  data,
+  token,
+  currentPage,
+  rowsPerPage,
+  totalCount,
+  onPageChange,
+}) => {
   const columns = [
     { key: "fullName", label: "Full Name" },
     { key: "destinationCountry", label: "Destination" },
@@ -75,7 +83,7 @@ const VisaTable: React.FC<VisaTableProps> = ({ data, token }) => {
     },
   ];
 
-  return <Table<VisaApplication> columns={columns} data={data} />;
+  return <DataTable<VisaApplication> columns={columns} data={data} />;
 };
 
 export default VisaTable;

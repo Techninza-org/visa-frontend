@@ -1,30 +1,55 @@
-import { Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Cookies from "js-cookie";
 
 export function DashboardHeader() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    Cookies.remove("user");
+    router.push("/");
+  };
+
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-6">
-      <SidebarTrigger />
-      <div className="w-full flex-1">
-        <form className="hidden sm:block">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-            />
-          </div>
-        </form>
+    <header className="sticky top-0  flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
+      <div className="flex items-center gap-4 ml-auto">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="h-8 w-8 rounded-full overflow-hidden cursor-pointer">
+              <Avatar className="h-full w-full rounded-full">
+                <AvatarImage
+                  src="/user.png"
+                  alt="User"
+                  className="h-full w-full object-cover rounded-full"
+                />
+                <AvatarFallback className="rounded-full">U</AvatarFallback>
+              </Avatar>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => console.log("Profile clicked")}>
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Button
+                className="w-full text-red-600 hover:bg-red-200"
+                onClick={handleLogout}
+                variant="ghost"
+              >
+                Logout
+              </Button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-      <Button variant="outline" size="icon" className="relative">
-        <Bell className="h-4 w-4" />
-        <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
-          3
-        </span>
-      </Button>
     </header>
   );
 }
