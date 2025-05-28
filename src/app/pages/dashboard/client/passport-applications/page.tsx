@@ -7,7 +7,7 @@ import { PassportModal } from "@/components/modals/passport-modal";
 import axios from "axios";
 import { Visa } from "@/types";
 import Cookies from "js-cookie";
-import { FileText, Upload } from "lucide-react";
+import { FileText, Upload, Filter, X } from "lucide-react";
 import DataTable from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -18,11 +18,25 @@ interface PassportProps {
   token: string;
 }
 
+interface FilterParams {
+  fromDate: string;
+  toDate: string;
+  status: string;
+  priority: string;
+}
+
 const PassportApplication = () => {
   const [PassportApplications, setPassportApplications] = useState<Visa[]>([]);
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalApplications, setTotalApplications] = useState(0);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<FilterParams>({
+    fromDate: "",
+    toDate: "",
+    status: "",
+    priority: "",
+  });
 
   const rowsPerPage = 10;
   const token = Cookies.get("token") || "";
@@ -40,11 +54,43 @@ const PassportApplication = () => {
     // setApprovalModal(formType);
   };
 
+  const handleFilterChange = (key: keyof FilterParams, value: string) => {
+    setFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      fromDate: "",
+      toDate: "",
+      status: "",
+      priority: "",
+    });
+    setCurrentPage(1);
+  };
+
+  const buildQueryParams = () => {
+    const params = new URLSearchParams();
+    params.append('page', currentPage.toString());
+    params.append('limit', rowsPerPage.toString());
+    
+    if (filters.fromDate) params.append('fromDate', filters.fromDate);
+    if (filters.toDate) params.append('toDate', filters.toDate);
+    if (filters.status) params.append('status', filters.status);
+    if (filters.priority) params.append('priority', filters.priority);
+    
+    return params.toString();
+  };
+
   useEffect(() => {
     const fetchPassports = async () => {
       try {
+        const queryString = buildQueryParams();
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/user/passport-application?page=${currentPage}&limit=${rowsPerPage}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/user/passport-application?${queryString}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -60,7 +106,7 @@ const PassportApplication = () => {
     };
 
     fetchPassports();
-  }, [token]);
+  }, [token, currentPage, filters]);
 
   const columns = [
     { key: "fullName", label: "Full Name" },
@@ -144,13 +190,23 @@ const PassportApplication = () => {
                 </p>
               </div>
 
-              <button
-                className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl duration-200 flex items-center gap-2 space-x-2 hover:from-amber-500 hover:to-amber-700 transition-colors"
-                onClick={() => handleOpenModal("passport")}
-              >
-                <Upload className="w-5 h-5" />
-                Upload Passport Application
-              </button>
+              <div className="flex items-center gap-4">
+                <button
+                  className="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl shadow hover:shadow-md duration-200 flex items-center gap-2 hover:bg-gray-200 transition-colors"
+                  onClick={() => setShowFilters(!showFilters)}
+                >
+                  <Filter className="w-4 h-4" />
+                  Filters
+                </button>
+
+                <button
+                  className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl duration-200 flex items-center gap-2 space-x-2 hover:from-amber-500 hover:to-amber-700 transition-colors"
+                  onClick={() => handleOpenModal("passport")}
+                >
+                  <Upload className="w-5 h-5" />
+                  Upload Passport Application
+                </button>
+              </div>
 
               <PassportModal
                 isOpen={activeModal === "passport"}
@@ -160,6 +216,87 @@ const PassportApplication = () => {
               />
             </div>
           </div>
+
+          {/* Filters Section */}
+          {showFilters && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Filter Applications</h3>
+                <button
+                  onClick={clearFilters}
+                  className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                >
+                  <X className="w-4 h-4" />
+                  Clear All
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* From Date */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    From Date
+                  </label>
+                  <input
+                    type="date"
+                    value={filters.fromDate}
+                    onChange={(e) => handleFilterChange('fromDate', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* To Date */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    To Date
+                  </label>
+                  <input
+                    type="date"
+                    value={filters.toDate}
+                    onChange={(e) => handleFilterChange('toDate', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Status Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Status
+                  </label>
+                  <select
+                    value={filters.status}
+                    onChange={(e) => handleFilterChange('status', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  >
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="under review">Under Review</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+
+                {/* Priority Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Priority
+                  </label>
+                  <select
+                    value={filters.priority}
+                    onChange={(e) => handleFilterChange('priority', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  >
+                    <option value="">All Priority</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div>
             <DataTable<VisaApplication>
               columns={columns}

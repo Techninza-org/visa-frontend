@@ -63,6 +63,13 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
     },
     {
       icon: FileText,
+      label: "Kyc Profile",
+      href: "/pages/dashboard/client/kyc-profile",
+      badge: "3",
+      description: "Track your visa progress",
+    },
+    {
+      icon: FileText,
       label: "Passport",
       href: "/pages/dashboard/client/passport-applications",
       badge: "1",
@@ -86,7 +93,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       icon: Settings,
       label: "Support ",
       href: "/pages/dashboard/client/support",
-      
+
       badge: null,
       description: "Account preferences",
     },

@@ -24,7 +24,7 @@ export function DashboardHeader() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="h-8 w-8 rounded-full overflow-hidden cursor-pointer">
-              <Avatar className="h-full w-full rounded-full">
+              <Avatar className="h-full w-full rounded-full border border-gray-300 bg-amber-300 text-white">
                 <AvatarImage
                   src="/user.png"
                   alt="User"
@@ -35,9 +35,9 @@ export function DashboardHeader() {
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => console.log("Profile clicked")}>
+            {/* <DropdownMenuItem onClick={() => console.log("Profile clicked")}>
               Profile
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuItem>
               <Button
                 className="w-full text-red-600 hover:bg-red-200"

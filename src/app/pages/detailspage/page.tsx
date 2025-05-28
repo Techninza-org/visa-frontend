@@ -124,7 +124,7 @@ export default function USVisaIndiaPassport() {
       const token = Cookies.get("token"); // replace 'token' with your actual cookie key
 
       if (token) {
-        router.push("/pages/dashboard/client/applications");
+        router.push("/pages/dashboard/client/kyc-profile");
       } else {
         router.push("/pages/login");
       }

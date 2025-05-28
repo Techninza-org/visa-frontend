@@ -16,6 +16,15 @@ export default function LocationForm() {
   const [selectedCountry2, setSelectedCountry2] = useState<Country | null>(
     null
   );
+
+
+  // console.log(selectedCountry1?.name, selectedCountry2?.name, "selected countries");
+
+
+
+
+
+  // State for dropdowns
   const [isOpen1, setIsOpen1] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
   const [search1, setSearch1] = useState("");
@@ -77,6 +86,15 @@ export default function LocationForm() {
     const filteredCountries = countries.filter((country) =>
       country.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+
+ sessionStorage.setItem(
+    "selectedCountries",
+    JSON.stringify({
+      source: selectedCountry1?.name || "",
+      destination: selectedCountry2?.name || "",
+    })
+  );
 
     return (
       <div className="relative w-full">

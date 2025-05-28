@@ -1,7 +1,7 @@
 import { useState } from "react";
+import Cookies from "js-cookie";
 
 export const useRazorpayPayment = ({
-  token,
   currentUser,
   totalAmount,
   productId,
@@ -20,6 +20,7 @@ export const useRazorpayPayment = ({
     });
 
   const handleRazorpayPayment = async () => {
+    const token = Cookies.get("token");
     setIsProcessing(true);
 
     try {
@@ -30,56 +31,73 @@ export const useRazorpayPayment = ({
         return;
       }
 
-      const amountToPay = totalAmount * 100; // Razorpay expects in paise
+      const amountToPay = totalAmount * 100; // in paise
 
-      // Step 1: Create Razorpay Order from backend
+      // Step 1: Call /user/create-order to get Razorpay Order ID
+      const formBody = new URLSearchParams();
+      formBody.append("amount", amountToPay.toString());
+
       const orderRes = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/web/create-razorpay-order`,
+        `${process.env.NEXT_PUBLIC_API_URL}/user/create-order`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ amount: amountToPay }),
+          body: formBody.toString(),
         }
       );
 
       const orderData = await orderRes.json();
-      if (!orderData?.order?.id) throw new Error("Order creation failed");
 
-      // Step 2: Configure Razorpay options
+      console.log("Order Data:", orderData);
+
+      if (!orderData?.id) {
+        throw new Error("Failed to create order or fetch Razorpay order ID.");
+      }
+
+      // Step 2: Initialize Razorpay payment
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+        key:"rzp_test_eaw8FUWQWt0bHV",
         amount: amountToPay,
         currency: "INR",
         name: "ShopNest",
         description: "Complete your purchase",
-        order_id: orderData.order.id,
+        order_id: orderData.id,
         handler: async function (response) {
+          console.log("Payment Response:", response);
           try {
-            // Step 3: Verify Razorpay Signature
-            const formBody = new URLSearchParams();
-            formBody.append("razorpay_order_id", response.razorpay_order_id);
-            formBody.append("razorpay_payment_id", response.razorpay_payment_id);
-            formBody.append("razorpay_signature", response.razorpay_signature);
-            formBody.append("amount", amountToPay.toString());
-            formBody.append("currency", "INR");
-            formBody.append("product_id", productId);
+            const verifyBody = new URLSearchParams();
+            verifyBody.append("razorpay_order_id", response.razorpay_order_id);
+            verifyBody.append(
+              "razorpay_payment_id",
+              response.razorpay_payment_id
+            );
+            verifyBody.append(
+              "razorpay_signature",
+              response.razorpay_signature
+            );
+            verifyBody.append("product_id", productId);
+            verifyBody.append("amount", totalAmount.toString());
+           
+            
+          
 
             const verifyRes = await fetch(
-              `${process.env.NEXT_PUBLIC_BASE_URL}/user/verify-payment`,
+              `${process.env.NEXT_PUBLIC_API_URL}/user/verify-payment`,
               {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/x-www-form-urlencoded",
                   Authorization: `Bearer ${token}`,
                 },
-                body: formBody.toString(),
+                body: verifyBody.toString(),
               }
             );
 
             const verifyData = await verifyRes.json();
+            console.log("Verification Data:", verifyData);
             if (
               verifyRes.status !== 200 ||
               verifyData.message !== "Payment verified successfully"
@@ -87,29 +105,8 @@ export const useRazorpayPayment = ({
               throw new Error("Payment verification failed");
             }
 
-            // Step 4: Final Order Creation
-            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/create-order`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                paymentMode: "razorpay",
-                paymentOrderId: response.razorpay_payment_id,
-                orderStatus: "SUCCESS",
-                addressId: selectedAddressId, // Ensure this is just the ID, not an object
-                gst: 49.0,
-                discount: 50.0,
-                couponCode: "NEWUSER50",
-                totalAmount,
-                notes: "Ring the bell on arrival",
-              }),
-            });
-
-            // Clear cart and redirect
-            localStorage.setItem("cartItems", JSON.stringify([]));
-            router.push("/order/success");
+          
+      
           } catch (error) {
             console.error("Payment verification error:", error);
             alert("Something went wrong during payment verification.");

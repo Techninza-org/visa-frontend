@@ -152,7 +152,7 @@ export default function LoginPage() {
               </Button>
             </CardFooter>
           </Card>
-          <p className="px-8 text-center text-sm text-gray-400">
+          {/* <p className="px-8 text-center text-sm text-gray-400">
             Don&apos;t have an account?{" "}
             <Link
               href="/pages/ragister"
@@ -160,7 +160,7 @@ export default function LoginPage() {
             >
               Sign up
             </Link>
-          </p>
+          </p> */}
         </div>
       </div>
       <Footer />
