@@ -18,6 +18,7 @@ import {
   StampIcon as Passport,
   AlertCircle,
   User,
+  Upload,
 } from "lucide-react";
 
 import {
@@ -40,6 +41,7 @@ import PassportTable from "@/components/dashboar-components/PassPortTable";
 import { Badge } from "@/components/ui/badge";
 import { ProgressIndicator } from "@radix-ui/react-progress";
 import { DashboardHeader } from "@/components/dashboard-header";
+import { VisaModal } from "@/components/modals/visa-modal";
 
 interface Passport {
   firstName: string;
@@ -61,8 +63,12 @@ interface Visa {
 export default function ClientDashboard() {
   const token = Cookies.get("token") || "";
 
-  const [passportApplications, setPassportApplications] = useState<Passport[]>([]);
+  const [passportApplications, setPassportApplications] = useState<Passport[]>(
+    []
+  );
   const [visaApplications, setVisaApplications] = useState<Visa[]>([]);
+  const [activeModal, setActiveModal] = useState<string | null>(null);
+
   const [userName, setUserName] = useState<string>("");
   const [memberSince, setMemberSince] = useState<string>("");
 
@@ -71,14 +77,29 @@ export default function ClientDashboard() {
   const whatsAppUrl = `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(
     whatsAppMessage
   )}`;
+  const handleOpenModal = (modalName: string) => {
+    setActiveModal(modalName);
+  };
+
+  const handleCloseModal = () => {
+    setActiveModal(null);
+  };
+
+  const handleSubmitForm = (formType: string) => {
+    handleCloseModal();
+    // setApprovalModal(formType);
+  };
 
   // Optional: Fetch user info to display in header welcome message
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/user/profile`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setUserName(res.data.name || "User");
         setMemberSince(res.data.memberSince || "");
       } catch (error) {
@@ -118,7 +139,8 @@ export default function ClientDashboard() {
     if (token) fetchPassports();
   }, [token]);
 
-  const totalApplications = passportApplications.length + visaApplications.length;
+  const totalApplications =
+    passportApplications.length + visaApplications.length;
   const inProgressCount = [...passportApplications, ...visaApplications].filter(
     (app) => app.status?.toLowerCase() === "pending"
   ).length;
@@ -128,7 +150,13 @@ export default function ClientDashboard() {
 
   // Recent activities dummy data
   const recentActivities = [
-    { id: 1, type: "visa", action: "Application submitted for US Tourist Visa", date: "2024-01-15", status: "pending" },
+    {
+      id: 1,
+      type: "visa",
+      action: "Application submitted for US Tourist Visa",
+      date: "2024-01-15",
+      status: "pending",
+    },
     {
       id: 2,
       type: "payment",
@@ -136,14 +164,38 @@ export default function ClientDashboard() {
       date: "2024-01-14",
       status: "completed",
     },
-    { id: 3, type: "passport", action: "Passport renewal application approved", date: "2024-01-12", status: "approved" },
-    { id: 4, type: "kyc", action: "KYC documents verified successfully", date: "2024-01-10", status: "verified" },
+    {
+      id: 3,
+      type: "passport",
+      action: "Passport renewal application approved",
+      date: "2024-01-12",
+      status: "approved",
+    },
+    {
+      id: 4,
+      type: "kyc",
+      action: "KYC documents verified successfully",
+      date: "2024-01-10",
+      status: "verified",
+    },
   ];
 
   // Upcoming renewals/expiries
   const upcomingRenewals = [
-    { id: 1, document: "Passport", expiryDate: "2024-06-15", daysLeft: 45, type: "passport" },
-    { id: 2, document: "US Visa", expiryDate: "2024-08-20", daysLeft: 111, type: "visa" },
+    {
+      id: 1,
+      document: "Passport",
+      expiryDate: "2024-06-15",
+      daysLeft: 45,
+      type: "passport",
+    },
+    {
+      id: 2,
+      document: "US Visa",
+      expiryDate: "2024-08-20",
+      daysLeft: 111,
+      type: "visa",
+    },
   ];
 
   return (
@@ -164,15 +216,32 @@ export default function ClientDashboard() {
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold">Welcome back, {userName || "User"}!</h1>
-                <p className="text-blue-100 mt-1">Manage your travel documents with ease</p>
+                <h1 className="text-2xl font-bold">
+                  Welcome back, {userName || "User"}!
+                </h1>
+                <p className="text-blue-100 mt-1">
+                  Manage your travel documents with ease
+                </p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-blue-100">Member since</p>
-                <p className="text-lg font-semibold">{memberSince || "N/A"}</p>
+                {/* <p className="text-sm text-blue-100">Member since</p>
+                <p className="text-lg font-semibold">{memberSince || "N/A"}</p> */}
+                <button
+                  className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl duration-200 flex items-center gap-2 space-x-2 hover:from-amber-500 hover:to-amber-700 transition-colors"
+                  onClick={() => handleOpenModal("visa")}
+                >
+                  <Upload className="w-5 h-5" />
+                  Apply Visa Application
+                </button>
               </div>
             </div>
           </div>
+          <VisaModal
+            isOpen={activeModal === "visa"}
+            onClose={handleCloseModal}
+            onSubmit={() => handleSubmitForm("visa")}
+            // userId="userId"
+          />
 
           {/* Summary Cards */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6">
@@ -204,7 +273,9 @@ export default function ClientDashboard() {
             ].map((item, idx) => (
               <Card key={idx} className="border border-gray-300">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    {item.title}
+                  </CardTitle>
                   {item.icon}
                 </CardHeader>
                 <CardContent>
@@ -216,7 +287,7 @@ export default function ClientDashboard() {
           </div>
 
           {/* Tabs for Applications */}
-          <Tabs defaultValue="passport" className="mt-8">
+          {/* <Tabs defaultValue="passport" className="mt-8">
             <TabsList className="rounded-md gap-2">
               <TabsTrigger value="passport" className="border">
                 Passport Applications
@@ -230,7 +301,9 @@ export default function ClientDashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle>Passport Applications</CardTitle>
-                  <CardDescription>All your submitted passport applications</CardDescription>
+                  <CardDescription>
+                    All your submitted passport applications
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <PassportTable data={passportApplications} token={token} />
@@ -242,52 +315,69 @@ export default function ClientDashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle>Visa Applications</CardTitle>
-                  <CardDescription>All your submitted visa applications</CardDescription>
+                  <CardDescription>
+                    All your submitted visa applications
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="overflow-x-auto">
                   <VisaTable data={visaApplications} token={token} />
                 </CardContent>
               </Card>
             </TabsContent>
-          </Tabs>
+          </Tabs> */}
 
           {/* Recent Activities & Upcoming Renewals */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
             {/* Recent Activities */}
-            <Card  className="border border-gray-300">
+            <Card className="border border-gray-300">
               <CardHeader>
                 <CardTitle>Recent Activities</CardTitle>
-                <CardDescription>Your latest travel document activities</CardDescription>
+                <CardDescription>
+                  Your latest travel document activities
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {recentActivities.map((activity) => (
-                    <div key={activity.id} className="flex items-center space-x-4">
+                    <div
+                      key={activity.id}
+                      className="flex items-center space-x-4"
+                    >
                       <div className="flex-shrink-0">
-                        {activity.type === "visa" && <Globe className="h-5 w-5 text-blue-500" />}
-                        {activity.type === "passport" && <Passport className="h-5 w-5 text-green-500" />}
-                        {activity.type === "payment" && <CreditCard className="h-5 w-5 text-purple-500" />}
-                        {activity.type === "kyc" && <User className="h-5 w-5 text-orange-500" />}
+                        {activity.type === "visa" && (
+                          <Globe className="h-5 w-5 text-blue-500" />
+                        )}
+                        {activity.type === "passport" && (
+                          <Passport className="h-5 w-5 text-green-500" />
+                        )}
+                        {activity.type === "payment" && (
+                          <CreditCard className="h-5 w-5 text-purple-500" />
+                        )}
+                        {activity.type === "kyc" && (
+                          <User className="h-5 w-5 text-orange-500" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{activity.action}</p>
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {activity.action}
+                        </p>
                         <p className="text-sm text-gray-500">{activity.date}</p>
                       </div>
-                        <span
+                      <span
                         className={`inline-block px-2 py-0.5 rounded text-xs font-semibold
                           ${
-                          activity.status === "completed" ||
-                          activity.status === "approved" ||
-                          activity.status === "verified"
-                            ? "bg-green-100 text-green-700"
-                            : activity.status === "pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-gray-200 text-gray-700"
+                            activity.status === "completed" ||
+                            activity.status === "approved" ||
+                            activity.status === "verified"
+                              ? "bg-green-100 text-green-700"
+                              : activity.status === "pending"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-gray-200 text-gray-700"
                           }
                         `}
-                        >
+                      >
                         {activity.status}
-                        </span>
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -295,7 +385,7 @@ export default function ClientDashboard() {
             </Card>
 
             {/* Upcoming Renewals */}
-            <Card  className="border border-gray-300">
+            <Card className="border border-gray-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertCircle className="h-5 w-5 text-orange-500" />
@@ -314,9 +404,15 @@ export default function ClientDashboard() {
                           ) : (
                             <Globe className="h-4 w-4 text-green-500" />
                           )}
-                          <span className="font-medium">{renewal.document}</span>
+                          <span className="font-medium">
+                            {renewal.document}
+                          </span>
                         </div>
-                        <Badge variant={renewal.daysLeft < 60 ? "destructive" : "secondary"}>
+                        <Badge
+                          variant={
+                            renewal.daysLeft < 60 ? "destructive" : "secondary"
+                          }
+                        >
                           {renewal.daysLeft} days left
                         </Badge>
                       </div>
@@ -324,7 +420,13 @@ export default function ClientDashboard() {
                         <div className="flex justify-between text-sm text-gray-600">
                           <span>Expires: {renewal.expiryDate}</span>
                         </div>
-                        <Progress value={Math.max(0, 100 - (renewal.daysLeft / 365) * 100)} className="h-2 bg-black" />
+                        <Progress
+                          value={Math.max(
+                            0,
+                            100 - (renewal.daysLeft / 365) * 100
+                          )}
+                          className="h-2 bg-black"
+                        />
                       </div>
                     </div>
                   ))}

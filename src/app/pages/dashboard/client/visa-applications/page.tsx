@@ -2,12 +2,24 @@
 import React, { useEffect, useState } from "react";
 
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import ChecklistModal from "@/components/modals/ChecklistModal";
 
 import axios from "axios";
 import { Visa } from "@/types";
 import Cookies from "js-cookie";
 import { VisaModal } from "@/components/modals/visa-modal";
-import { FileText, Upload, Filter, X } from "lucide-react";
+import {
+  FileText,
+  Upload,
+  Filter,
+  X,
+  Edit,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  Eye,
+  Check,
+} from "lucide-react";
 import DataTable from "@/components/DataTable";
 import PaymentButton from "@/components/PaymentButton";
 import { Button } from "@/components/ui/button";
@@ -22,6 +34,13 @@ interface VisaApplication {
   travelDurationInDays: number;
   applicationStatus: string;
   priority: string;
+  checklist?: Array<{
+    _id: string;
+    note: string;
+    file?: string;
+  }>;
+  paymentStatus?: boolean;
+  totalFee?: number;
 }
 
 interface FilterParams {
@@ -31,9 +50,23 @@ interface FilterParams {
   priority: string;
 }
 
+interface ChecklistItem {
+  _id: string;
+  note: string;
+  file?: string;
+}
+
+
+
+
+
 const VisaApplication = () => {
   const [visaApplications, setVisaApplications] = useState<Visa[]>([]);
-  const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [activeModal, setActiveModal] = useState<{
+    name: string;
+    id?: string;
+  } | null>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalApplications, setTotalApplications] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
@@ -44,10 +77,21 @@ const VisaApplication = () => {
     priority: "",
   });
 
+  // Add checklist modal state
+  const [checklistModal, setChecklistModal] = useState<{
+    isOpen: boolean;
+    checklist: ChecklistItem[];
+    applicationId: string;
+  }>({
+    isOpen: false,
+    checklist: [],
+    applicationId: "",
+  });
+
   const rowsPerPage = 10;
 
-  const handleOpenModal = (modalName: string) => {
-    setActiveModal(modalName);
+  const handleOpenModal = (modalName: string, id?: string) => {
+    setActiveModal({ name: modalName, id });
   };
 
   const handleCloseModal = () => {
@@ -56,15 +100,23 @@ const VisaApplication = () => {
 
   const handleSubmitForm = (formType: string) => {
     handleCloseModal();
-    // setApprovalModal(formType);
+  };
+
+  // Add checklist modal handler
+  const handleCheckListModal = (checklist: ChecklistItem[], applicationId: string) => {
+    setChecklistModal({
+      isOpen: true,
+      checklist: checklist || [],
+      applicationId: applicationId,
+    });
   };
 
   const handleFilterChange = (key: keyof FilterParams, value: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   };
 
   const clearFilters = () => {
@@ -79,14 +131,14 @@ const VisaApplication = () => {
 
   const buildQueryParams = () => {
     const params = new URLSearchParams();
-    params.append('page', currentPage.toString());
-    params.append('limit', rowsPerPage.toString());
-    
-    if (filters.fromDate) params.append('fromDate', filters.fromDate);
-    if (filters.toDate) params.append('toDate', filters.toDate);
-    if (filters.status) params.append('status', filters.status);
-    if (filters.priority) params.append('priority', filters.priority);
-    
+    params.append("page", currentPage.toString());
+    params.append("limit", rowsPerPage.toString());
+
+    if (filters.fromDate) params.append("fromDate", filters.fromDate);
+    if (filters.toDate) params.append("toDate", filters.toDate);
+    if (filters.status) params.append("status", filters.status);
+    if (filters.priority) params.append("priority", filters.priority);
+
     return params.toString();
   };
 
@@ -110,6 +162,36 @@ const VisaApplication = () => {
     fetchVisa();
   }, [token, currentPage, filters]);
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "completed":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "processing":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "failed":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "completed":
+        return <CheckCircle className="h-4 w-4" />;
+      case "pending":
+        return <Clock className="h-4 w-4" />;
+      case "processing":
+        return <Clock className="h-4 w-4" />;
+      case "failed":
+        return <AlertCircle className="h-4 w-4" />;
+      default:
+        return <AlertCircle className="h-4 w-4" />;
+    }
+  };
+
   const columns = [
     { key: "fullName", label: "Full Name" },
     { key: "destinationCountry", label: "Destination" },
@@ -126,58 +208,55 @@ const VisaApplication = () => {
       label: "Duration",
       render: (row: VisaApplication) => `${row.travelDurationInDays} days`,
     },
+
     {
-      key: "applicationStatus",
+      key: "status",
       label: "Status",
       render: (row: VisaApplication) => (
-        <span
-          className={`capitalize font-medium inline-flex items-center gap-1 ${
-            row.applicationStatus.toLowerCase() === "pending"
-              ? "text-yellow-600"
-              : row.applicationStatus.toLowerCase() === "under review"
-              ? "text-blue-600"
-              : row.applicationStatus.toLowerCase() === "rejected"
-              ? "text-red-600"
-              : "text-green-600"
-          }`}
+        <div
+          className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
+            row.applicationStatus.toLowerCase()
+          )}`}
         >
-          <span
-            className={`w-2 h-2 rounded-full inline-block ${
-              row.applicationStatus.toLowerCase() === "pending"
-                ? "bg-yellow-400"
-                : row.applicationStatus.toLowerCase() === "under review"
-                ? "bg-blue-400"
-                : row.applicationStatus.toLowerCase() === "rejected"
-                ? "bg-red-400"
-                : "bg-green-400"
-            }`}
-          ></span>
-          {row.applicationStatus}
-        </span>
+          {getStatusIcon(row.applicationStatus.toLowerCase())}
+          <span className="capitalize">
+            {row.applicationStatus.toLowerCase()}
+          </span>
+        </div>
       ),
-    }, 
-    // {
-    //   key: "priority",
-    //   label: "Priority",
-    //   render: (row: VisaApplication) => (
-    //     <span className="capitalize">{row.priority}</span>
-    //   ),
-    // },
+    },
     {
       key: "actions",
       label: "Actions",
       render: (row: VisaApplication) => (
         <div className="flex items-center space-x-2 justify-end">
-          <PaymentButton
-            token={token}
-            currentUser={row._id}
-            totalAmount={999}
-            productId="product_123"
-            selectedAddressId={{ id: "addr_789" }}
-          />
+          {/* Checklist button - Updated */}
+          <button
+            className="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl shadow hover:shadow-md duration-200 flex items-center gap-2 hover:bg-gray-200 transition-colors"
+            onClick={() => handleCheckListModal(row.checklist || [], row._id)}
+          >
+            <FileText className="w-5 h-5" />
+          </button>
+
+          <button
+            className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl duration-200 flex items-center gap-2 space-x-2 hover:from-amber-500 hover:to-amber-700 transition-colors"
+            onClick={() => handleOpenModal("visa", row._id)}
+          >
+            <Edit className="w-5 h-5" />
+          </button>
+
+          {!row.paymentStatus && (
+            <PaymentButton
+              token={token}
+              currentUser={row._id}
+              totalAmount={row.totalFee}
+              productId={row._id}
+              selectedAddressId={{ id: "addr_789" }}
+            />
+          )}
           <Button variant="outline" size="sm" asChild>
             <Link href={`/pages/dashboard/client/visatrack?visa_id=${row._id}`}>
-              View
+              <Eye className="w-5 h-5" />
             </Link>
           </Button>
         </div>
@@ -226,15 +305,24 @@ const VisaApplication = () => {
                   onClick={() => handleOpenModal("visa")}
                 >
                   <Upload className="w-5 h-5" />
-                  Upload Visa Application
+                  Apply Visa Application
                 </button>
               </div>
 
               <VisaModal
-                isOpen={activeModal === "visa"}
+                isOpen={activeModal?.name === "visa"}
                 onClose={handleCloseModal}
                 onSubmit={() => handleSubmitForm("visa")}
-                // userId="userId"
+                userId={activeModal?.id}
+              />
+
+              {/* Add Checklist Modal */}
+              <ChecklistModal
+                isOpen={checklistModal.isOpen}
+                onClose={() => setChecklistModal({ isOpen: false, checklist: [], applicationId: "" })}
+                checklist={checklistModal.checklist}
+                applicationId={checklistModal.applicationId}
+              
               />
             </div>
           </div>
@@ -243,7 +331,9 @@ const VisaApplication = () => {
           {showFilters && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Filter Applications</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Filter Applications
+                </h3>
                 <button
                   onClick={clearFilters}
                   className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
@@ -252,7 +342,7 @@ const VisaApplication = () => {
                   Clear All
                 </button>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* From Date */}
                 <div>
@@ -262,7 +352,9 @@ const VisaApplication = () => {
                   <input
                     type="date"
                     value={filters.fromDate}
-                    onChange={(e) => handleFilterChange('fromDate', e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange("fromDate", e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                   />
                 </div>
@@ -275,7 +367,9 @@ const VisaApplication = () => {
                   <input
                     type="date"
                     value={filters.toDate}
-                    onChange={(e) => handleFilterChange('toDate', e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange("toDate", e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                   />
                 </div>
@@ -287,7 +381,9 @@ const VisaApplication = () => {
                   </label>
                   <select
                     value={filters.status}
-                    onChange={(e) => handleFilterChange('status', e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange("status", e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                   >
                     <option value="">All Status</option>
@@ -305,7 +401,9 @@ const VisaApplication = () => {
                   </label>
                   <select
                     value={filters.priority}
-                    onChange={(e) => handleFilterChange('priority', e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange("priority", e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                   >
                     <option value="">All Priority</option>
@@ -319,15 +417,17 @@ const VisaApplication = () => {
             </div>
           )}
 
-          <div>
-            <DataTable<VisaApplication>
-              columns={columns}
-              currentPage={currentPage}
-              onPageChange={setCurrentPage}
-              rowsPerPage={rowsPerPage}
-              totalCount={totalApplications}
-              data={visaApplications}
-            />
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+            <div className="p-6 border-b border-gray-200">
+              <DataTable<VisaApplication>
+                columns={columns}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+                rowsPerPage={rowsPerPage}
+                totalCount={totalApplications}
+                data={visaApplications}
+              />
+            </div>
           </div>
         </div>
       </div>

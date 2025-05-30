@@ -68,13 +68,13 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       badge: "3",
       description: "Track your visa progress",
     },
-    {
-      icon: FileText,
-      label: "Passport",
-      href: "/pages/dashboard/client/passport-applications",
-      badge: "1",
-      description: "Passport renewals & new apps",
-    },
+    // {
+    //   icon: FileText,
+    //   label: "Passport",
+    //   href: "/pages/dashboard/client/passport-applications",
+    //   badge: "1",
+    //   description: "Passport renewals & new apps",
+    // },
     {
       icon: Clock,
       label: "Documents",

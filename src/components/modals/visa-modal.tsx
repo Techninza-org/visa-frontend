@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,10 +21,17 @@ import Cookies from "js-cookie";
 interface VisaModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: () => void;
+  onSubmit: () => void;
+  userId?: string; // Make sure it's optional if not always present
 }
 
-export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
+export function VisaModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  userId,
+}: VisaModalProps) {
+  console.log("VisaModal rendered with userId:", userId);
   const [formData, setFormData] = useState({
     fullName: "",
     dob: "",
@@ -42,6 +49,65 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
     employmentStatus: "Working",
   });
 
+  const [applicationId, setApplicationId] = useState<string | null>(null);
+  const [isDraft, setIsDraft] = useState(true);
+
+ 
+
+  useEffect(() => {
+    const fetchApplication = async () => {
+      if (!userId) return;
+      try {
+        const token = Cookies.get("token");
+        const { data } = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/user/visa-application/${userId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (data.success && data.application) {
+          const app = data.application;
+          setApplicationId(app._id);
+          setIsDraft(app.isDraft);
+
+          setFormData({
+            fullName: app.fullName || "",
+            dob: app.dob?.substring(0, 10) || "",
+            nationality: app.nationality || "",
+            passportNumber: app.passportNumber || "",
+            passportIssueDate: app.passportIssueDate?.substring(0, 10) || "",
+            passportExpiryDate: app.passportExpiryDate?.substring(0, 10) || "",
+            destinationCountry: app.destinationCountry || "",
+            travelPurpose: app.travelPurpose || "Tourism",
+            travelDate: app.travelDate?.substring(0, 10) || "",
+            travelDurationInDays: app.travelDurationInDays?.toString() || "",
+            email: app.email || "",
+            phone: app.phone || "",
+            address: app.address || "",
+            employmentStatus: app.employmentStatus || "Working",
+          });
+
+          // Load existing file URLs if needed
+
+          setFiles({
+            passportScan: app.documents.passportScan ? new File([], app.documents.passportScan) : null,
+            photo: app.documents.photo ? new File([], app.documents.photo) : null,
+            bankStatement: app.documents.bankStatement ? new File([], app.documents.bankStatement) : null,
+            itrOrSalarySlip: app.documents.itrOrSalarySlip ? new File([], app.documents.itrOrSalarySlip) : null,
+            travelHistory: app.documents.travelHistory ? new File([], app.documents.travelHistory) : null,
+          });
+
+
+        }
+      } catch (err) {
+        console.error("Failed to load visa application:", err);
+      }
+    };
+
+    if (isOpen) fetchApplication();
+  }, [isOpen, userId]);
+
   const [files, setFiles] = useState({
     passportScan: null as File | null,
     photo: null as File | null,
@@ -55,6 +121,10 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+   const isFormComplete =
+    Object.values(formData).every((v) => v !== "") &&
+    Object.values(files).every((f) => f !== null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files: selectedFiles } = e.target;
@@ -71,23 +141,32 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
     Object.entries(formData).forEach(([key, value]) => {
       payload.append(key, value);
     });
+
     Object.entries(files).forEach(([key, file]) => {
       if (file) payload.append(key, file);
     });
 
+    // Add isDraft flag
+    payload.append("isDraft", isFormComplete ? "false" : "true");
+
     try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/user/visa-application`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
+      const url = applicationId
+        ? `${process.env.NEXT_PUBLIC_API_URL}/user/visa-application/${applicationId}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/user/visa-application`;
+
+      const method = applicationId ? axios.put : axios.post;
+
+      await method(url, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      alert(
+        isFormComplete ? "Application submitted successfully." : "Draft saved."
       );
-      alert("Visa application submitted successfully.");
-      if (onSubmit) onSubmit();
+      onSubmit();
       onClose();
     } catch (error: any) {
       console.error("Error submitting form:", error);
@@ -114,10 +193,7 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
         </div>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-6  px-2 py-1"
-      >
+      <form onSubmit={handleSubmit} className="space-y-6  px-2 py-1">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
             { name: "fullName", label: "Full Name", type: "text" },
@@ -149,21 +225,25 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
             { name: "phone", label: "Phone", type: "text" },
           ].map(({ name, label, type }) => (
             <div key={name}>
-              <Label className="mb-2" htmlFor={name}>{label}</Label>
+              <Label className="mb-2" htmlFor={name}>
+                {label}
+              </Label>
               <Input
                 type={type}
                 id={name}
                 name={name}
                 value={(formData as any)[name]}
                 onChange={handleChange}
-                required
+               
               />
             </div>
           ))}
 
           {/* Employment Status Select */}
           <div>
-            <Label htmlFor="employmentStatus" className="mb-2">Employment Status</Label>
+            <Label htmlFor="employmentStatus" className="mb-2">
+              Employment Status
+            </Label>
             <Select
               value={formData.employmentStatus}
               onValueChange={(value) =>
@@ -192,7 +272,9 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
 
           {/* Travel Purpose Select */}
           <div>
-            <Label htmlFor="travelPurpose" className="mb-2">Travel Purpose</Label>
+            <Label htmlFor="travelPurpose" className="mb-2">
+              Travel Purpose
+            </Label>
             <Select
               value={formData.travelPurpose}
               onValueChange={(value) =>
@@ -221,13 +303,15 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
         </div>
 
         <div>
-          <Label htmlFor="address" className="mb-2">Address</Label>
+          <Label htmlFor="address" className="mb-2">
+            Address
+          </Label>
           <Textarea
             id="address"
             name="address"
             value={formData.address}
             onChange={handleChange}
-            required
+           
           />
         </div>
 
@@ -240,14 +324,16 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
             { name: "travelHistory", label: "Travel History" },
           ].map(({ name, label }) => (
             <div key={name}>
-              <Label className="mb-2" htmlFor={name}>{label}</Label>
+              <Label className="mb-2" htmlFor={name}>
+                {label}
+              </Label>
               <Input
                 type="file"
                 id={name}
                 name={name}
                 onChange={handleFileChange}
                 accept="image/*,.pdf"
-                required
+               
               />
               {files[name as keyof typeof files] && (
                 <p className="text-xs text-green-600 flex items-center gap-1 mt-1">
@@ -264,7 +350,7 @@ export function VisaModal({ isOpen, onClose, onSubmit }: VisaModalProps) {
             className="bg-gradient-to-r from-amber-400 to-amber-600 hover:bg-amber-600/90 border border-amber-500/20 text-white"
             type="submit"
           >
-            Submit Application
+            {isFormComplete ? "Submit Application" : "Save Draft"}
           </Button>
         </div>
       </form>

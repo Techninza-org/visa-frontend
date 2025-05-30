@@ -187,7 +187,10 @@ export default function Support() {
       setMessage("Message sent successfully!");
       fetchTickets(); // refresh to show updated data
     } catch (error) {
-      console.error("Failed to send message:", error?.response?.data || error.message);
+      console.error(
+        "Failed to send message:",
+        error?.response?.data || error.message
+      );
       setMessage("Failed to send message. Please try again.");
     }
   };
@@ -204,7 +207,9 @@ export default function Support() {
             </div>
           </div>
           <div>
-            <div className="font-semibold text-gray-900 text-sm">{row.subject}</div>
+            <div className="font-semibold text-gray-900 text-sm">
+              {row.subject}
+            </div>
             <div className="text-xs text-gray-500">ID: {row._id.slice(-8)}</div>
           </div>
         </div>
@@ -248,7 +253,8 @@ export default function Support() {
           {row.messages?.length > 0 && (
             <div className="flex items-center text-xs text-gray-500 mt-1">
               <MessageCircle className="w-3 h-3 mr-1" />
-              {row.messages.length} message{row.messages.length !== 1 ? "s" : ""}
+              {row.messages.length} message
+              {row.messages.length !== 1 ? "s" : ""}
             </div>
           )}
         </div>
@@ -298,17 +304,17 @@ export default function Support() {
       <DashboardHeader />
       <div className="flex flex-1">
         {/* Sidebar */}
-        <div className="hidden lg:block w-64 border-r border-gray-200/50 bg-white/80 backdrop-blur-sm">
+        <div className="fixed top-20 bottom-0 left-0 bg-gray-100 z-40">
           <DashboardSidebar userRole="client" />
         </div>
 
-        <div className="flex-1 ml-8 p-8">
+       <div className="flex-1 ml-64 p-6 bg-gray-50">
           {/* Header Section with Stats */}
           <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border border-white/50 p-8 mb-8 relative overflow-hidden">
             {/* Background decoration */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full -translate-y-20 translate-x-20"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-indigo-500/10 to-cyan-500/10 rounded-full translate-y-12 -translate-x-12"></div>
-            
+
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-4">
@@ -343,7 +349,9 @@ export default function Support() {
                           <Plus className="w-8 h-8 mr-4 bg-white/20 rounded-xl p-1.5" />
                           Create Support Ticket
                         </DialogTitle>
-                        <p className="text-blue-100 mt-2">We're here to help you with any questions or issues</p>
+                        <p className="text-blue-100 mt-2">
+                          We're here to help you with any questions or issues
+                        </p>
                       </DialogHeader>
                     </div>
 
@@ -433,8 +441,12 @@ export default function Support() {
                 <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/80 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Total Tickets</p>
-                      <p className="text-2xl font-bold text-gray-900">{tickets.length}</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Total Tickets
+                      </p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {tickets.length}
+                      </p>
                     </div>
                     <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                       <Ticket className="w-6 h-6 text-blue-600" />
@@ -444,9 +456,11 @@ export default function Support() {
                 <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/80 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Open Tickets</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Open Tickets
+                      </p>
                       <p className="text-2xl font-bold text-emerald-600">
-                        {tickets.filter(t => t.status === "OPEN").length}
+                        {tickets.filter((t) => t.status === "OPEN").length}
                       </p>
                     </div>
                     <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -457,9 +471,14 @@ export default function Support() {
                 <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/80 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Messages</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Messages
+                      </p>
                       <p className="text-2xl font-bold text-purple-600">
-                        {tickets.reduce((acc, ticket) => acc + ticket.messages.length, 0)}
+                        {tickets.reduce(
+                          (acc, ticket) => acc + ticket.messages.length,
+                          0
+                        )}
                       </p>
                     </div>
                     <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
@@ -481,7 +500,8 @@ export default function Support() {
                     Support Tickets
                   </h2>
                   <p className="text-gray-600 text-lg">
-                    {tickets.length} ticket{tickets.length !== 1 ? "s" : ""} in total
+                    {tickets.length} ticket{tickets.length !== 1 ? "s" : ""} in
+                    total
                   </p>
                 </div>
                 {tickets.length > 0 && (
@@ -500,7 +520,9 @@ export default function Support() {
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                     <div className="absolute inset-0 rounded-full border-2 border-blue-100"></div>
                   </div>
-                  <span className="mt-4 text-gray-600 font-medium">Loading your tickets...</span>
+                  <span className="mt-4 text-gray-600 font-medium">
+                    Loading your tickets...
+                  </span>
                 </div>
               ) : tickets.length === 0 ? (
                 <div className="text-center py-16">
@@ -522,7 +544,7 @@ export default function Support() {
                   </Button>
                 </div>
               ) : (
-                <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm bg-white/50">
+                <div className="overflow-hidden rounded-2xl  bg-white/50">
                   <DataTable<DocumentItem>
                     currentPage={currentPage}
                     onPageChange={setCurrentPage}
@@ -549,8 +571,12 @@ export default function Support() {
                         <MessageCircle className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-white">Reply to Ticket</h3>
-                        <p className="text-blue-100">Send a message to support</p>
+                        <h3 className="text-xl font-bold text-white">
+                          Reply to Ticket
+                        </h3>
+                        <p className="text-blue-100">
+                          Send a message to support
+                        </p>
                       </div>
                     </div>
                     <button
@@ -558,8 +584,18 @@ export default function Support() {
                       onClick={() => setPreviewOpen(false)}
                       className="bg-white/20 hover:bg-white/30 text-white rounded-2xl p-2 transition-all duration-200"
                     >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
                       </svg>
                     </button>
                   </div>

@@ -67,52 +67,50 @@ export const useRazorpayPayment = ({
         order_id: orderData.id,
         handler: async function (response) {
           console.log("Payment Response:", response);
-          try {
-            const verifyBody = new URLSearchParams();
-            verifyBody.append("razorpay_order_id", response.razorpay_order_id);
-            verifyBody.append(
+            try {
+              const verifyBody = new URLSearchParams();
+              verifyBody.append("razorpay_order_id", response.razorpay_order_id);
+              verifyBody.append(
               "razorpay_payment_id",
               response.razorpay_payment_id
-            );
-            verifyBody.append(
+              );
+              verifyBody.append(
               "razorpay_signature",
               response.razorpay_signature
-            );
-            verifyBody.append("product_id", productId);
-            verifyBody.append("amount", totalAmount.toString());
-           
-            
-          
+              );
+              verifyBody.append("product_id", productId);
+              verifyBody.append("amount", totalAmount.toString());
 
-            const verifyRes = await fetch(
+              const verifyRes = await fetch(
               `${process.env.NEXT_PUBLIC_API_URL}/user/verify-payment`,
               {
                 method: "POST",
                 headers: {
-                  "Content-Type": "application/x-www-form-urlencoded",
-                  Authorization: `Bearer ${token}`,
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Bearer ${token}`,
                 },
                 body: verifyBody.toString(),
               }
-            );
+              );
 
-            const verifyData = await verifyRes.json();
-            console.log("Verification Data:", verifyData);
-            if (
-              verifyRes.status !== 200 ||
-              verifyData.message !== "Payment verified successfully"
-            ) {
+              const verifyData = await verifyRes.json();
+              console.log("Verification Data:", verifyData);
+              if (
+              verifyRes.status === 200 &&
+              verifyData.message ===
+                "Payment verified and stored, application updated"
+              ) {
+              alert("Payment successful! Your order has been placed.");
+              router.push("/orders");
+              } else {
               throw new Error("Payment verification failed");
+              }
+            } catch (error) {
+              console.error("Payment verification error:", error);
+              alert("Something went wrong during payment verification.");
+            } finally {
+              setIsProcessing(false);
             }
-
-          
-      
-          } catch (error) {
-            console.error("Payment verification error:", error);
-            alert("Something went wrong during payment verification.");
-          } finally {
-            setIsProcessing(false);
-          }
         },
         prefill: {
           name: currentUser?.username || "Guest",

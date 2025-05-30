@@ -81,10 +81,12 @@ const ProfilePage = () => {
         dateOfBirth: data.user?.dateOfBirth || "",
       });
 
-      if (data.profilePic) {
+      console.log("User profile data fetched:", data.user.profilePic);  
+
+      if (data.user.profilePic) {
         setProfile((prev) => ({
           ...prev,
-          avatar: `${process.env.NEXT_PUBLIC_API_URL_IMAGE}${data.profilePic}`,
+          avatar: `${process.env.NEXT_PUBLIC_API_URL_IMAGE}${data.user.profilePic}`,
         }));
       }
     } catch (error) {
@@ -201,7 +203,10 @@ const ProfilePage = () => {
 
         <div className="flex-1 p-6 max-w-4xl mx-auto mt-20 md:mt-12 lg:mt-12 ">
           {/* Profile Header Card */}
-          <Card className="mb-8 overflow-hidden bg-gradient-to-r from-amber-400 to-amber-600 text-white border-0 shadow-xl">
+          <Card className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border border-white/50 p-8 mb-8 relative overflow-hidden">
+            {/* Background decoration */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full -translate-y-20 translate-x-20"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-indigo-500/10 to-cyan-500/10 rounded-full translate-y-12 -translate-x-12"></div>
             <CardContent className="p-8">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                 <div className="relative group">
@@ -240,13 +245,13 @@ const ProfilePage = () => {
                     <h1 className="text-3xl font-bold mb-2">
                       {profile.name || "Your Name"}
                     </h1>
-                    <p className="text-blue-100 text-lg">{profile.email}</p>
+                    <p className="text-gray-600 text-lg">{profile.email}</p>
                   </div>
 
                   <div className="flex items-center gap-4">
                     <Badge
                       variant={getStatusColor(profile.kycStatus)}
-                      className="px-4 py-2 text-sm font-medium bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
+                      className="px-4 py-2 text-sm font-medium bg-white/20 backdrop-blur-sm border-white/30 text-gray-600 hover:bg-white/30"
                     >
                       {getStatusIcon(profile.kycStatus)}
                       <span className="ml-2 capitalize">
@@ -256,7 +261,7 @@ const ProfilePage = () => {
 
                     {profile.kycStatus === "pending" && (
                       <div className="flex-1 max-w-48">
-                        <div className="text-sm text-blue-100 mb-1">
+                        <div className="text-sm text-gray-600 mb-1">
                           KYC Progress
                         </div>
                         <div className="w-full bg-white/20 rounded-full h-2">

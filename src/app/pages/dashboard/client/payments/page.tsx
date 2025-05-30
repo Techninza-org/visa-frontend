@@ -1,146 +1,56 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
+
 import {
   Search,
   Download,
   CreditCard,
   DollarSign,
-  FileText,
   CheckCircle,
   Clock,
   AlertCircle,
   Receipt,
+  Eye,
 } from "lucide-react";
-import Header from "@/components/header";
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
+
+import ModalPayment from "@/components/modals/modal-payment";
+import PaymentSlip from "@/components/PaymentSlip";
+import DataTable from "@/components/DataTable";
 import { DashboardHeader } from "@/components/dashboard-header";
-
-// Dummy payment data
-const payments = [
-  {
-    id: "PAY001",
-    transactionId: "TXN123456789",
-    amount: 185,
-    date: "2024-01-15",
-    purpose: "US Tourist Visa Application",
-    status: "completed",
-    method: "Credit Card",
-    applicationId: "VA001",
-    receipt: "receipt_001.pdf",
-  },
-  {
-    id: "PAY002",
-    transactionId: "TXN987654321",
-    amount: 115,
-    date: "2024-01-14",
-    purpose: "UK Standard Visitor Visa",
-    status: "completed",
-    method: "Debit Card",
-    applicationId: "VA002",
-    receipt: "receipt_002.pdf",
-  },
-  {
-    id: "PAY003",
-    transactionId: "TXN456789123",
-    amount: 150,
-    date: "2024-01-20",
-    purpose: "Passport Renewal Application",
-    status: "pending",
-    method: "Bank Transfer",
-    applicationId: "PA002",
-    receipt: null,
-  },
-  {
-    id: "PAY004",
-    transactionId: "TXN789123456",
-    amount: 100,
-    date: "2024-01-22",
-    purpose: "Canada Visitor Visa",
-    status: "failed",
-    method: "Credit Card",
-    applicationId: "VA003",
-    receipt: null,
-  },
-  {
-    id: "PAY005",
-    transactionId: "TXN321654987",
-    amount: 200,
-    date: "2024-01-25",
-    purpose: "Tatkal Passport Service",
-    status: "processing",
-    method: "UPI",
-    applicationId: "PA004",
-    receipt: null,
-  },
-];
-
-// Payment summary data
-const paymentSummary = {
-  totalPaid: 450,
-  totalPending: 300,
-  totalFailed: 100,
-  thisMonth: 650,
-  lastMonth: 285,
-};
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const PaymentsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [payments, setPayments] = useState([]);
   const [dateFilter, setDateFilter] = useState("all");
-  const { toast } = useToast();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const token = Cookies.get("token");
+  const rowsPerPage = 5;
 
-  const getStatusColor = (status: string) => {
+
+
+  const getStatusColor = (status) => {
     switch (status) {
       case "completed":
-        return "default";
+        return "bg-green-100 text-green-800 border-green-200";
       case "pending":
-        return "secondary";
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
       case "processing":
-        return "outline";
+        return "bg-blue-100 text-blue-800 border-blue-200";
       case "failed":
-        return "destructive";
+        return "bg-red-100 text-red-800 border-red-200";
       default:
-        return "secondary";
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status) => {
     switch (status) {
       case "completed":
         return <CheckCircle className="h-4 w-4" />;
@@ -155,11 +65,62 @@ const PaymentsPage = () => {
     }
   };
 
+
+const fetchPaymentHistory = async () => {
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/user/payment-history`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const paymentsRaw = response.data.payments || [];
+
+    // Transform real data to expected structure
+    const transformed = paymentsRaw.map((p) => ({
+      transactionId: p.payment_id,
+      destinationCountry: p.productDetails.destinationCountry,
+      // travelPurpose: p.productDetails.travelPurpose,
+
+      purpose: ` ${p.productDetails.travelPurpose || "Other"} `, // You can customize this
+      // applicationId: p.order_id,
+      amount: p.amount,
+      date: new Date(p.created_at).toISOString().split("T")[0],
+      method: p.type_of_payment === "visa" ? "Visa" : "Other",
+      status: p.status === "success" ? "completed" : p.status,
+      receipt: null, // Handle this if receipts are available
+      raw: p, // Keep original object if needed later
+    }));
+
+    setPayments(transformed);
+    console.log("Transformed payment data:", transformed);
+  } catch (error) {
+    console.error("Error fetching payment history:", error);
+  }
+};
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const paymentData = await fetchPaymentHistory();
+      if (paymentData) {
+        setPayments(paymentData);
+      }
+    };
+
+    fetchData();
+  }
+  , [token]);
+
+
   const filteredPayments = payments.filter((payment) => {
     const matchesSearch =
       payment.purpose.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.transactionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.applicationId.toLowerCase().includes(searchTerm.toLowerCase());
+      payment.transactionId.toLowerCase().includes(searchTerm.toLowerCase())
+      // payment.applicationId.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
       statusFilter === "all" || payment.status === statusFilter;
     const matchesDate =
@@ -169,343 +130,210 @@ const PaymentsPage = () => {
     return matchesSearch && matchesStatus && matchesDate;
   });
 
-  const handleDownloadReceipt = (paymentId: string, receipt: string | null) => {
-    if (receipt) {
-      toast({
-        title: "Download Started",
-        description: `Downloading receipt for payment ${paymentId}`,
-      });
-    } else {
-      toast({
-        title: "Receipt Not Available",
-        description: "Receipt will be available once payment is completed",
-        variant: "destructive",
-      });
-    }
+  const paginatedPayments = filteredPayments.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  const handleViewReceipt = (payment) => {
+    setSelectedPayment(payment);
+    setShowModal(true);
   };
 
-  const handleRetryPayment = (paymentId: string) => {
-    toast({
-      title: "Payment Retry",
-      description: `Retrying payment for ${paymentId}`,
-    });
-  };
+  // DataTable columns configuration
+  const columns = [
+    {
+      key: "transactionId",
+      label: "Transaction ID",
+      render: (payment) => (
+        <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+          {payment.transactionId}
+        </span>
+      ),
+    },
+    {
+      key: "purpose",
+      label: "Purpose",
+      render: (payment) => (
+        <div>
+          <p className="font-medium text-sm">{payment.purpose}</p>
+          <p className="text-xs text-gray-500">
+            {/* App ID: {payment.applicationId} */}
+          </p>
+        </div>
+      ),
+    },
+    {
+      key: "destinationCountry",
+      label: "Destination Country",
+      render: (payment) => (
+        <span className="text-sm text-gray-700">
+          {payment.destinationCountry || "US"} 
+        </span>
+      ),
+    },
+    {
+      key: "amount",
+      label: "Amount",
+      render: (payment) => (
+        <span className="font-semibold text-green-600">₹{payment.amount}</span>
+      ),
+    },
+    {
+      key: "date",
+      label: "Date",
+    },
+    {
+      key: "method",
+      label: "Method",
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (payment) => (
+        <div
+          className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
+            payment.status
+          )}`}
+        >
+          {getStatusIcon(payment.status)}
+          <span className="capitalize">{payment.status}</span>
+        </div>
+      ),
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (payment) => (
+        <div className="flex space-x-2">
+          <button
+            onClick={() => handleViewReceipt(payment)}
+            className="flex items-center justify-center w-8 h-8 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          >
+            <Eye className="h-4 w-4" />
+          </button>
 
-  const handleExportData = () => {
-    toast({
-      title: "Export Started",
-      description: "Your payment data is being exported to PDF",
-    });
-  };
+          {payment.receipt ? (
+            <button className="flex items-center justify-center w-8 h-8 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+              <Receipt className="h-4 w-4" />
+            </button>
+          ) : (
+            <button className="flex items-center justify-center w-8 h-8 border border-gray-300 rounded-md opacity-50 cursor-not-allowed">
+              <Receipt className="h-4 w-4" />
+            </button>
+          )}
+
+          {payment.status === "failed" && (
+            <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors">
+              Retry
+            </button>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Fixed Header */}
-      <DashboardHeader />
-      <div className="flex flex-1 pt-[4.5rem] bg-gray-50">
-        {/* Sidebar */}
-        <div className="hidden lg:block w-64 border-r border-gray-200 bg-white">
+      <div className="fixed top-0 left-0 w-full z-30  bg-white shadow">
+        <DashboardHeader />
+      </div>
+
+      <div className="flex flex-1 justify-center">
+        <div className="fixed top-20 bottom-0 left-0 bg-gray-100 z-40">
           <DashboardSidebar userRole="client" />
         </div>
-
         {/* Payment Summary Cards */}
-         <div className="flex-1 p-4 md:p-6 lg:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
-              <CheckCircle className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                ${paymentSummary.totalPaid}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Successfully completed
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending</CardTitle>
-              <Clock className="h-4 w-4 text-yellow-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                ${paymentSummary.totalPending}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Awaiting processing
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Failed</CardTitle>
-              <AlertCircle className="h-4 w-4 text-red-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                ${paymentSummary.totalFailed}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Failed transactions
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">This Month</CardTitle>
-              <DollarSign className="h-4 w-4 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                ${paymentSummary.thisMonth}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                +
-                {Math.round(
-                  ((paymentSummary.thisMonth - paymentSummary.lastMonth) /
-                    paymentSummary.lastMonth) *
-                    100
-                )}
-                % from last month
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+         <div className="flex-1 p-6 max-w-6xl mx-auto mt-20 md:mt-12 lg:mt-12 mr-18 ">
+      
 
-        {/* Filters and Search */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
+        {/* Main Table Card */}
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5" />
+                <h2 className="flex items-center gap-3 text-2xl font-bold text-gray-900">
+                  <div className="bg-blue-100 p-2 rounded-lg">
+                    <CreditCard className="h-6 w-6 text-blue-600" />
+                  </div>
                   Payment History
-                </CardTitle>
-                <CardDescription>
+                </h2>
+                <p className="text-gray-600 mt-1">
                   View and manage all your payment transactions
-                </CardDescription>
+                </p>
               </div>
-              <Button onClick={handleExportData} variant="outline">
-                <Download className="h-4 w-4 mr-2" />
-                Export PDF
-              </Button>
+              <button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
+                <Download className="h-4 w-4" />
+                <span>Export PDF</span>
+              </button>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+
+            {/* Filters */}
+            <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
+                  <input
+                    type="text"
                     placeholder="Search payments, transaction ID, or application..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="processing">Processing</SelectItem>
-                  <SelectItem value="failed">Failed</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={dateFilter} onValueChange={setDateFilter}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Filter by date" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Time</SelectItem>
-                  <SelectItem value="this-month">This Month</SelectItem>
-                  <SelectItem value="last-month">Last Month</SelectItem>
-                  <SelectItem value="this-year">This Year</SelectItem>
-                </SelectContent>
-              </Select>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="all">All Status</option>
+                <option value="completed">Completed</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="failed">Failed</option>
+              </select>
+              <select
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="all">All Time</option>
+                <option value="this-month">This Month</option>
+                <option value="last-month">Last Month</option>
+                <option value="this-year">This Year</option>
+              </select>
             </div>
+          </div>
 
-            {/* Payments Table */}
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Transaction ID</TableHead>
-                    <TableHead>Purpose</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Method</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredPayments.map((payment) => (
-                    <TableRow key={payment.id}>
-                      <TableCell className="font-mono text-sm">
-                        {payment.transactionId}
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{payment.purpose}</p>
-                          <p className="text-sm text-gray-500">
-                            App ID: {payment.applicationId}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-semibold">
-                        ${payment.amount}
-                      </TableCell>
-                      <TableCell>{payment.date}</TableCell>
-                      <TableCell>{payment.method}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={getStatusColor(payment.status)}
-                          className="text-xs"
-                        >
-                          {getStatusIcon(payment.status)}
-                          <span className="ml-1 capitalize">
-                            {payment.status}
-                          </span>
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button variant="outline" size="sm">
-                                <FileText className="h-4 w-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Payment Details</DialogTitle>
-                                <DialogDescription>
-                                  Transaction ID: {payment.transactionId}
-                                </DialogDescription>
-                              </DialogHeader>
-                              <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <h4 className="font-medium">Amount</h4>
-                                    <p className="text-2xl font-bold">
-                                      ${payment.amount}
-                                    </p>
-                                  </div>
-                                  <div>
-                                    <h4 className="font-medium">Status</h4>
-                                    <Badge
-                                      variant={getStatusColor(payment.status)}
-                                    >
-                                      {getStatusIcon(payment.status)}
-                                      <span className="ml-1 capitalize">
-                                        {payment.status}
-                                      </span>
-                                    </Badge>
-                                  </div>
-                                  <div>
-                                    <h4 className="font-medium">Date</h4>
-                                    <p>{payment.date}</p>
-                                  </div>
-                                  <div>
-                                    <h4 className="font-medium">Method</h4>
-                                    <p>{payment.method}</p>
-                                  </div>
-                                </div>
-                                <div>
-                                  <h4 className="font-medium">Purpose</h4>
-                                  <p>{payment.purpose}</p>
-                                </div>
-                                <div>
-                                  <h4 className="font-medium">
-                                    Application ID
-                                  </h4>
-                                  <p className="font-mono">
-                                    {payment.applicationId}
-                                  </p>
-                                </div>
-                              </div>
-                              <DialogFooter>
-                                {payment.status === "failed" && (
-                                  <Button
-                                    onClick={() =>
-                                      handleRetryPayment(payment.id)
-                                    }
-                                  >
-                                    Retry Payment
-                                  </Button>
-                                )}
-                                {payment.receipt && (
-                                  <Button
-                                    variant="outline"
-                                    onClick={() =>
-                                      handleDownloadReceipt(
-                                        payment.id,
-                                        payment.receipt
-                                      )
-                                    }
-                                  >
-                                    <Download className="h-4 w-4 mr-2" />
-                                    Download Receipt
-                                  </Button>
-                                )}
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
-
-                          {payment.receipt ? (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() =>
-                                handleDownloadReceipt(
-                                  payment.id,
-                                  payment.receipt
-                                )
-                              }
-                            >
-                              <Receipt className="h-4 w-4" />
-                            </Button>
-                          ) : (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              disabled
-                              className="opacity-50"
-                            >
-                              <Receipt className="h-4 w-4" />
-                            </Button>
-                          )}
-
-                          {payment.status === "failed" && (
-                            <Button
-                              size="sm"
-                              onClick={() => handleRetryPayment(payment.id)}
-                            >
-                              Retry
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+          <div className="p-6">
+            {/* Enhanced DataTable */}
+            <DataTable
+              columns={columns}
+              data={paginatedPayments}
+              currentPage={currentPage}
+              rowsPerPage={rowsPerPage}
+              totalCount={filteredPayments.length}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         </div>
+
+        {/* Modal for Payment Slip */}
+        <ModalPayment
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          title="Payment Receipt"
+        >
+          {selectedPayment && <PaymentSlip payment={selectedPayment} />}
+        </ModalPayment>
       </div>
     </div>
+      </div>
   );
 };
 
 export default PaymentsPage;
+
 export { PaymentsPage };
