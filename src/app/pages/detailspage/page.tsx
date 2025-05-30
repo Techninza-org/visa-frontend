@@ -16,6 +16,9 @@ export default function USVisaIndiaPassport() {
   const [destination, setDestination] = useState("");
   const [visaType, setVisaType] = useState<string>(""); // "e-visa", "visa-required", or number for visa-free
 
+
+  
+
   const visaTypes = [
     {
       id: "tourist",
@@ -124,7 +127,7 @@ export default function USVisaIndiaPassport() {
       const token = Cookies.get("token"); // replace 'token' with your actual cookie key
 
       if (token) {
-        router.push("/pages/dashboard/client/kyc-profile");
+        router.push("/pages/dashboard");
       } else {
         router.push("/pages/login");
       }

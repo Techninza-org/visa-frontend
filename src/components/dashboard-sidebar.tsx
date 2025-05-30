@@ -14,7 +14,7 @@ import {
   SidebarMenuButton,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import Image from "next/image";
+
 import {
   Home,
   FileText,
@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
 
 interface DashboardSidebarProps {
   userRole: "client" | "admin" | "expert";
@@ -35,6 +36,22 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const user = Cookies.get("user");
+    if (user) {
+      try {
+        const parsedUser = JSON.parse(user);
+        setUsername(parsedUser.name || "User");
+        setEmail(parsedUser.email || "");
+      } catch (error) {
+        setUsername("User", error );
+      }
+    }
+  }, []);
+
   const handleLogout = () => {
     Cookies.remove("token");
     Cookies.remove("user");
@@ -100,8 +117,8 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
   ];
 
   const roleInfo = {
-    name: "John Doe",
-    email: "john@example.com",
+    name: username || "John Doe",
+    email:email|| "john@example.com",
     roleLabel: "Client",
     avatarFallback: "JD",
     badgeColor: "bg-blue-100 text-blue-800",
@@ -110,8 +127,8 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
   return (
     <SidebarProvider>
       <Sidebar className="bg-gradient-to-b from-slate-50 to-white border-r z-10 border-slate-200 shadow-sm w-64 hidden md:flex">
-        <SidebarHeader className="p-4 border-b border-slate-200">
-          <Link href="/" className="flex items-center justify-center w-full">
+        <SidebarHeader className="p-4 border-b border-slate-200 mb-10">
+          {/* <Link href="/" className="flex items-center justify-center w-full">
             <Image
               src="/visalogo.jpeg"
               alt="Axe Visa Logo"
@@ -119,10 +136,10 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
               height={80}
               className="h-18 w-auto object-contain transition-transform duration-200 hover:scale-105"
             />
-          </Link>
+          </Link> */}
         </SidebarHeader>
 
-        <SidebarContent className="px-3 py-4 overflow-y-auto max-h-[calc(100vh-200px)]">
+        <SidebarContent className="px-3 py-4  overflow-y-auto max-h-[calc(100vh-200px)]">
           <div className="mb-4">
             <Badge
               variant="secondary"
@@ -205,7 +222,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
                   alt="User"
                 />
                 <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold text-sm">
-                  {roleInfo.avatarFallback}
+                  {roleInfo.name.slice(0, 2).toUpperCase() || roleInfo.avatarFallback}
                 </AvatarFallback>
               </Avatar>
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />

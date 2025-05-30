@@ -36,11 +36,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import VisaTable from "@/components/dashboar-components/VisaTable";
-import PassportTable from "@/components/dashboar-components/PassPortTable";
+
 import { Badge } from "@/components/ui/badge";
-import { ProgressIndicator } from "@radix-ui/react-progress";
-import { DashboardHeader } from "@/components/dashboard-header";
+
 import { VisaModal } from "@/components/modals/visa-modal";
 
 interface Passport {
@@ -199,19 +197,7 @@ export default function ClientDashboard() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Fixed Header */}
-      <DashboardHeader />
-
-      {/* Main Content Area */}
-      <div className="flex flex-1  bg-gray-50">
-        {/* Sidebar */}
-        <div className="hidden lg:block w-64 border-r border-gray-200 bg-white">
-          <DashboardSidebar userRole="client" />
-        </div>
-
-        {/* Main Panel */}
-        <div className="flex-1 p-4 md:p-6 lg:p-8">
+        <div >
           {/* Welcome Banner */}
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
             <div className="flex items-center justify-between">
@@ -434,10 +420,8 @@ export default function ClientDashboard() {
               </CardContent>
             </Card>
           </div>
-        </div>
-      </div>
 
-      {/* WhatsApp Floating Button */}
+            {/* WhatsApp Floating Button */}
       <TooltipProvider>
         <div className="fixed bottom-6 right-6 z-50">
           <Tooltip>
@@ -480,6 +464,10 @@ export default function ClientDashboard() {
           `,
         }}
       />
-    </div>
+        </div>
+     
+
+    
+    
   );
 }

@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogTrigger,
+
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -23,7 +23,7 @@ import {
   AlertTriangle,
   Info,
 } from "lucide-react";
-import { DashboardHeader } from "@/components/dashboard-header";
+
 import axios from "axios";
 
 interface DocumentItem {
@@ -450,14 +450,10 @@ export default function TrackStatusPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      <DashboardHeader />
-      <div className="flex flex-1">
-        <div className="hidden lg:block w-64 border-r border-gray-200 bg-white">
-          <DashboardSidebar userRole="client" />
-        </div>
 
-        <div className="flex-1 p-6">
+      
+
+        <div>
           {/* Document Checklist */}
           <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border border-white/50 p-8 mb-8 relative overflow-hidden">
             {/* Background decoration */}
@@ -734,7 +730,6 @@ export default function TrackStatusPage() {
             </DialogContent>
           </Dialog>
         </div>
-      </div>
-    </div>
+      
   );
 }

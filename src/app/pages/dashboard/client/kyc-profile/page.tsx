@@ -23,14 +23,13 @@ import {
   User,
   Mail,
   Phone,
-  Calendar,
+
   Globe,
   MapPin,
   Save,
   X,
 } from "lucide-react";
-import { DashboardHeader } from "@/components/dashboard-header";
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
+
 import Cookies from "js-cookie";
 
 const userProfile = {
@@ -51,12 +50,14 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState(userProfile);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+    const [fetchLoading, setFetchLoading] = useState(true);
   const token = Cookies.get("token") || "";
   const { toast } = useToast();
 
   //fetch user profile data from API
   const fetchUserProfile = async () => {
     try {
+      setFetchLoading(true);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/user/details`,
         {
@@ -96,6 +97,9 @@ const ProfilePage = () => {
         variant: "destructive",
       });
     }
+  finally {
+        setFetchLoading(false);
+      }
   };
 
   useEffect(() => {
@@ -189,19 +193,17 @@ const ProfilePage = () => {
     setIsEditing(false);
   };
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      {/* Fixed Header */}
-      <div className="fixed top-0 left-0 w-full z-30  bg-white shadow">
-        <DashboardHeader />
+    if (fetchLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
+    );
+  }
 
-      <div className="flex flex-1 justify-center">
-        <div className="fixed top-20 bottom-0 left-0 bg-gray-100 z-40">
-          <DashboardSidebar userRole="client" />
-        </div>
-
-        <div className="flex-1 p-6 max-w-4xl mx-auto mt-20 md:mt-12 lg:mt-12 ">
+  return (
+ 
+        <div>
           {/* Profile Header Card */}
           <Card className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border border-white/50 p-8 mb-8 relative overflow-hidden">
             {/* Background decoration */}
@@ -546,8 +548,7 @@ const ProfilePage = () => {
             </CardContent>
           </Card>
         </div>
-      </div>
-    </div>
+     
   );
 };
 

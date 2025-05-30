@@ -57,6 +57,7 @@ interface VisaApplication {
 export default function TrackStatusPage() {
   const [visaData, setVisaData] = useState<VisaApplication | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+    const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
   const searchParams = useSearchParams();
@@ -72,6 +73,7 @@ export default function TrackStatusPage() {
     const fetchVisaData = async () => {
       try {
         setLoading(true);
+        setFetchLoading(true);
         setError("");
 
         const res = await fetch(
@@ -92,24 +94,24 @@ export default function TrackStatusPage() {
         setError(err.message || "Something went wrong");
       } finally {
         setLoading(false);
+        setFetchLoading(false);
       }
     };
 
     fetchVisaData();
   }, [visaId, token]);
 
+    if (fetchLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
-     <div className="min-h-screen flex flex-col">
-          {/* Fixed Header */}
-          <Header />
-   {/* Main Content Area */}
-      <div className="flex flex-1 pt-[4.5rem] bg-gray-50">
-        {/* Sidebar */}
-        <div className="hidden lg:block w-64 border-r border-gray-200 bg-white">
-          <DashboardSidebar userRole="client" />
-        </div>
-     <div className="flex-1 p-4 md:p-6 lg:p-8">
+   
+     <div>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-800 tracking-tight">
@@ -197,39 +199,14 @@ export default function TrackStatusPage() {
                     <DetailItem label="Priority" value={visaData.priority} />
                   </div>
 
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Documents</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-                      <DocumentImage
-                        label="Passport Scan"
-                        src={visaData.documents.passportScan}
-                      />
-                      <DocumentImage
-                        label="Photo"
-                        src={visaData.documents.photo}
-                      />
-                      <DocumentImage
-                        label="Bank Statement"
-                        src={visaData.documents.bankStatement}
-                      />
-                      <DocumentImage
-                        label="ITR / Salary Slip"
-                        src={visaData.documents.itrOrSalarySlip}
-                      />
-                      <DocumentImage
-                        label="Travel History"
-                        src={visaData.documents.travelHistory}
-                      />
-                    </div>
-                  </div>
+            
                 </CardContent>
               </Card>
             )}
           </TabsContent>
         </Tabs>
       </div>
-      </div>
-    </div>
+     
   );
 }
 

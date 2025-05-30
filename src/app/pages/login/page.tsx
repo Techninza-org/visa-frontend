@@ -31,8 +31,9 @@ export default function LoginPage() {
       return;
     }
 
-    setLoading(true);
+  
     try {
+      setLoading(true);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/public/user-login-register`,
         {
@@ -145,22 +146,16 @@ export default function LoginPage() {
                 disabled={loading}
               >
                 {loading
-                  ? "Processing..."
+                  ? otpSent
+                  ? "Verifying..."
+                  : "Processing..."
                   : otpSent
                   ? "Verify OTP"
                   : "Send OTP"}
               </Button>
             </CardFooter>
           </Card>
-          {/* <p className="px-8 text-center text-sm text-gray-400">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/pages/ragister"
-              className="underline underline-offset-4 text-[#f6d365] hover:text-[#fda085]"
-            >
-              Sign up
-            </Link>
-          </p> */}
+      
         </div>
       </div>
       <Footer />

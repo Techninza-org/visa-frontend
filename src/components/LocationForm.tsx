@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Check } from "lucide-react";
 
 interface Country {
   name: string;
@@ -16,6 +18,7 @@ export default function LocationForm() {
   const [selectedCountry2, setSelectedCountry2] = useState<Country | null>(
     null
   );
+  const [loader, setLoader] = useState<boolean>(false);
 
 
   // console.log(selectedCountry1?.name, selectedCountry2?.name, "selected countries");
@@ -50,6 +53,7 @@ export default function LocationForm() {
     }
 
     try {
+      setLoader(true);
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/public/check-visa`,
         {
@@ -72,6 +76,7 @@ export default function LocationForm() {
       console.error("Error checking visa:", error);
       alert("Failed to check visa requirements.");
     }
+    setLoader(false);
   };
 
   const renderDropdown = (
@@ -141,6 +146,7 @@ export default function LocationForm() {
                     src={`https://flagcdn.com/w40/${country.Iso2.toLowerCase()}.png`}
                     className="w-6 h-4 rounded shadow"
                     alt={country.name}
+                    
                   />
                   <span>{country.name}</span>
                 </div>
@@ -183,20 +189,36 @@ export default function LocationForm() {
         <button
           type="button"
           onClick={handleVisaCheck}
+          disabled={loader}
+          className={`bg-amber-500 text-white px-8 py-2 rounded-xl shadow-md hover:bg-amber-600 transition-all duration-200 flex items-center gap-2 w-full ${
+            loader ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          style={{ maxWidth: "150px", height: "50px" }}
+        >
+          {loader ? (
+        "  Checking.... "
+          ) : (
+            "Check Visa"
+          )}
+        </button>
+
+        {/* <button
+          type="button"
+          onClick={handleVisaCheck}
           className="bg-amber-500 text-white px-8 py-2 rounded-xl shadow-md hover:bg-amber-600 transition-all duration-200 flex items-center gap-2 w-full"
           style={{ maxWidth: "150px", height: "50px" }}
         >
           Check Visa
-        </button>
+        </button> */}
       </form>
 
-      {visaResult && (
+      {/* {visaResult && (
         <div className="mt-6 p-4 border border-green-400 bg-green-50 rounded-xl">
           <pre className="text-sm text-gray-700 whitespace-pre-wrap">
             {JSON.stringify(visaResult, null, 2)}
           </pre>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
