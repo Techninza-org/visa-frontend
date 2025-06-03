@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import {
   Search,
-  Download,
   CreditCard,
   CheckCircle,
   Clock,
@@ -23,12 +21,13 @@ import Cookies from "js-cookie";
 const PaymentsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [payments, setPayments] = useState([]);
   const [dateFilter, setDateFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [selectedPayment, setSelectedPayment] = useState({});
   const [showModal, setShowModal] = useState(false);
-    const [fetchLoading, setFetchLoading] = useState(true);
+  const [fetchLoading, setFetchLoading] = useState(true);
+
+  const [payments, setPayments] = useState([]);
   const token = Cookies.get("token");
   const rowsPerPage = 5;
 
@@ -52,11 +51,9 @@ const PaymentsPage = () => {
       case "completed":
         return <CheckCircle className="h-4 w-4" />;
       case "pending":
-        return <Clock className="h-4 w-4" />;
       case "processing":
         return <Clock className="h-4 w-4" />;
       case "failed":
-        return <AlertCircle className="h-4 w-4" />;
       default:
         return <AlertCircle className="h-4 w-4" />;
     }
@@ -68,63 +65,56 @@ const PaymentsPage = () => {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/user/payment-history`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-
       const paymentsRaw = response.data.payments || [];
 
-      // Transform real data to expected structure
       const transformed = paymentsRaw.map((p) => ({
         transactionId: p.payment_id,
-        destinationCountry: p.productDetails.destinationCountry,
-        // travelPurpose: p.productDetails.travelPurpose,
-
-        purpose: ` ${p.productDetails.travelPurpose || "Other"} `, // You can customize this
-        // applicationId: p.order_id,
+        destinationCountry: p.productDetails?.destinationCountry || "N/A",
+        purpose: p.productDetails?.travelPurpose || "Other",
         amount: p.amount,
         date: new Date(p.created_at).toISOString().split("T")[0],
         method: p.type_of_payment === "visa" ? "Visa" : "Other",
         status: p.status === "success" ? "completed" : p.status,
-        receipt: null, // Handle this if receipts are available
-        raw: p, // Keep original object if needed later
+        receipt: p.receipt || null,
+        raw: p,
       }));
 
       setPayments(transformed);
-      console.log("Transformed payment data:", transformed);
     } catch (error) {
       console.error("Error fetching payment history:", error);
-    }
-    finally {
+    } finally {
       setFetchLoading(false);
     }
-
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const paymentData = await fetchPaymentHistory();
-      if (paymentData) {
-        setPayments(paymentData);
-      }
-    };
-
-    fetchData();
+    fetchPaymentHistory();
   }, [token]);
 
   const filteredPayments = payments.filter((payment) => {
     const matchesSearch =
       payment.purpose.toLowerCase().includes(searchTerm.toLowerCase()) ||
       payment.transactionId.toLowerCase().includes(searchTerm.toLowerCase());
-    // payment.applicationId.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesStatus =
       statusFilter === "all" || payment.status === statusFilter;
+
+    const now = new Date();
+    const paymentDate = new Date(payment.date);
     const matchesDate =
       dateFilter === "all" ||
-      (dateFilter === "this-month" && payment.date.startsWith("2024-01")) ||
-      (dateFilter === "last-month" && payment.date.startsWith("2023-12"));
+      (dateFilter === "this-month" &&
+        paymentDate.getMonth() === now.getMonth() &&
+        paymentDate.getFullYear() === now.getFullYear()) ||
+      (dateFilter === "last-month" &&
+        paymentDate.getMonth() === now.getMonth() - 1 &&
+        paymentDate.getFullYear() === now.getFullYear()) ||
+      (dateFilter === "this-year" &&
+        paymentDate.getFullYear() === now.getFullYear());
+
     return matchesSearch && matchesStatus && matchesDate;
   });
 
@@ -134,11 +124,13 @@ const PaymentsPage = () => {
   );
 
   const handleViewReceipt = (payment) => {
-    setSelectedPayment(payment);
+    // console.log("Viewing receipt for payment:", payment.raw);
+    setSelectedPayment(payment.raw);
     setShowModal(true);
   };
 
-  // DataTable columns configuration
+  console.log('selectedPaymentojnjnjnj', selectedPayment);
+
   const columns = [
     {
       key: "transactionId",
@@ -155,9 +147,6 @@ const PaymentsPage = () => {
       render: (payment) => (
         <div>
           <p className="font-medium text-sm">{payment.purpose}</p>
-          <p className="text-xs text-gray-500">
-            {/* App ID: {payment.applicationId} */}
-          </p>
         </div>
       ),
     },
@@ -166,7 +155,7 @@ const PaymentsPage = () => {
       label: "Destination Country",
       render: (payment) => (
         <span className="text-sm text-gray-700">
-          {payment.destinationCountry || "US"}
+          {payment.destinationCountry}
         </span>
       ),
     },
@@ -177,14 +166,8 @@ const PaymentsPage = () => {
         <span className="font-semibold text-green-600">₹{payment.amount}</span>
       ),
     },
-    {
-      key: "date",
-      label: "Date",
-    },
-    {
-      key: "method",
-      label: "Method",
-    },
+    { key: "date", label: "Date" },
+    { key: "method", label: "Method" },
     {
       key: "status",
       label: "Status",
@@ -211,15 +194,16 @@ const PaymentsPage = () => {
             <Eye className="h-4 w-4" />
           </button>
 
-          {payment.receipt ? (
-            <button className="flex items-center justify-center w-8 h-8 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-              <Receipt className="h-4 w-4" />
-            </button>
-          ) : (
-            <button className="flex items-center justify-center w-8 h-8 border border-gray-300 rounded-md opacity-50 cursor-not-allowed">
-              <Receipt className="h-4 w-4" />
-            </button>
-          )}
+          <button
+            className={`flex items-center justify-center w-8 h-8 border border-gray-300 rounded-md ${
+              payment.receipt
+                ? "hover:bg-gray-50"
+                : "opacity-50 cursor-not-allowed"
+            } transition-colors`}
+            disabled={!payment.receipt}
+          >
+            <Receipt className="h-4 w-4" />
+          </button>
 
           {payment.status === "failed" && (
             <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors">
@@ -255,10 +239,6 @@ const PaymentsPage = () => {
                 View and manage all your payment transactions
               </p>
             </div>
-            <button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
-              <Download className="h-4 w-4" />
-              <span>Export PDF</span>
-            </button>
           </div>
 
           {/* Filters */}
@@ -268,7 +248,7 @@ const PaymentsPage = () => {
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search payments, transaction ID, or application..."
+                  placeholder="Search payments, transaction ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -300,7 +280,6 @@ const PaymentsPage = () => {
         </div>
 
         <div className="p-6">
-          {/* Enhanced DataTable */}
           <DataTable
             columns={columns}
             data={paginatedPayments}
@@ -312,7 +291,6 @@ const PaymentsPage = () => {
         </div>
       </div>
 
-      {/* Modal for Payment Slip */}
       <ModalPayment
         isOpen={showModal}
         onClose={() => setShowModal(false)}
@@ -325,5 +303,3 @@ const PaymentsPage = () => {
 };
 
 export default PaymentsPage;
-
-export { PaymentsPage };

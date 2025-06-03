@@ -32,6 +32,27 @@ export function VisaModal({
   userId,
 }: VisaModalProps) {
   console.log("VisaModal rendered with userId:", userId);
+
+  const [applicationId, setApplicationId] = useState<string | null>(null);
+  const [usedSessionDestination, setUsedSessionDestination] = useState(false);
+
+  // Retrieve destination countries from sessionStorage (stored as JSON string array of objects)
+  // Example stored value: '[{"source":"Afghanistan","destination":"Albania"}]'
+  const destinationCountries = sessionStorage.getItem("selectedCountries");
+  const parsedCountries = destinationCountries
+    ? JSON.parse(destinationCountries)
+    : [];
+
+  useEffect(() => {
+    if (parsedCountries.length && !usedSessionDestination) {
+      setFormData((prev) => ({
+        ...prev,
+        destinationCountry: parsedCountries[0]?.destination || "",
+      }));
+      setUsedSessionDestination(true);
+    }
+  }, [parsedCountries, usedSessionDestination]);
+
   const [formData, setFormData] = useState({
     fullName: "",
     dob: "",
@@ -39,7 +60,7 @@ export function VisaModal({
     passportNumber: "",
     passportIssueDate: "",
     passportExpiryDate: "",
-    destinationCountry: "",
+    destinationCountry: parsedCountries.destination || "",
     travelPurpose: "Tourism",
     travelDate: "",
     travelDurationInDays: "",
@@ -49,7 +70,6 @@ export function VisaModal({
     employmentStatus: "Working",
   });
 
-  const [applicationId, setApplicationId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -124,6 +144,10 @@ export function VisaModal({
           "Content-Type": "application/json",
         },
       });
+
+      if (!applicationId) {
+        sessionStorage.removeItem("selectedCountries");
+      }
 
       alert(
         isFormComplete ? "Application submitted successfully." : "Draft saved."

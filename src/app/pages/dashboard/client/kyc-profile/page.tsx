@@ -203,7 +203,7 @@ const ProfilePage = () => {
 
   return (
  
-        <div>
+        <div className="max-w-4xl mx-auto p-6 space-y-2">
           {/* Profile Header Card */}
           <Card className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border border-white/50 p-8 mb-8 relative overflow-hidden">
             {/* Background decoration */}
@@ -263,9 +263,9 @@ const ProfilePage = () => {
 
                     {profile.kycStatus === "pending" && (
                       <div className="flex-1 max-w-48">
-                        <div className="text-sm text-gray-600 mb-1">
+                        {/* <div className="text-sm text-gray-600 mb-1">
                           KYC Progress
-                        </div>
+                        </div> */}
                         <div className="w-full bg-white/20 rounded-full h-2">
                           <div
                             className="bg-white h-2 rounded-full transition-all duration-500"

@@ -28,12 +28,12 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-amber-300/30 bg-white/80 backdrop-blur-lg">
+    <header className="fixed top-0 z-50 w-full border-b border-amber-300/30 bg-white/96 backdrop-blur-lg">
       <div className="mx-auto flex h-20 max-w-[95%] items-center justify-between px-4 md:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/visalogo.jpeg"
+            src="/visa-logo.png"
             alt="Global Visa Solutions"
             width={100}
             height={60}
