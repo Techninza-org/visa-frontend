@@ -513,8 +513,8 @@ export default function TrackStatusPage() {
                 onClick={() => setActiveTab(tab.key as any)}
                 className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === tab.key
-                    ? "border-blue-500 text-white bg-slate-800"
-                    : "border-transparent text-gray-600 hover:text-white hover:bg-slate-800"
+                    ? "border-blue-500 text-white bg-blue-600 rounded-lg"
+                    : "border-transparent text-gray-600 hover:text-white hover:bg-blue-600 rounded-lg"
                 }`}
               >
                 {tab.label}

@@ -24,7 +24,7 @@ const PaymentButton = ({
     <button
       onClick={handleRazorpayPayment}
       disabled={isProcessing}
-      className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700"
+      className="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl shadow hover:shadow-md duration-200 flex items-center gap-2 hover:bg-gray-200 transition-colors"
     >
       {isProcessing ? "Processing..." : "Pay"}
     </button>

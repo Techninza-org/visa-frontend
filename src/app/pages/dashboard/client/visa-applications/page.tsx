@@ -17,6 +17,10 @@ import {
   Clock,
   AlertCircle,
   Eye,
+  CreditCard,
+  CalendarDays,
+  Phone,
+  Mail,
 } from "lucide-react";
 import DataTable from "@/components/DataTable";
 import PaymentButton from "@/components/PaymentButton";
@@ -165,59 +169,109 @@ const VisaApplication = () => {
     fetchVisa();
   }, [fetchVisa]);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "processing":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "failed":
-        return "bg-red-100 text-red-800 border-red-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
+const getStatusColor = (status) => {
+  switch (status) {
+    case "completed":
+      return "bg-emerald-50 text-emerald-700 border-emerald-200 ring-emerald-200/50";
+    case "pending":
+      return "bg-amber-50 text-amber-700 border-amber-200 ring-amber-200/50";
+    case "processing":
+      return "bg-blue-50 text-blue-700 border-blue-200 ring-blue-200/50";
+    case "failed":
+      return "bg-red-50 text-red-700 border-red-200 ring-red-200/50";
+    default:
+      return "bg-gray-50 text-gray-700 border-gray-200 ring-gray-200/50";
+  }
+};
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "completed":
-        return <CheckCircle className="h-4 w-4" />;
-      case "pending":
-        return <Clock className="h-4 w-4" />;
-      case "processing":
-        return <Clock className="h-4 w-4" />;
-      case "failed":
-        return <AlertCircle className="h-4 w-4" />;
-      default:
-        return <AlertCircle className="h-4 w-4" />;
-    }
-  };
+const getStatusIcon = (status) => {
+  switch (status) {
+    case "completed":
+      return <CheckCircle className="h-4 w-4 text-emerald-600" />;
+    case "pending":
+      return <Clock className="h-4 w-4 text-amber-600" />;
+    case "processing":
+      return <Loader2 className="h-4 w-4 text-blue-600 animate-spin" />;
+    case "failed":
+      return <AlertCircle className="h-4 w-4 text-red-600" />;
+    default:
+      return <AlertCircle className="h-4 w-4 text-gray-600" />;
+  }
+};
 
-  const columns = [
-    { key: "fullName", label: "Full Name" },
-    { key: "destinationCountry", label: "Destination" },
-    { key: "phone", label: "Mobile" },
-    { key: "email", label: "Email" },
-    {
-      key: "travelDate",
-      label: "Travel Date",
-      render: (row: VisaApplication) =>
-        new Date(row.travelDate).toLocaleDateString(),
-    },
-    {
-      key: "travelDurationInDays",
-      label: "Duration",
-      render: (row: VisaApplication) => `${row.travelDurationInDays} days`,
-    },
-
-    {
-      key: "status",
-      label: "Status",
-      render: (row: VisaApplication) => (
+ const columns = [
+  { 
+    key: "fullName", 
+    label: "Full Name",
+    render: (row) => (
+      <div className="flex items-center space-x-3">
+        <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+          {row.fullName?.charAt(0)?.toUpperCase() || 'U'}
+        </div>
+        <div>
+          <p className="font-semibold text-gray-900">{row.fullName}</p>
+          <p className="text-sm text-gray-500">ID: {row._id?.slice(-6)}</p>
+        </div>
+      </div>
+    )
+  },
+  { 
+    key: "destinationCountry", 
+    label: "Destination",
+    render: (row) => (
+      <div className="flex items-center space-x-2">
+        <div className="w-6 h-4 rounded-sm bg-gray-200 flex items-center justify-center">
+          <span className="text-xs">🌍</span>
+        </div>
+        <span className="font-medium text-gray-900">{row.destinationCountry || "N/A"}</span>
+      </div>
+    )
+  },
+  { 
+    key: "phone", 
+    label: "Contact",
+    render: (row) => (
+      <div className="space-y-1">
+        <div className="flex items-center space-x-2 text-sm">
+          <Phone className="h-3 w-3 text-gray-400" />
+          <span className="text-gray-900">{row.phone || "N/A"}</span>
+        </div>
+        <div className="flex items-center space-x-2 text-sm">
+          <Mail className="h-3 w-3 text-gray-400" />
+          <span className="text-gray-600 truncate max-w-32">{row.email || "N/A"}</span>
+        </div>
+      </div>
+    )
+  },
+  {
+    key: "travelDate",
+    label: "Travel Details",
+    render: (row) => (
+      <div className="space-y-1">
+        <div className="flex items-center space-x-2 text-sm">
+          <CalendarDays className="h-3 w-3 text-gray-400" />
+          <span className="text-gray-900 font-medium">
+            {new Date(row.travelDate).toLocaleDateString('en-US', { 
+              month: 'short', 
+              day: 'numeric',
+              year: 'numeric'
+            }) || "N/A"}
+          </span>
+        </div>
+        <div className="flex items-center space-x-2 text-sm">
+          <Clock className="h-3 w-3 text-gray-400" />
+          <span className="text-gray-600">{row.travelDurationInDays || "N/A"} days</span>
+        </div>
+      </div>
+    )
+  },
+  {
+    key: "status",
+    label: "Status",
+    render: (row) => (
+      <div className="flex flex-col space-y-2">
         <div
-          className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
+          className={`inline-flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold border ring-1 ${getStatusColor(
             row.applicationStatus.toLowerCase()
           )}`}
         >
@@ -226,46 +280,74 @@ const VisaApplication = () => {
             {row.applicationStatus.toLowerCase()}
           </span>
         </div>
-      ),
-    },
-    {
-      key: "actions",
-      label: "Actions",
-      render: (row: VisaApplication) => (
-        <div className="flex items-center space-x-2 justify-end">
-          {/* Checklist button - Updated */}
-          <button
-            className="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl shadow hover:shadow-md duration-200 flex items-center gap-2 hover:bg-gray-200 transition-colors"
-            onClick={() => handleCheckListModal(row.checklist || [], row._id)}
-          >
-            <FileText className="w-5 h-5" />
-          </button>
+        {row.paymentStatus === "Pending" && (
+          <div className="inline-flex items-center space-x-1 px-2 py-1 rounded-md text-xs bg-orange-50 text-orange-700 border border-orange-200">
+            <CreditCard className="h-3 w-3" />
+            <span>Payment Due</span>
+          </div>
+        )}
+      </div>
+    ),
+  },
+  {
+    key: "actions",
+    label: "Actions",
+    render: (row) => (
+      <div className="flex items-center justify-end space-x-2">
+        {/* Checklist Button */}
+        <button
+          className="group relative bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 hover:bg-gray-50 hover:border-gray-300 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+          onClick={() => handleCheckListModal(row.checklist || [], row._id)}
+          title="View Checklist"
+        >
+          <FileText className="w-4 h-4" />
+          <span className="sr-only">Checklist</span>
+        </button>
 
-          <button
-            className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl duration-200 flex items-center gap-2 space-x-2 hover:from-amber-500 hover:to-amber-700 transition-colors"
-            onClick={() => handleOpenModal("visa", row._id)}
-          >
-            <Edit className="w-5 h-5" />
-          </button>
+        {/* Edit Button */}
+        <button
+          className="group relative bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 hover:bg-gray-50 hover:border-gray-300 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+          onClick={() => handleOpenModal("visa", row._id)}
+          title="Edit Application"
+        >
+          <Edit className="w-4 h-4" />
+          <span className="sr-only">Edit</span>
+        </button>
 
-          {!row.paymentStatus && (
+        {/* Payment Button */}
+        {row.paymentStatus === "Pending" && (
+          <div className="relative">
             <PaymentButton
               token={token}
               currentUser={row._id}
               totalAmount={row.totalFee}
               productId={row._id}
               selectedAddressId={{ id: "addr_789" }}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 font-medium focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
             />
-          )}
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`/pages/dashboard/client/visatrack?visa_id=${row._id}`}>
-              <Eye className="w-5 h-5" />
-            </Link>
-          </Button>
-        </div>
-      ),
-    },
-  ];
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+          </div>
+        )}
+
+        {/* View Details Button */}
+        <Button 
+          variant="outline" 
+          size="sm" 
+          asChild
+          className="bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm hover:shadow-md transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+        >
+          <Link 
+            href={`/pages/dashboard/client/visatrack?visa_id=${row._id}`}
+            className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+          >
+            <Eye className="w-4 h-4" />
+            <span className="hidden sm:inline">View</span>
+          </Link>
+        </Button>
+      </div>
+    ),
+  },
+];
 
 
   if (fetchLoading) {

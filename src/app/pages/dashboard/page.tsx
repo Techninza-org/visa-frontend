@@ -19,6 +19,10 @@ import {
   AlertCircle,
   User,
   Upload,
+  Sparkles,
+  TrendingUp,
+  CheckCircle,
+  Eye,
 } from "lucide-react";
 
 import {
@@ -36,10 +40,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-
 import { Badge } from "@/components/ui/badge";
-
 import { VisaModal } from "@/components/modals/visa-modal";
+import { parse } from "path";
 
 interface Passport {
   firstName: string;
@@ -61,13 +64,19 @@ interface Visa {
 export default function ClientDashboard() {
   const token = Cookies.get("token") || "";
 
-  const [passportApplications, setPassportApplications] = useState<Passport[]>(
-    []
-  );
-  const [visaApplications, setVisaApplications] = useState<Visa[]>([]);
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
-  const [userName, setUserName] = useState<string>("");
+  // Parse user data from cookie (JSON string to object)
+  const userCookie = Cookies.get("user");
+  const user = userCookie ? JSON.parse(userCookie) : {};
+
+
+
+
+
+  console.log("User Data:", user.name);
+
+  const [userName, setUserName] = useState<string>(user.name || "User");
   const [memberSince, setMemberSince] = useState<string>("");
 
   const whatsAppNumber = "+916392848646";
@@ -75,6 +84,7 @@ export default function ClientDashboard() {
   const whatsAppUrl = `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(
     whatsAppMessage
   )}`;
+  
   const handleOpenModal = (modalName: string) => {
     setActiveModal(modalName);
   };
@@ -85,7 +95,6 @@ export default function ClientDashboard() {
 
   const handleSubmitForm = (formType: string) => {
     handleCloseModal();
-    // setApprovalModal(formType);
   };
 
   // Optional: Fetch user info to display in header welcome message
@@ -93,13 +102,14 @@ export default function ClientDashboard() {
     const fetchUserInfo = async () => {
       try {
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/user/profile`,
+          `${process.env.NEXT_PUBLIC_API_URL}/user/dashboard-stats`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setUserName(res.data.name || "User");
-        setMemberSince(res.data.memberSince || "");
+        console.log("User Info:", res.data.data);
+        // setUserName(res.data.name || "User");
+        setMemberSince(res.data.data || "");
       } catch (error) {
         console.error("Failed to fetch user info", error);
       }
@@ -107,367 +117,285 @@ export default function ClientDashboard() {
     if (token) fetchUserInfo();
   }, [token]);
 
-  useEffect(() => {
-    const fetchVisa = async () => {
-      try {
-        const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/user/visa-application`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setVisaApplications(res.data.applications || []);
-      } catch (error) {
-        console.error("Failed to fetch visa applications", error);
-      }
-    };
-    if (token) fetchVisa();
-  }, [token]);
+  // Parse memberSince as an object if it's a stringified JSON
+  let memberData: any = {};
+  try {
+    memberData = typeof memberSince === "string" ? JSON.parse(memberSince) : memberSince;
+  } catch {
+    memberData = {};
+  }
 
-  useEffect(() => {
-    const fetchPassports = async () => {
-      try {
-        const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/user/passport-application`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setPassportApplications(res.data.applications || []);
-      } catch (error) {
-        console.error("Failed to fetch passport applications", error);
-      }
-    };
-    if (token) fetchPassports();
-  }, [token]);
-
-  const totalApplications =
-    passportApplications.length + visaApplications.length;
-  const inProgressCount = [...passportApplications, ...visaApplications].filter(
-    (app) => app.status?.toLowerCase() === "pending"
-  ).length;
-  const approvedCount = [...passportApplications, ...visaApplications].filter(
-    (app) => app.status?.toLowerCase() === "approved"
-  ).length;
-
-  // Recent activities dummy data
-  const recentActivities = [
-    {
-      id: 1,
-      type: "visa",
-      action: "Application submitted for US Tourist Visa",
-      date: "2024-01-15",
-      status: "pending",
-    },
-    {
-      id: 2,
-      type: "payment",
-      action: "Payment completed for UK Visa application",
-      date: "2024-01-14",
-      status: "completed",
-    },
-    {
-      id: 3,
-      type: "passport",
-      action: "Passport renewal application approved",
-      date: "2024-01-12",
-      status: "approved",
-    },
-    {
-      id: 4,
-      type: "kyc",
-      action: "KYC documents verified successfully",
-      date: "2024-01-10",
-      status: "verified",
-    },
-  ];
-
-  // Upcoming renewals/expiries
-  const upcomingRenewals = [
-    {
-      id: 1,
-      document: "Passport",
-      expiryDate: "2024-06-15",
-      daysLeft: 45,
-      type: "passport",
-    },
-    {
-      id: 2,
-      document: "US Visa",
-      expiryDate: "2024-08-20",
-      daysLeft: 111,
-      type: "visa",
-    },
-  ];
+  const totalApplications = memberData.totals?.all || 0;
+  const inProgressCount = memberData.totals?.pending || 0;
+  const approvedCount = memberData.totals?.approved || 0;
+  const underReviewCount = memberData.totals?.underReview || 0;
 
   return (
-        <div >
-          {/* Welcome Banner */}
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
-            <div className="flex items-center justify-between">
-              <div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto p-6 space-y-8">
+        {/* Welcome Banner */}
+        <div className="bg-blue-600 rounded-lg p-6 text-white border-2 border-blue-700 shadow-lg">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-500 rounded-lg border border-blue-400">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
                 <h1 className="text-2xl font-bold">
                   Welcome back, {userName || "User"}!
                 </h1>
-                <p className="text-blue-100 mt-1">
-                  Manage your travel documents with ease
-                </p>
               </div>
-              <div className="text-right">
-                {/* <p className="text-sm text-blue-100">Member since</p>
-                <p className="text-lg font-semibold">{memberSince || "N/A"}</p> */}
-                <button
-                  className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl duration-200 flex items-center gap-2 space-x-2 hover:from-amber-500 hover:to-amber-700 transition-colors"
-                  onClick={() => handleOpenModal("visa")}
-                >
-                  <Upload className="w-5 h-5" />
-                  Apply Visa Application
-                </button>
+              <p className="text-blue-100">
+                Manage your travel documents with ease
+              </p>
+              <div className="flex items-center gap-2 mt-3">
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                <span className="text-sm text-blue-100">All systems operational</span>
               </div>
             </div>
+            <div>
+              <button
+                className="bg-gradient-to-r from-amber-400 to-amber-600 hover:bg-orange-600 text-white px-6 py-3 rounded-lg border-1 shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2"
+                onClick={() => handleOpenModal("visa")}
+              >
+                <Upload className="w-5 h-5" />
+                <span className="font-semibold">Apply for Visa</span>
+              </button>
+            </div>
           </div>
-          <VisaModal
-            isOpen={activeModal === "visa"}
-            onClose={handleCloseModal}
-            onSubmit={() => handleSubmitForm("visa")}
-            // userId="userId"
-          />
+        </div>
 
-          {/* Summary Cards */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6">
-            {[
-              {
-                title: "Total Applications",
-                icon: <FileText className="h-4 w-4 text-muted-foreground" />,
-                value: totalApplications,
-                note: "+1 from last month",
-              },
-              {
-                title: "In Progress",
-                icon: <Clock className="h-4 w-4 text-muted-foreground" />,
-                value: inProgressCount,
-                note: "Estimated completion: 5 days",
-              },
-              {
-                title: "Approved",
-                icon: <Users className="h-4 w-4 text-muted-foreground" />,
-                value: approvedCount,
-                note: "Ready for download",
-              },
-              {
-                title: "Total Spent",
-                icon: <CreditCard className="h-4 w-4 text-muted-foreground" />,
-                value: "$1,250",
-                note: "+$250 from last month",
-              },
-            ].map((item, idx) => (
-              <Card key={idx} className="border border-gray-300">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
+        <VisaModal
+          isOpen={activeModal === "visa"}
+          onClose={handleCloseModal}
+          onSubmit={() => handleSubmitForm("visa")}
+        />
+
+        {/* Summary Cards */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              title: "Total Applications",
+              icon: <FileText className="h-5 w-5" />,
+              value: totalApplications,
+              note: "+1 from last month",
+              color: "blue",
+              bgColor: "bg-blue-50",
+              borderColor: "border-blue-200",
+              iconBg: "bg-blue-100",
+              iconColor: "text-blue-600",
+              textColor: "text-blue-800"
+            },
+            {
+              title: "In Progress",
+              icon: <Clock className="h-5 w-5" />,
+              value: inProgressCount,
+              note: "Estimated completion: 5 days",
+              color: "orange",
+              bgColor: "bg-orange-50",
+              borderColor: "border-orange-200",
+              iconBg: "bg-orange-100",
+              iconColor: "text-orange-600",
+              textColor: "text-orange-800"
+            },
+            {
+              title: "Approved",
+              icon: <CheckCircle className="h-5 w-5" />,
+              value: approvedCount,
+              note: "Ready for download",
+              color: "green",
+              bgColor: "bg-green-50",
+              borderColor: "border-green-200",
+              iconBg: "bg-green-100",
+              iconColor: "text-green-600",
+              textColor: "text-green-800"
+            },
+            {
+              title: "Under Review",
+              icon: <Eye className="h-5 w-5" />,
+              value: underReviewCount,
+              note: "Awaiting verification",
+              color: "purple",
+              bgColor: "bg-purple-50",
+              borderColor: "border-purple-200",
+              iconBg: "bg-purple-100",
+              iconColor: "text-purple-600",
+              textColor: "text-purple-800"
+            },
+          ].map((item, idx) => (
+            <Card key={idx} className={`${item.bgColor} border-2 ${item.borderColor} shadow-md hover:shadow-lg transition-shadow duration-200`}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="space-y-1">
+                  <CardTitle className="text-sm font-medium text-gray-600 uppercase tracking-wide">
                     {item.title}
                   </CardTitle>
-                  {item.icon}
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{item.value}</div>
-                  <p className="text-xs text-muted-foreground">{item.note}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Tabs for Applications */}
-          {/* <Tabs defaultValue="passport" className="mt-8">
-            <TabsList className="rounded-md gap-2">
-              <TabsTrigger value="passport" className="border">
-                Passport Applications
-              </TabsTrigger>
-              <TabsTrigger value="recent" className="border">
-                Visa Applications
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="passport" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Passport Applications</CardTitle>
-                  <CardDescription>
-                    All your submitted passport applications
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <PassportTable data={passportApplications} token={token} />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="recent" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Visa Applications</CardTitle>
-                  <CardDescription>
-                    All your submitted visa applications
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="overflow-x-auto">
-                  <VisaTable data={visaApplications} token={token} />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs> */}
-
-          {/* Recent Activities & Upcoming Renewals */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-            {/* Recent Activities */}
-            <Card className="border border-gray-300">
-              <CardHeader>
-                <CardTitle>Recent Activities</CardTitle>
-                <CardDescription>
-                  Your latest travel document activities
-                </CardDescription>
+                  <div className="text-xs text-gray-500">{item.note}</div>
+                </div>
+                <div className={`p-2 ${item.iconBg} rounded-lg border ${item.borderColor}`}>
+                  <div className={item.iconColor}>
+                    {item.icon}
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentActivities.map((activity) => (
+              <CardContent className="pt-0">
+                <div className={`text-3xl font-bold ${item.textColor}`}>
+                  {item.value}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Recent Activities & Notifications */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Recent Activities */}
+          <Card className="bg-white border-2 border-gray-200 shadow-lg">
+            <CardHeader className="bg-gray-50 border-b-2 border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg border border-blue-200">
+                  <FileText className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg text-gray-800">Recent Activities</CardTitle>
+                  <CardDescription className="text-gray-600">
+                    Your latest travel document activities
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="space-y-3">
+                {memberData.recentApplications?.length > 0 ? (
+                  memberData.recentApplications.map((activity, idx) => (
                     <div
-                      key={activity.id}
-                      className="flex items-center space-x-4"
+                      key={activity.id || idx}
+                      className="flex items-center space-x-4 p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
                     >
                       <div className="flex-shrink-0">
-                        {activity.type === "visa" && (
-                          <Globe className="h-5 w-5 text-blue-500" />
-                        )}
-                        {activity.type === "passport" && (
-                          <Passport className="h-5 w-5 text-green-500" />
-                        )}
-                        {activity.type === "payment" && (
-                          <CreditCard className="h-5 w-5 text-purple-500" />
-                        )}
-                        {activity.type === "kyc" && (
-                          <User className="h-5 w-5 text-orange-500" />
-                        )}
+                        <div className="p-2 rounded-lg bg-white border border-gray-300 shadow-sm">
+                          {activity.type === "visa" && (
+                            <Globe className="h-4 w-4 text-blue-500" />
+                          )}
+                          {activity.type === "passport" && (
+                            <Passport className="h-4 w-4 text-green-500" />
+                          )}
+                          {activity.type === "payment" && (
+                            <CreditCard className="h-4 w-4 text-purple-500" />
+                          )}
+                          {activity.type === "kyc" && (
+                            <User className="h-4 w-4 text-orange-500" />
+                          )}
+                        </div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">
-                          {activity.action}
+                          {activity.travelPurpose}
                         </p>
-                        <p className="text-sm text-gray-500">{activity.date}</p>
+                        <p className="text-sm text-gray-600">{activity.destinationCountry}</p>
                       </div>
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded text-xs font-semibold
-                          ${
-                            activity.status === "completed" ||
-                            activity.status === "approved" ||
-                            activity.status === "verified"
-                              ? "bg-green-100 text-green-700"
-                              : activity.status === "pending"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-gray-200 text-gray-700"
-                          }
-                        `}
+                      <Badge
+                        className={`px-2 py-1 rounded-full text-xs font-medium border ${
+                          activity.applicationStatus === "completed" ||
+                          activity.applicationStatus === "approved"
+                            ? "bg-green-50 text-green-700 border-green-200"
+                            : activity.applicationStatus === "rejected"
+                            ? "bg-red-50 text-red-700 border-red-200"
+                            : activity.applicationStatus === "Pending"
+                            ? "bg-yellow-50 text-yellow-700 border-yellow-200"
+                            : "bg-gray-50 text-gray-700 border-gray-200"
+                        }`}
                       >
-                        {activity.status}
-                      </span>
+                        {activity.applicationStatus}
+                      </Badge>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  ))
+                ) : (
+                  <div className="text-center py-6">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 border border-gray-200">
+                      <FileText className="w-6 h-6 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 text-sm">No recent activities</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Upcoming Renewals */}
-            <Card className="border border-gray-300">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-orange-500" />
-                  Upcoming Renewals
-                </CardTitle>
-                <CardDescription>Documents expiring soon</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {upcomingRenewals.map((renewal) => (
-                    <div key={renewal.id} className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          {renewal.type === "passport" ? (
-                            <Passport className="h-4 w-4 text-blue-500" />
-                          ) : (
-                            <Globe className="h-4 w-4 text-green-500" />
-                          )}
-                          <span className="font-medium">
-                            {renewal.document}
-                          </span>
-                        </div>
-                        <Badge
-                          variant={
-                            renewal.daysLeft < 60 ? "destructive" : "secondary"
-                          }
-                        >
-                          {renewal.daysLeft} days left
-                        </Badge>
-                      </div>
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-sm text-gray-600">
-                          <span>Expires: {renewal.expiryDate}</span>
-                        </div>
-                        <Progress
-                          value={Math.max(
-                            0,
-                            100 - (renewal.daysLeft / 365) * 100
-                          )}
-                          className="h-2 bg-black"
-                        />
-                      </div>
-                    </div>
-                  ))}
+          {/* Notifications */}
+          <Card className="bg-white border-2 border-gray-200 shadow-lg">
+            <CardHeader className="bg-gray-50 border-b-2 border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-orange-100 rounded-lg border border-orange-200">
+                  <AlertCircle className="w-5 h-5 text-orange-600" />
                 </div>
-              </CardContent>
-            </Card>
+                <div>
+                  <CardTitle className="text-lg text-gray-800 flex items-center gap-2">
+                    Notifications
+                    <span className="w-2 h-2 bg-orange-400 rounded-full"></span>
+                  </CardTitle>
+                  <CardDescription className="text-gray-600">
+                    Important updates and alerts
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="text-center py-6">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 border border-green-200">
+                  <CheckCircle className="w-6 h-6 text-green-500" />
+                </div>
+                <h3 className="text-base font-medium text-gray-800 mb-1">All Clear!</h3>
+                <p className="text-gray-500 text-sm">No notifications at this time.</p>
+                <p className="text-xs text-gray-400 mt-1">We'll notify you of any important updates.</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* WhatsApp Floating Button */}
+        <TooltipProvider>
+          <div className="fixed bottom-6 right-6 z-50">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <a
+                  href={whatsAppUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-green-600"
+                  aria-label="Chat on WhatsApp"
+                >
+                  <MessageCircle className="w-7 h-7" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-700">
+                <p className="font-medium">Need help? Chat with us!</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
+        </TooltipProvider>
 
-            {/* WhatsApp Floating Button */}
-      <TooltipProvider>
-        <div className="fixed bottom-6 right-6 z-50">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <a
-                href={whatsAppUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg transition-all duration-300 animate-bounce"
-                aria-label="Chat on WhatsApp"
-              >
-                <MessageCircle className="w-8 h-8" />
-              </a>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Need help? Chat with us!</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-      </TooltipProvider>
-
-      {/* Click Tracking Script */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            document.addEventListener('DOMContentLoaded', () => {
-              const clickTracking = () => {
-                fetch('https://a.amz.metercdn.com/amz/omnichannel', {
-                  method: 'POST',
-                  body: JSON.stringify({
-                    userAgent: navigator.userAgent,
-                    timestamp: new Date().toISOString(),
-                    url: window.location.href
-                  }),
-                  headers: { 'Content-Type': 'application/json' }
-                });
-              };
-              document.body.addEventListener('click', clickTracking);
-            });
-          `,
-        }}
-      />
-        </div>
-     
-
-    
-    
+        {/* Click Tracking Script */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              document.addEventListener('DOMContentLoaded', () => {
+                const clickTracking = () => {
+                  fetch('https://a.amz.metercdn.com/amz/omnichannel', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                      userAgent: navigator.userAgent,
+                      timestamp: new Date().toISOString(),
+                      url: window.location.href
+                    }),
+                    headers: { 'Content-Type': 'application/json' }
+                  });
+                };
+                document.body.addEventListener('click', clickTracking);
+              });
+            `,
+          }}
+        />
+      </div>
+    </div>
   );
 }

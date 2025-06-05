@@ -118,7 +118,7 @@ export default function LoginPage() {
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="6393141893"
+                  placeholder="Enter your phone number"
                   className="bg-white/10 border border-white/20 placeholder-gray-300 text-white focus:ring-2 focus:ring-[#f6d365]"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}

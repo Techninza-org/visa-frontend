@@ -9,6 +9,10 @@ export const metadata = {
   title: "AXE VISA TECHNOLOGY",
   description:
     "Luxury visa and passport application services across India. Fast, reliable, and premium service for all your travel document needs.",
+  icons: {
+    icon: "/favicon.ico", 
+  },
+
 };
 
 export default function RootLayout({

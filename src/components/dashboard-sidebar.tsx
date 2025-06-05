@@ -185,7 +185,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
                       </div>
 
                       <div className="flex items-center gap-2">
-                        {item.badge && (
+                        {/* {item.badge && (
                           <Badge
                             variant="secondary"
                             className={`text-xs px-2 py-0.5 min-w-[20px] h-5 flex items-center justify-center ${
@@ -196,7 +196,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
                           >
                             {item.badge}
                           </Badge>
-                        )}
+                        )} */}
                         <ChevronRight
                           className={`h-4 w-4 transition-transform duration-200 opacity-0 group-hover:opacity-100 ${
                             isActive
