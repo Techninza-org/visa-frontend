@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -18,60 +19,71 @@ import {
 
 export default function RegisterPage() {
   const router = useRouter();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
     nationality: "",
-    country: "",
-    address: "",
+    password: "",
   });
-  const [profilePic, setProfilePic] = useState<File | null>(null);
+
+  // const [profilePic, setProfilePic] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setProfilePic(e.target.files[0]);
-    }
-  };
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files[0]) {
+  //     setProfilePic(e.target.files[0]);
+  //   }
+  // };
 
-  const handleSubmit = async () => {
-    const formData = new FormData();
-    Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-    if (profilePic) {
-      formData.append("profilePic", profilePic);
-    }
+const handleSubmit = async () => {
+  const formData = new FormData();
+  Object.entries(form).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
 
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/public/user-register`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+  // if (profilePic) {
+  //   formData.append("profilePic", profilePic);
+  // }
 
-      if (response.ok) {
-        alert("Registration successful!");
-        router.push("/pages/login");
-      } else {
-        const error = await response.json();
-        alert(`Registration failed: ${error.message || "Unknown error"}`);
+  setLoading(true);
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/public/user-register`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }
-    } catch (err) {
-      console.error(err);
-      alert("An error occurred during registration.");
-    } finally {
-      setLoading(false);
+    );
+
+    console.log("Response:", response.data);
+
+    if (response.data?.success) {
+      alert(response.data.message || "Registration successful!");
+      router.push("/pages/login");
+    } else {
+      alert(`Registration failed: ${response.data?.message || "Unknown error"}`);
     }
-  };
+  } catch (error: any) {
+    const responseData = error.response?.data;
+    if (Array.isArray(responseData?.errors)) {
+      alert("Registration failed:\n" + responseData.errors.map((err: string) => `• ${err}`).join("\n"));
+    } else if (responseData?.message) {
+      alert(`Registration failed: ${responseData.message}`);
+    } else {
+      alert(`Registration failed: ${error.message || "Unknown error"}`);
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div>
@@ -84,7 +96,7 @@ export default function RegisterPage() {
               Enter your details to register a new account
             </p>
           </div>
-          <Card className="backdrop-blur-md bg-white/5 border border-white/10 shadow-2xl rounded-2xl mt-5 ">
+          <Card className="backdrop-blur-md bg-white/5 border border-white/10 shadow-2xl rounded-2xl mt-5">
             <CardHeader>
               <CardTitle className="text-white">Sign Up</CardTitle>
               <CardDescription className="text-gray-300">
@@ -97,8 +109,7 @@ export default function RegisterPage() {
                 { name: "email", label: "Email", type: "email" },
                 { name: "phone", label: "Phone Number", type: "tel" },
                 { name: "nationality", label: "Nationality" },
-                { name: "country", label: "Country" },
-                { name: "address", label: "Address" },
+                { name: "password", label: "Password", type: "password" },
               ].map((field) => (
                 <div key={field.name}>
                   <Label htmlFor={field.name} className="text-white mb-2">
@@ -115,10 +126,10 @@ export default function RegisterPage() {
                   />
                 </div>
               ))}
-
+{/* 
               <div>
                 <Label htmlFor="profilePic" className="text-white">
-                  Profile Picture
+                  Profile Picture (optional)
                 </Label>
                 <Input
                   id="profilePic"
@@ -127,7 +138,7 @@ export default function RegisterPage() {
                   onChange={handleFileChange}
                   className="text-white file:text-white file:bg-[#f6d365] file:border-none file:rounded-lg"
                 />
-              </div>
+              </div> */}
             </CardContent>
             <CardFooter>
               <Button
