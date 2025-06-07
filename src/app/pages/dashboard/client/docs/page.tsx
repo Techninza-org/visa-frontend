@@ -527,6 +527,8 @@ export default function TrackStatusPage() {
         </div>
 
         {/* Document Lists by Category */}
+
+        
         <div className="p-6">
           {Object.entries(groupedDocuments).map(([category, docs]) => (
             <div key={category} className="mb-8 last:mb-0">
@@ -562,7 +564,7 @@ export default function TrackStatusPage() {
                             {doc.description}
                           </p>
 
-                          {doc.status === "uploaded" && doc.uploadedDate && (
+                          {doc.status === "uploaded" && "uploadedDate" in doc && doc.uploadedDate && (
                             <div className="flex items-center text-xs text-gray-500 space-x-4">
                               <span className="flex items-center">
                                 <FileText className="w-3 h-3 mr-1" />
@@ -575,7 +577,7 @@ export default function TrackStatusPage() {
                             </div>
                           )}
 
-                          {doc.status === "issue" && doc.issueDescription && (
+                          {doc.status === "issue"  && "issueDescription" in doc && doc.issueDescription && (
                             <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-xs">
                               <AlertTriangle className="w-3 h-3 inline mr-1" />
                               {doc.issueDescription}
@@ -585,12 +587,14 @@ export default function TrackStatusPage() {
                       </div>
 
                       <div className="flex items-center space-x-2 ml-4">
-                        {doc.status === "uploaded" && doc.filePath && (
+                        {doc.status === "uploaded" &&
+                          "filePath" in doc &&
+                          doc.filePath && (
                           <>
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handlePreview(doc.filePath)}
+                              onClick={() => doc.filePath && handlePreview(doc.filePath)}
                               className="text-gray-500 border-slate-600 hover:bg-blue-400 hover:text-white"
                             >
                               <Eye className="w-4 h-4 mr-1" />
@@ -601,8 +605,8 @@ export default function TrackStatusPage() {
                               variant="outline"
                               onClick={() =>
                                 handleDownload(
-                                  doc.filePath,
-                                  `${doc.documentType}.${doc.filePath
+                                  doc.filePath!,
+                                  `${doc.documentType}.${(doc.filePath ?? "")
                                     .split(".")
                                     .pop()}`
                                 )
@@ -615,7 +619,7 @@ export default function TrackStatusPage() {
                           </>
                         )}
 
-                        {doc.status === "issue" && !doc.isVerified && (
+                        {doc.status === "issue" && (!("isVerified" in doc) || !doc.isVerified) && (
                           <Button
                             size="sm"
                             variant="outline"
