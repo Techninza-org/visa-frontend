@@ -65,6 +65,8 @@ export function FileUpload({ onFileChange, accept = "*" }: FileUploadProps) {
                   src={preview || "/placeholder.svg"}
                   alt="Preview"
                   className="w-full h-full object-cover rounded-md"
+                  width={64}
+                  height={64}
                 />
               </div>
             ) : (

@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, JSX } from "react";
 
 import ChecklistModal from "@/components/modals/ChecklistModal";
 
 import axios from "axios";
-import { Visa } from "@/types";
+
 import Cookies from "js-cookie";
 import { VisaModal } from "@/components/modals/visa-modal";
 import {
@@ -21,6 +21,7 @@ import {
   CalendarDays,
   Phone,
   Mail,
+  Loader2,
 } from "lucide-react";
 import DataTable from "@/components/DataTable";
 import PaymentButton from "@/components/PaymentButton";
@@ -57,8 +58,10 @@ interface ChecklistItem {
   file?: string;
 }
 
+
+
 const VisaApplication = () => {
-  const [visaApplications, setVisaApplications] = useState<Visa[]>([]);
+  const [visaApplications, setVisaApplications] = useState<any[]>([]);
 
       const [fetchLoading, setFetchLoading] = useState(true);
   
@@ -169,22 +172,22 @@ const VisaApplication = () => {
     fetchVisa();
   }, [fetchVisa]);
 
-const getStatusColor = (status) => {
-  switch (status) {
-    case "completed":
-      return "bg-emerald-50 text-emerald-700 border-emerald-200 ring-emerald-200/50";
-    case "pending":
-      return "bg-amber-50 text-amber-700 border-amber-200 ring-amber-200/50";
-    case "processing":
-      return "bg-blue-50 text-blue-700 border-blue-200 ring-blue-200/50";
-    case "failed":
-      return "bg-red-50 text-red-700 border-red-200 ring-red-200/50";
-    default:
-      return "bg-gray-50 text-gray-700 border-gray-200 ring-gray-200/50";
-  }
+interface StatusColorMap {
+  [key: string]: string;
+}
+
+const getStatusColor = (status: string): string => {
+  const colorMap: StatusColorMap = {
+    completed: "bg-emerald-50 text-emerald-700 border-emerald-200 ring-emerald-200/50",
+    pending: "bg-amber-50 text-amber-700 border-amber-200 ring-amber-200/50",
+    processing: "bg-blue-50 text-blue-700 border-blue-200 ring-blue-200/50",
+    failed: "bg-red-50 text-red-700 border-red-200 ring-red-200/50",
+  };
+  return colorMap[status] || "bg-gray-50 text-gray-700 border-gray-200 ring-gray-200/50";
 };
 
-const getStatusIcon = (status) => {
+
+const getStatusIcon = (status: string): JSX.Element => {
   switch (status) {
     case "completed":
       return <CheckCircle className="h-4 w-4 text-emerald-600" />;
@@ -199,11 +202,22 @@ const getStatusIcon = (status) => {
   }
 };
 
- const columns = [
+interface VisaApplicationRow extends VisaApplication {
+  phone?: string;
+  email?: string;
+}
+
+interface Column<T> {
+  key: string;
+  label: string;
+  render: (row: T) => React.ReactNode;
+}
+
+const columns: Column<VisaApplicationRow>[] = [
   { 
     key: "fullName", 
     label: "Full Name",
-    render: (row) => (
+    render: (row: VisaApplicationRow) => (
       <div className="flex items-center space-x-3">
         <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
           {row.fullName?.charAt(0)?.toUpperCase() || 'U'}
@@ -218,7 +232,7 @@ const getStatusIcon = (status) => {
   { 
     key: "destinationCountry", 
     label: "Destination",
-    render: (row) => (
+    render: (row: VisaApplicationRow) => (
       <div className="flex items-center space-x-2">
         <div className="w-6 h-4 rounded-sm bg-gray-200 flex items-center justify-center">
           <span className="text-xs">🌍</span>
@@ -230,7 +244,7 @@ const getStatusIcon = (status) => {
   { 
     key: "phone", 
     label: "Contact",
-    render: (row) => (
+    render: (row: VisaApplicationRow) => (
       <div className="space-y-1">
         <div className="flex items-center space-x-2 text-sm">
           <Phone className="h-3 w-3 text-gray-400" />
@@ -246,7 +260,7 @@ const getStatusIcon = (status) => {
   {
     key: "travelDate",
     label: "Travel Details",
-    render: (row) => (
+    render: (row: VisaApplicationRow) => (
       <div className="space-y-1">
         <div className="flex items-center space-x-2 text-sm">
           <CalendarDays className="h-3 w-3 text-gray-400" />
@@ -268,7 +282,7 @@ const getStatusIcon = (status) => {
   {
     key: "status",
     label: "Status",
-    render: (row) => (
+    render: (row: VisaApplicationRow) => (
       <div className="flex flex-col space-y-2">
         <div
           className={`inline-flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold border ring-1 ${getStatusColor(
@@ -280,7 +294,7 @@ const getStatusIcon = (status) => {
             {row.applicationStatus.toLowerCase()}
           </span>
         </div>
-        {row.paymentStatus === "Pending" && (
+        {row.paymentStatus === false && (
           <div className="inline-flex items-center space-x-1 px-2 py-1 rounded-md text-xs bg-orange-50 text-orange-700 border border-orange-200">
             <CreditCard className="h-3 w-3" />
             <span>Payment Due</span>
@@ -292,7 +306,7 @@ const getStatusIcon = (status) => {
   {
     key: "actions",
     label: "Actions",
-    render: (row) => (
+    render: (row: VisaApplicationRow) => (
       <div className="flex items-center justify-end space-x-2">
         {/* Checklist Button */}
         <button
@@ -315,7 +329,7 @@ const getStatusIcon = (status) => {
         </button>
 
         {/* Payment Button */}
-        {row.paymentStatus === "Pending" && (
+        {row.paymentStatus === false && (
           <div className="relative">
             <PaymentButton
               token={token}
@@ -323,7 +337,6 @@ const getStatusIcon = (status) => {
               totalAmount={row.totalFee}
               productId={row._id}
               selectedAddressId={{ id: "addr_789" }}
-              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 font-medium focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
             />
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
           </div>

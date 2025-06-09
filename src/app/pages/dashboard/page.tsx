@@ -1,26 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState,JSX } from "react";
 import Cookies from "js-cookie";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
-import Header from "@/components/header";
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
+// import Header from "@/components/header";
+// import { DashboardSidebar } from "@/components/dashboard-sidebar";
+// import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+// import { Progress } from "@/components/ui/progress";
 import {
   MessageCircle,
   FileText,
   Clock,
   CreditCard,
-  Users,
+  // Users,
   Globe,
   StampIcon as Passport,
   AlertCircle,
   User,
   Upload,
   Sparkles,
-  TrendingUp,
+  // TrendingUp,
   CheckCircle,
   Eye,
 } from "lucide-react";
@@ -42,8 +42,9 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { VisaModal } from "@/components/modals/visa-modal";
-import { parse } from "path";
+// import { parse } from "path";
 
+// Type definitions
 interface Passport {
   firstName: string;
   dateOfBirth: string;
@@ -51,57 +52,104 @@ interface Passport {
   _id: string;
 }
 
-interface Visa {
-  country: string;
-  dateOfBirth: string;
-  visaType: string;
-  travelDate: Date;
-  returnDate: Date;
-  status: string;
-  _id: string;
+// interface Visa {
+//   country: string;
+//   dateOfBirth: string;
+//   visaType: string;
+//   travelDate: Date;
+//   returnDate: Date;
+//   status: string;
+//   _id: string;
+// }
+
+interface User {
+  name?: string;
+  email?: string;
+  id?: string;
+  [key: string]: any;
 }
 
-export default function ClientDashboard() {
-  const token = Cookies.get("token") || "";
+interface RecentApplication {
+  id?: string;
+  type: "visa" | "passport" | "payment" | "kyc";
+  travelPurpose: string;
+  destinationCountry: string;
+  applicationStatus: "completed" | "approved" | "rejected" | "Pending" | string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
-  const [activeModal, setActiveModal] = useState<string | null>(null);
+interface DashboardTotals {
+  all: number;
+  pending: number;
+  approved: number;
+  underReview: number;
+}
+
+interface MemberData {
+  totals?: DashboardTotals;
+  recentApplications?: RecentApplication[];
+  memberSince?: string;
+}
+
+interface DashboardStatsResponse {
+  success: boolean;
+  data: string | MemberData;
+  message?: string;
+}
+
+interface SummaryCardItem {
+  title: string;
+  icon: JSX.Element;
+  value: number;
+  note: string;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  iconBg: string;
+  iconColor: string;
+  textColor: string;
+}
+
+type ModalType = "visa" | "passport" | "kyc" | null;
+
+export default function ClientDashboard(): JSX.Element {
+  const token: string = Cookies.get("token") || "";
+
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   // Parse user data from cookie (JSON string to object)
-  const userCookie = Cookies.get("user");
-  const user = userCookie ? JSON.parse(userCookie) : {};
-
-
-
-
+  const userCookie: string | undefined = Cookies.get("user");
+  const user: User = userCookie ? JSON.parse(userCookie) : {};
 
   console.log("User Data:", user.name);
 
   const [userName, setUserName] = useState<string>(user.name || "User");
   const [memberSince, setMemberSince] = useState<string>("");
 
-  const whatsAppNumber = "+916392848646";
-  const whatsAppMessage = "Hello! I need help with my visa application.";
-  const whatsAppUrl = `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(
+  const whatsAppNumber: string = "+916392848646";
+  const whatsAppMessage: string = "Hello! I need help with my visa application.";
+  const whatsAppUrl: string = `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(
     whatsAppMessage
   )}`;
   
-  const handleOpenModal = (modalName: string) => {
-    setActiveModal(modalName);
+  const handleOpenModal = (modalName: string): void => {
+    setActiveModal(modalName as ModalType);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (): void => {
     setActiveModal(null);
   };
 
-  const handleSubmitForm = (formType: string) => {
+  const handleSubmitForm = (formType: string): void => {
     handleCloseModal();
   };
 
   // Optional: Fetch user info to display in header welcome message
-  useEffect(() => {
-    const fetchUserInfo = async () => {
+  useEffect((): void => {
+    const fetchUserInfo = async (): Promise<void> => {
       try {
-        const res = await axios.get(
+        const res: AxiosResponse<DashboardStatsResponse> = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/user/dashboard-stats`,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -109,8 +157,8 @@ export default function ClientDashboard() {
         );
         console.log("User Info:", res.data.data);
         // setUserName(res.data.name || "User");
-        setMemberSince(res.data.data || "");
-      } catch (error) {
+        setMemberSince(typeof res.data.data === 'string' ? res.data.data : JSON.stringify(res.data.data));
+      } catch (error: unknown) {
         console.error("Failed to fetch user info", error);
       }
     };
@@ -118,17 +166,97 @@ export default function ClientDashboard() {
   }, [token]);
 
   // Parse memberSince as an object if it's a stringified JSON
-  let memberData: any = {};
+  let memberData: MemberData = {};
   try {
     memberData = typeof memberSince === "string" ? JSON.parse(memberSince) : memberSince;
   } catch {
     memberData = {};
   }
 
-  const totalApplications = memberData.totals?.all || 0;
-  const inProgressCount = memberData.totals?.pending || 0;
-  const approvedCount = memberData.totals?.approved || 0;
-  const underReviewCount = memberData.totals?.underReview || 0;
+  const totalApplications: number = memberData.totals?.all || 0;
+  const inProgressCount: number = memberData.totals?.pending || 0;
+  const approvedCount: number = memberData.totals?.approved || 0;
+  const underReviewCount: number = memberData.totals?.underReview || 0;
+
+  const summaryCards: SummaryCardItem[] = [
+    {
+      title: "Total Applications",
+      icon: <FileText className="h-5 w-5" />,
+      value: totalApplications,
+      note: "+1 from last month",
+      color: "blue",
+      bgColor: "bg-blue-50",
+      borderColor: "border-blue-200",
+      iconBg: "bg-blue-100",
+      iconColor: "text-blue-600",
+      textColor: "text-blue-800"
+    },
+    {
+      title: "In Progress",
+      icon: <Clock className="h-5 w-5" />,
+      value: inProgressCount,
+      note: "Estimated completion: 5 days",
+      color: "orange",
+      bgColor: "bg-orange-50",
+      borderColor: "border-orange-200",
+      iconBg: "bg-orange-100",
+      iconColor: "text-orange-600",
+      textColor: "text-orange-800"
+    },
+    {
+      title: "Approved",
+      icon: <CheckCircle className="h-5 w-5" />,
+      value: approvedCount,
+      note: "Ready for download",
+      color: "green",
+      bgColor: "bg-green-50",
+      borderColor: "border-green-200",
+      iconBg: "bg-green-100",
+      iconColor: "text-green-600",
+      textColor: "text-green-800"
+    },
+    {
+      title: "Under Review",
+      icon: <Eye className="h-5 w-5" />,
+      value: underReviewCount,
+      note: "Awaiting verification",
+      color: "purple",
+      bgColor: "bg-purple-50",
+      borderColor: "border-purple-200",
+      iconBg: "bg-purple-100",
+      iconColor: "text-purple-600",
+      textColor: "text-purple-800"
+    },
+  ];
+
+  const getActivityIcon = (type: RecentApplication['type']): JSX.Element => {
+    switch (type) {
+      case "visa":
+        return <Globe className="h-4 w-4 text-blue-500" />;
+      case "passport":
+        return <Passport className="h-4 w-4 text-green-500" />;
+      case "payment":
+        return <CreditCard className="h-4 w-4 text-purple-500" />;
+      case "kyc":
+        return <User className="h-4 w-4 text-orange-500" />;
+      default:
+        return <FileText className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getStatusBadgeClasses = (status: string): string => {
+    switch (status.toLowerCase()) {
+      case "completed":
+      case "approved":
+        return "bg-green-50 text-green-700 border-green-200";
+      case "rejected":
+        return "bg-red-50 text-red-700 border-red-200";
+      case "pending":
+        return "bg-yellow-50 text-yellow-700 border-yellow-200";
+      default:
+        return "bg-gray-50 text-gray-700 border-gray-200";
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -157,6 +285,7 @@ export default function ClientDashboard() {
               <button
                 className="bg-gradient-to-r from-amber-400 to-amber-600 hover:bg-orange-600 text-white px-6 py-3 rounded-lg border-1 shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2"
                 onClick={() => handleOpenModal("visa")}
+                type="button"
               >
                 <Upload className="w-5 h-5" />
                 <span className="font-semibold">Apply for Visa</span>
@@ -173,56 +302,7 @@ export default function ClientDashboard() {
 
         {/* Summary Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              title: "Total Applications",
-              icon: <FileText className="h-5 w-5" />,
-              value: totalApplications,
-              note: "+1 from last month",
-              color: "blue",
-              bgColor: "bg-blue-50",
-              borderColor: "border-blue-200",
-              iconBg: "bg-blue-100",
-              iconColor: "text-blue-600",
-              textColor: "text-blue-800"
-            },
-            {
-              title: "In Progress",
-              icon: <Clock className="h-5 w-5" />,
-              value: inProgressCount,
-              note: "Estimated completion: 5 days",
-              color: "orange",
-              bgColor: "bg-orange-50",
-              borderColor: "border-orange-200",
-              iconBg: "bg-orange-100",
-              iconColor: "text-orange-600",
-              textColor: "text-orange-800"
-            },
-            {
-              title: "Approved",
-              icon: <CheckCircle className="h-5 w-5" />,
-              value: approvedCount,
-              note: "Ready for download",
-              color: "green",
-              bgColor: "bg-green-50",
-              borderColor: "border-green-200",
-              iconBg: "bg-green-100",
-              iconColor: "text-green-600",
-              textColor: "text-green-800"
-            },
-            {
-              title: "Under Review",
-              icon: <Eye className="h-5 w-5" />,
-              value: underReviewCount,
-              note: "Awaiting verification",
-              color: "purple",
-              bgColor: "bg-purple-50",
-              borderColor: "border-purple-200",
-              iconBg: "bg-purple-100",
-              iconColor: "text-purple-600",
-              textColor: "text-purple-800"
-            },
-          ].map((item, idx) => (
+          {summaryCards.map((item: SummaryCardItem, idx: number) => (
             <Card key={idx} className={`${item.bgColor} border-2 ${item.borderColor} shadow-md hover:shadow-lg transition-shadow duration-200`}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div className="space-y-1">
@@ -265,26 +345,15 @@ export default function ClientDashboard() {
             </CardHeader>
             <CardContent className="p-4">
               <div className="space-y-3">
-                {memberData.recentApplications?.length > 0 ? (
-                  memberData.recentApplications.map((activity, idx) => (
+                {memberData.recentApplications && memberData.recentApplications.length > 0 ? (
+                  memberData.recentApplications.map((activity: RecentApplication, idx: number) => (
                     <div
                       key={activity.id || idx}
                       className="flex items-center space-x-4 p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
                     >
                       <div className="flex-shrink-0">
                         <div className="p-2 rounded-lg bg-white border border-gray-300 shadow-sm">
-                          {activity.type === "visa" && (
-                            <Globe className="h-4 w-4 text-blue-500" />
-                          )}
-                          {activity.type === "passport" && (
-                            <Passport className="h-4 w-4 text-green-500" />
-                          )}
-                          {activity.type === "payment" && (
-                            <CreditCard className="h-4 w-4 text-purple-500" />
-                          )}
-                          {activity.type === "kyc" && (
-                            <User className="h-4 w-4 text-orange-500" />
-                          )}
+                          {getActivityIcon(activity.type)}
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
@@ -294,16 +363,7 @@ export default function ClientDashboard() {
                         <p className="text-sm text-gray-600">{activity.destinationCountry}</p>
                       </div>
                       <Badge
-                        className={`px-2 py-1 rounded-full text-xs font-medium border ${
-                          activity.applicationStatus === "completed" ||
-                          activity.applicationStatus === "approved"
-                            ? "bg-green-50 text-green-700 border-green-200"
-                            : activity.applicationStatus === "rejected"
-                            ? "bg-red-50 text-red-700 border-red-200"
-                            : activity.applicationStatus === "Pending"
-                            ? "bg-yellow-50 text-yellow-700 border-yellow-200"
-                            : "bg-gray-50 text-gray-700 border-gray-200"
-                        }`}
+                        className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadgeClasses(activity.applicationStatus)}`}
                       >
                         {activity.applicationStatus}
                       </Badge>

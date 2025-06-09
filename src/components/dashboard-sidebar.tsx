@@ -47,7 +47,8 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
         setUsername(parsedUser.name || "User");
         setEmail(parsedUser.email || "");
       } catch (error) {
-        setUsername("User", error );
+        setUsername("User");
+        console.error("Failed to parse user data:", error);
       }
     }
   }, []);

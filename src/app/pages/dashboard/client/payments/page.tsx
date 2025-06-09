@@ -1,6 +1,8 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
+ import { useCallback } from "react";
 import {
   Search,
   CreditCard,
@@ -18,6 +20,34 @@ import DataTable from "@/components/DataTable";
 import axios from "axios";
 import Cookies from "js-cookie";
 
+type PaymentStatus = "completed" | "pending" | "failed" | "processing";
+
+  type RawPayment = {
+        payment_id: string;
+        productDetails?: {
+          destinationCountry?: string;
+          travelPurpose?: string;
+        };
+        amount: number;
+        created_at: string;
+        type_of_payment: string;
+        status: string;
+        receipt?: string | null;
+        // Add other fields if needed
+      };
+
+        type Payment = {
+    transactionId: string;
+    destinationCountry: string;
+    purpose: string;
+    amount: number;
+    date: string;
+    method: string;
+    status: string;
+    receipt: string | null;
+    raw: any;
+  };
+
 const PaymentsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -27,11 +57,13 @@ const PaymentsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
 
-  const [payments, setPayments] = useState([]);
+
+
+  const [payments, setPayments] = useState<Payment[]>([]);
   const token = Cookies.get("token");
   const rowsPerPage = 5;
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status:PaymentStatus) => {
     switch (status) {
       case "completed":
         return "bg-green-100 text-green-800 border-green-200";
@@ -46,7 +78,7 @@ const PaymentsPage = () => {
     }
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status:PaymentStatus) => {
     switch (status) {
       case "completed":
         return <CheckCircle className="h-4 w-4" />;
@@ -59,7 +91,9 @@ const PaymentsPage = () => {
     }
   };
 
-  const fetchPaymentHistory = async () => {
+ 
+
+  const fetchPaymentHistory = useCallback(async () => {
     try {
       setFetchLoading(true);
       const response = await axios.get(
@@ -68,9 +102,11 @@ const PaymentsPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      const paymentsRaw = response.data.payments || [];
+    
 
-      const transformed = paymentsRaw.map((p) => ({
+      const paymentsRaw: RawPayment[] = response.data.payments || [];
+
+      const transformed = paymentsRaw.map((p: RawPayment) => ({
         transactionId: p.payment_id,
         destinationCountry: p.productDetails?.destinationCountry || "N/A",
         purpose: p.productDetails?.travelPurpose || "Other",
@@ -88,11 +124,11 @@ const PaymentsPage = () => {
     } finally {
       setFetchLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchPaymentHistory();
-  }, [token]);
+  }, [fetchPaymentHistory]);
 
   const filteredPayments = payments.filter((payment) => {
     const matchesSearch =
@@ -123,7 +159,11 @@ const PaymentsPage = () => {
     currentPage * rowsPerPage
   );
 
-  const handleViewReceipt = (payment) => {
+  interface HandleViewReceiptPayment extends Payment {
+    raw: Payment;
+  }
+
+  const handleViewReceipt = (payment: HandleViewReceiptPayment): void => {
     // console.log("Viewing receipt for payment:", payment.raw);
     setSelectedPayment(payment.raw);
     setShowModal(true);
@@ -135,7 +175,7 @@ const PaymentsPage = () => {
     {
       key: "transactionId",
       label: "Transaction ID",
-      render: (payment) => (
+      render: (payment:HandleViewReceiptPayment) => (
         <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
           {payment.transactionId}
         </span>
@@ -144,7 +184,7 @@ const PaymentsPage = () => {
     {
       key: "purpose",
       label: "Purpose",
-      render: (payment) => (
+      render: (payment:HandleViewReceiptPayment) => (
         <div>
           <p className="font-medium text-sm">{payment.purpose}</p>
         </div>
@@ -153,7 +193,7 @@ const PaymentsPage = () => {
     {
       key: "destinationCountry",
       label: "Destination Country",
-      render: (payment) => (
+      render: (payment:HandleViewReceiptPayment) => (
         <span className="text-sm text-gray-700">
           {payment.destinationCountry}
         </span>
@@ -162,7 +202,7 @@ const PaymentsPage = () => {
     {
       key: "amount",
       label: "Amount",
-      render: (payment) => (
+      render: (payment:HandleViewReceiptPayment) => (
         <span className="font-semibold text-green-600">₹{payment.amount}</span>
       ),
     },
@@ -171,13 +211,13 @@ const PaymentsPage = () => {
     {
       key: "status",
       label: "Status",
-      render: (payment) => (
+      render: (payment:HandleViewReceiptPayment) => (
         <div
           className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-            payment.status
+            payment.status as PaymentStatus
           )}`}
         >
-          {getStatusIcon(payment.status)}
+          {getStatusIcon(payment.status as PaymentStatus)}
           <span className="capitalize">{payment.status}</span>
         </div>
       ),
@@ -185,7 +225,7 @@ const PaymentsPage = () => {
     {
       key: "actions",
       label: "Actions",
-      render: (payment) => (
+      render: (payment:HandleViewReceiptPayment) => (
         <div className="flex space-x-2">
           <button
             onClick={() => handleViewReceipt(payment)}
@@ -296,7 +336,9 @@ const PaymentsPage = () => {
         onClose={() => setShowModal(false)}
         title="Payment Receipt"
       >
-        {selectedPayment && <PaymentSlip payment={selectedPayment} />}
+        {selectedPayment && (
+          <PaymentSlip payment={selectedPayment} onClose={() => setShowModal(false)} />
+        )}
       </ModalPayment>
     </div>
   );

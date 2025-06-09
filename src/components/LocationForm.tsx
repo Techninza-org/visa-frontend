@@ -92,14 +92,25 @@ export default function LocationForm() {
       country.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // let selectedCountry = selected || null;
+     if (typeof window !== "undefined") {
+    sessionStorage.setItem(
+      "selectedCountries",
+      JSON.stringify({
+        source: selectedCountry1?.name || "",
+        destination: selectedCountry2?.name || "",
+      })
+    )
+  }
 
- sessionStorage.setItem(
-    "selectedCountries",
-    JSON.stringify({
-      source: selectedCountry1?.name || "",
-      destination: selectedCountry2?.name || "",
-    })
-  );
+
+//  sessionStorage.setItem(
+//     "selectedCountries",
+//     JSON.stringify({
+//       source: selectedCountry1?.name || "",
+//       destination: selectedCountry2?.name || "",
+//     })
+//   );
 
     return (
       <div className="relative w-full">

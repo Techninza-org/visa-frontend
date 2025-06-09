@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,11 +50,15 @@ export function VisaModal({
   const [applicationId, setApplicationId] = useState<string | null>(null);
   const [usedSessionDestination, setUsedSessionDestination] = useState(false);
   // const [currentStep, setCurrentStep] = useState(1);
+  let destinationCountries: string | null = null;
+  if (typeof window !== "undefined") {
+    destinationCountries = sessionStorage.getItem("selectedCountries");
+  }
 
-  const destinationCountries = sessionStorage.getItem("selectedCountries");
-  const parsedCountries = destinationCountries
-    ? JSON.parse(destinationCountries)
-    : [];
+  // const destinationCountries = sessionStorage.getItem("selectedCountries");
+  const parsedCountries = useMemo(() => {
+    return destinationCountries ? JSON.parse(destinationCountries) : [];
+  }, [destinationCountries]);
 
   useEffect(() => {
     if (parsedCountries.length && !usedSessionDestination) {

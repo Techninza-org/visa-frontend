@@ -188,8 +188,7 @@ export default function Support() {
       fetchTickets(); // refresh to show updated data
     } catch (error) {
       console.error(
-        "Failed to send message:",
-        error?.response?.data || error.message
+        "Failed to send message"
       );
       setMessage("Failed to send message. Please try again.");
     }
@@ -543,7 +542,7 @@ export default function Support() {
             </div>
           ) : (
             <div className="overflow-hidden rounded-2xl  bg-white/50">
-              <DataTable<DocumentItem>
+              <DataTable<any>
                 currentPage={currentPage}
                 onPageChange={setCurrentPage}
                 rowsPerPage={rowsPerPage}

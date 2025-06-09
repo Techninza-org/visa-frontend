@@ -39,12 +39,14 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative flex h-[600px] items-center justify-center mb-10">
-          <div className="absolute inset-0 z-0 h-[600px]">
+          <div className="absolute inset-0 z-0 ">
             <Image
               src="/hero2.jpeg"
               alt="Hero Background"
-              layout="fill"
-              objectFit="cover"
+              fill
+              className="object-cover brightness-75"
+              style={{ objectFit: "cover" }}
+              priority
             />
             <div className="absolute inset-0" />
           </div>
@@ -240,8 +242,9 @@ export default function Home() {
                 <Image
                   src="/luxury.jpg"
                   alt="Luxury office"
-                  fill
                   className="object-cover"
+                  width={800}
+                  height={600}
                 />
               </div>
               <div className="space-y-6">

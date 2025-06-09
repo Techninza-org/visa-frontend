@@ -12,6 +12,7 @@ import {
   import { useEffect, useState } from "react";
   import Cookies from "js-cookie";
 import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 interface KycData {
     firstName: string;
     lastName: string;
@@ -177,40 +178,47 @@ export default function TrackPassportDetails() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
             <div>
               <p className="text-xs text-gray-500 mb-1">User Image</p>
-              <img
+              <Image
                 src={`http://localhost:4000/${passData?.userImg}`}
                 alt="User"
-                
                 className="w-full h-40 object-cover rounded border"
+                width={160}
+                height={160} // Adjust height as needed
+
               />
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">
                 Adhar Front
               </p>
-              <img
+              <Image
                 src={`http://localhost:4000/${passData.adharFrontImage}`}
                 alt="Adhar Front"
-             
-                className="w-full h-40 object-cover rounded border"
+               className="w-full h-40 object-cover rounded border"
+                width={160}
+                height={160} // Adjust height as needed
               />
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">Adhar Back</p>
-              <img
+              <Image
                 src={`http://localhost:4000/${passData.adharBackImage}`}
                 alt="Adhar Back"
 
                 className="w-full h-40 object-cover rounded border"
+                width={160}
+                height={160} // Adjust height as needed
               />
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">PAN Card</p>
-              <img
+              <Image
                 src={`http://localhost:4000/${passData.panCardImg}`}
                 alt="PAN Card"
                 
                 className="w-full h-40 object-cover rounded border"
+                width={160}
+                height={160} // Adjust height as needed
               />
             </div>
           </div>

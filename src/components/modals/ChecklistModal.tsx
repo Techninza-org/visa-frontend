@@ -2,7 +2,7 @@
 
 import {
   AlertCircle,
-  Check,
+
   FileText,
   Upload,
   X,
@@ -12,7 +12,7 @@ import {
   ExternalLink,
   FileCheck,
 } from "lucide-react";
-import { useState } from "react";
+import { useState,JSX } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 
@@ -22,6 +22,7 @@ interface ChecklistItem {
   file?: string;
   remarks?: string;
   accepted?: string; // "accepted", "rejected", "pending", etc.
+  subnote?: string; // Added missing subnote property
 }
 
 interface ChecklistModalProps {
@@ -29,6 +30,15 @@ interface ChecklistModalProps {
   onClose: () => void;
   checklist: ChecklistItem[];
   applicationId: string;
+}
+
+interface AcceptanceStatus {
+  icon: JSX.Element;
+  text: string;
+  bgColor: string;
+  textColor: string;
+  borderColor: string;
+  cardBorder: string;
 }
 
 const ChecklistModal: React.FC<ChecklistModalProps> = ({
@@ -39,7 +49,7 @@ const ChecklistModal: React.FC<ChecklistModalProps> = ({
 }) => {
   const [uploading, setUploading] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<{
-    [key: string]: "success" | "error";
+    [key: string]: "success" | "error" | undefined;
   }>({});
   const token = Cookies.get("token") || "";
 
@@ -90,7 +100,7 @@ const ChecklistModal: React.FC<ChecklistModalProps> = ({
     }
   };
 
-  const getAcceptanceStatus = (accepted?: string) => {
+  const getAcceptanceStatus = (accepted?: string): AcceptanceStatus | null => {
     switch (accepted?.toLowerCase()) {
       case "accepted":
         return {
@@ -124,7 +134,7 @@ const ChecklistModal: React.FC<ChecklistModalProps> = ({
     }
   };
 
-  const getItemBorderColor = (item: ChecklistItem) => {
+  const getItemBorderColor = (item: ChecklistItem): string => {
     const status = getAcceptanceStatus(item.accepted);
     if (status) return status.cardBorder;
     if (item.file) return "border-l-blue-500";
@@ -137,6 +147,7 @@ const ChecklistModal: React.FC<ChecklistModalProps> = ({
   const totalItems = checklist.length;
   const progressPercentage =
     totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[92vh] overflow-hidden">
@@ -287,95 +298,95 @@ const ChecklistModal: React.FC<ChecklistModalProps> = ({
                     )}
 
                     {/* Status Indicators */}
-                    <div className="flex items-center space-x-4 ">
-                    <div className="flex flex-wrap gap-3 ">
-                      {/* File upload status */}
-                      {item.file ? (
-                        <div className="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full border border-blue-200 shadow-sm">
-                          <FileCheck className="w-4 h-4 text-blue-600" />
-                          <span className="text-sm text-blue-700 font-medium">
-                            Document Uploaded
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center space-x-2 bg-orange-50 px-4 py-2 rounded-full border border-orange-200 shadow-sm">
-                          <AlertCircle className="w-4 h-4 text-orange-600" />
-                          <span className="text-sm text-orange-700 font-medium">
-                            Document Required
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Document Link */}
-                    {item.file && (
-                      <div>
-                        <a
-                          href={`${
-                            process.env.NEXT_PUBLIC_API_URL_IMAGE || ""
-                          }${item.file}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors group bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100"
-                        >
-                          <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                          <span className="text-sm font-medium">
-                            View Uploaded Document
-                          </span>
-                        </a>
-                      </div>
-                    )}
-
-                    {/* Upload Section */}
                     <div className="flex items-center space-x-4">
-                      <label className="cursor-pointer">
-                        <input
-                          type="file"
-                          className="hidden"
-                          accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                          onChange={(e) => handleFileInputChange(item._id, e)}
-                          disabled={uploading === item._id}
-                        />
-                        <div
-                          className={`flex items-center space-x-3 px-6 py-3 rounded-xl transition-all duration-200 font-medium shadow-sm ${
-                            uploading === item._id
-                              ? "bg-gray-100 text-gray-500 cursor-not-allowed"
-                              : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                          }`}
-                        >
-                          <Upload
-                            className={`w-5 h-5 ${
-                              uploading === item._id ? "animate-spin" : ""
-                            }`}
-                          />
-                          <span className="text-sm">
-                            {uploading === item._id
-                              ? "Uploading..."
-                              : item.file
-                              ? "Replace Document"
-                              : "Upload Document"}
-                          </span>
-                        </div>
-                      </label>
+                      <div className="flex flex-wrap gap-3">
+                        {/* File upload status */}
+                        {item.file ? (
+                          <div className="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full border border-blue-200 shadow-sm">
+                            <FileCheck className="w-4 h-4 text-blue-600" />
+                            <span className="text-sm text-blue-700 font-medium">
+                              Document Uploaded
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-2 bg-orange-50 px-4 py-2 rounded-full border border-orange-200 shadow-sm">
+                            <AlertCircle className="w-4 h-4 text-orange-600" />
+                            <span className="text-sm text-orange-700 font-medium">
+                              Document Required
+                            </span>
+                          </div>
+                        )}
+                      </div>
 
-                      {/* Upload Status Messages */}
-                      {uploadStatus[item._id] === "success" && (
-                        <div className="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-lg border border-green-200 animate-fade-in shadow-sm">
-                          <CheckCircle className="w-4 h-4 text-green-600" />
-                          <span className="text-sm font-medium text-green-700">
-                            Uploaded successfully!
-                          </span>
+                      {/* Document Link */}
+                      {item.file && (
+                        <div>
+                          <a
+                            href={`${
+                              process.env.NEXT_PUBLIC_API_URL_IMAGE || ""
+                            }${item.file}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors group bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100"
+                          >
+                            <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                            <span className="text-sm font-medium">
+                              View Uploaded Document
+                            </span>
+                          </a>
                         </div>
                       )}
-                      {uploadStatus[item._id] === "error" && (
-                        <div className="flex items-center space-x-2 bg-red-50 px-4 py-2 rounded-lg border border-red-200 animate-fade-in shadow-sm">
-                          <AlertTriangle className="w-4 h-4 text-red-600" />
-                          <span className="text-sm font-medium text-red-700">
-                            Upload failed. Please try again.
-                          </span>
-                        </div>
-                      )}
-                    </div>
+
+                      {/* Upload Section */}
+                      <div className="flex items-center space-x-4">
+                        <label className="cursor-pointer">
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                            onChange={(e) => handleFileInputChange(item._id, e)}
+                            disabled={uploading === item._id}
+                          />
+                          <div
+                            className={`flex items-center space-x-3 px-6 py-3 rounded-xl transition-all duration-200 font-medium shadow-sm ${
+                              uploading === item._id
+                                ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                                : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                            }`}
+                          >
+                            <Upload
+                              className={`w-5 h-5 ${
+                                uploading === item._id ? "animate-spin" : ""
+                              }`}
+                            />
+                            <span className="text-sm">
+                              {uploading === item._id
+                                ? "Uploading..."
+                                : item.file
+                                ? "Replace Document"
+                                : "Upload Document"}
+                            </span>
+                          </div>
+                        </label>
+
+                        {/* Upload Status Messages */}
+                        {uploadStatus[item._id] === "success" && (
+                          <div className="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-lg border border-green-200 animate-fade-in shadow-sm">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            <span className="text-sm font-medium text-green-700">
+                              Uploaded successfully!
+                            </span>
+                          </div>
+                        )}
+                        {uploadStatus[item._id] === "error" && (
+                          <div className="flex items-center space-x-2 bg-red-50 px-4 py-2 rounded-lg border border-red-200 animate-fade-in shadow-sm">
+                            <AlertTriangle className="w-4 h-4 text-red-600" />
+                            <span className="text-sm font-medium text-red-700">
+                              Upload failed. Please try again.
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );

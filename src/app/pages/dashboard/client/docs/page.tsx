@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
 import { Button } from "@/components/ui/button";
+  import { useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ import {
 } from "lucide-react";
 
 import axios from "axios";
+import Image from "next/image";
 
 interface DocumentItem {
   _id: string;
@@ -220,7 +222,9 @@ export default function TrackStatusPage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateDocumentId, setUpdateDocumentId] = useState<string>("");
 
-  const fetchDocuments = async () => {
+
+
+  const fetchDocuments = useCallback(async () => {
     try {
       setFetchLoading(true);
       const res = await axios.get(
@@ -242,13 +246,13 @@ export default function TrackStatusPage() {
     } finally {
       setFetchLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     if (token) {
       fetchDocuments();
     }
-  }, [token]);
+  }, [token, fetchDocuments]);
 
   // Merge static required documents with API data
   const getMergedDocuments = () => {
@@ -379,6 +383,7 @@ export default function TrackStatusPage() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       alert("Failed to download file.");
+      console.error("Download error:", error);
     }
   };
 
@@ -785,13 +790,15 @@ export default function TrackStatusPage() {
                 />
               </svg>
             </button>
-            <img
+            <Image
               src={previewImage}
               alt="Document preview"
-              className="w-full h-full object-contain max-h-[90vh]"
+              className=" object-contain "
               onError={(e) => {
                 e.currentTarget.src = "/placeholder.png";
               }}
+              width={1000}
+              height={1000}
             />
           </div>
         </DialogContent>

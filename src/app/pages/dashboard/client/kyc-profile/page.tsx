@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, use, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -55,7 +55,7 @@ const ProfilePage = () => {
   const { toast } = useToast();
 
   //fetch user profile data from API
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = useCallback(async () => {
     try {
       setFetchLoading(true);
       const response = await fetch(
@@ -97,10 +97,10 @@ const ProfilePage = () => {
         variant: "destructive",
       });
     }
-  finally {
-        setFetchLoading(false);
-      }
-  };
+    finally {
+      setFetchLoading(false);
+    }
+  }, [token, toast]);
 
   useEffect(() => {
     if (token) {
@@ -112,13 +112,13 @@ const ProfilePage = () => {
         variant: "destructive",
       });
     }
-  }, [token, toast]);
+  }, [token, toast, fetchUserProfile]);
 
   const handleSaveProfile = async () => {
     try {
       const formData = new FormData();
       Object.entries(profile).forEach(([key, value]) =>
-        formData.append(key, value)
+       formData.append(key, String(value)) // Ensure all values are strings
       );
 
       if (selectedFile) {

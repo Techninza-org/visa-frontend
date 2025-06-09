@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Cookies from "js-cookie";
 
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
+// import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import {
   Card,
   CardContent,
@@ -18,7 +18,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import Header from "@/components/header";
+// import Header from "@/components/header";
+// import Image from "next/image";
 
 // Type definition for the API data
 interface VisaApplication {
@@ -53,8 +54,7 @@ interface VisaApplication {
     travelHistory: string;
   };
 }
-
-export default function TrackStatusPage() {
+ function TrackStatusContent() {
   const [visaData, setVisaData] = useState<VisaApplication | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
     const [fetchLoading, setFetchLoading] = useState(true);
@@ -90,7 +90,7 @@ export default function TrackStatusPage() {
 
         const data = await res.json();
         setVisaData(data.application);
-      } catch (err: any) {
+      } catch (err:any ) {
         setError(err.message || "Something went wrong");
       } finally {
         setLoading(false);
@@ -218,14 +218,30 @@ const DetailItem = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
+
+
+export default function TrackStatusPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <TrackStatusContent />
+    </Suspense>
+  );
+}
+
 // Reusable document image viewer
-const DocumentImage = ({ label, src }: { label: string; src: string }) => (
-  <div>
-    <p className="text-xs text-gray-500 mb-1">{label}</p>
-    <img
-      src={`${process.env.NEXT_PUBLIC_API_URL_IMAGE}${src}`} // Update this URL as needed
-      alt={label}
-      className="w-full h-40 object-cover rounded border"
-    />
-  </div>
-);
+// const DocumentImage = ({ label, src }: { label: string; src: string }) => (
+//   <div>
+//     <p className="text-xs text-gray-500 mb-1">{label}</p>
+//     <Image
+//       src={`${process.env.NEXT_PUBLIC_API_URL_IMAGE}${src}`} // Update this URL as needed
+//       alt={label}
+//       className="w-full h-40 object-cover rounded border"
+//       width={200}
+//       height={200} // Adjust height as needed
+//     />
+//   </div>
+// );

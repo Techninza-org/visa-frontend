@@ -7,14 +7,18 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { Suspense } from "react";
 
-export default function USVisaIndiaPassport() {
+ function USVisaIndiaPassportContent() {
   const [activeTab, setActiveTab] = useState("tourist");
   const searchParams = useSearchParams();
   const [visaResult, setVisaResult] = useState<any>(null);
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
   const [visaType, setVisaType] = useState<string>(""); // "e-visa", "visa-required", or number for visa-free
+
+
+  
 
 
   
@@ -373,6 +377,7 @@ export default function USVisaIndiaPassport() {
   };
   useEffect(() => {
     const data = searchParams.get("data");
+
     const sourceParam = searchParams.get("source");
     const destinationParam = searchParams.get("destination");
     const visaTypeParam = searchParams.get("visaType"); // e-visa, visa-required, or number
@@ -876,5 +881,15 @@ export default function USVisaIndiaPassport() {
 
       <Footer />
     </div>
+  );
+}
+
+
+
+export default function USVisaIndiaPassport() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <USVisaIndiaPassportContent />
+    </Suspense>
   );
 }

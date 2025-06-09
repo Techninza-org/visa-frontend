@@ -2,13 +2,21 @@
 import { useRouter } from "next/navigation";
 import { useRazorpayPayment } from "@/lib/useRazorpayPayment";
 
+interface PaymentButtonProps {
+  token: string;
+  currentUser: any; // Replace 'any' with the actual type if available
+  totalAmount: number;
+  productId: string;
+  selectedAddressId: string;
+}
+
 const PaymentButton = ({
   token,
   currentUser,
   totalAmount,
   productId,
   selectedAddressId,
-}) => {
+}: PaymentButtonProps) => {
   const router = useRouter();
 
   const { handleRazorpayPayment, isProcessing } = useRazorpayPayment({

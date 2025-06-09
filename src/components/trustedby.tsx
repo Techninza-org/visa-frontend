@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 // import Image from "next/image";
 
@@ -35,10 +36,11 @@ const TrustedBy = () => {
             className="flex flex-col items-center justify-center"
           >
             <div className="relative h-12 w-32 mb-2">
-              <img
+              <Image
                 src={company.logo}
                 alt={company.name}
                 width={50}
+                height={50}
                 className="object-contain"
               />
             </div>

@@ -1,4 +1,13 @@
-const ModalPayment = ({ isOpen, onClose, children, title }) => {
+import { ReactNode } from "react";
+
+interface ModalPaymentProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactNode;
+  title: ReactNode;
+}
+
+const ModalPayment = ({ isOpen, onClose, children, title }: ModalPaymentProps) => {
   if (!isOpen) return null;
 
   return (

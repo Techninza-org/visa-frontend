@@ -4,8 +4,22 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { ShieldCheck, Clock, Globe2, Users } from "lucide-react";
 import Link from "next/link";
+import { ReactNode } from "react";
 
-const services = [
+// Types
+interface Service {
+  title: string;
+  desc: string;
+  link?: string;
+}
+
+interface Stat {
+  icon: ReactNode;
+  label: string;
+  value: string;
+}
+
+const services: Service[] = [
   {
     title: "Tourist Visa Assistance",
     desc: "Get quick and hassle-free visa processing for travel across 98+ countries. Our experts ensure all documents meet embassy standards.",
@@ -24,7 +38,7 @@ const services = [
   },
 ];
 
-const additionalservices = [
+const additionalservices: Service[] = [
   {
     title: "Travel Insurance",
     desc: "Protect your travel plans with our comprehensive insurance packages covering medical emergencies, trip cancellations, and more.",
@@ -39,7 +53,7 @@ const additionalservices = [
   },
 ];
 
-const stats = [
+const stats: Stat[] = [
   {
     icon: <ShieldCheck className="h-8 w-8 text-amber-500" />,
     label: "Approval Rate",
@@ -96,13 +110,9 @@ export default function ServicesPage() {
           <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
             Additional services
           </h1>
-          {/* <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-            Complete visa and passport solutions trusted by thousands of
-            travelers, students, and professionals across India.
-          </p> */}
         </div>
 
-        {/* Additional services */}
+        {/* Additional Services */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
           {additionalservices.map((service) => (
             <Link key={service.title} href={service.link || "#"}>
