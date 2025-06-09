@@ -4,147 +4,108 @@ import Header from "@/components/header";
 export default function PrivacyPolicy() {
   return (
     <>
-    <Header />
-    <div className="min-h-screen bg-gray-50 py-12 mt-10">
-      <div className="container max-w-4xl mx-auto px-4 md:px-6">
-        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
-            Privacy Policy
-          </h1>
-          
-          <div className="prose prose-lg max-w-none text-gray-700">
-            <p className="text-lg mb-6">
-              <strong>Last Updated:</strong> {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-            </p>
+      <Header />
+      <div className="min-h-screen bg-gray-50 py-12 mt-10">
+        <div className="container max-w-4xl mx-auto px-4 md:px-6">
+          <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
+              Privacy Policy
+            </h1>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Introduction</h2>
-              <p className="mb-4">
-                Axe Visa Technology ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our visa consultation services.
+            <div className="prose prose-lg max-w-none text-gray-700">
+              <p><strong>Last Updated:</strong> {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              <p><strong>Company Name:</strong> Axe Visa Technology</p>
+              <p><strong>Registered Address:</strong> K-2/12 13 Peepal Chowk, Mohan Garden Uttam Nagar, Near Reliance Fresh, New Delhi, Delhi – 110059</p>
+              <p><strong>Website:</strong> www.axevia.com</p>
+              <p><strong>Contact Email:</strong> info@axevia.com</p>
+
+              <h2>1. Introduction</h2>
+              <p>
+                At Axe Visa Technology, we value your privacy and are committed to protecting the personal information you share with us.
+                This Privacy Policy outlines how we collect, use, store, and safeguard your data in connection with our visa and travel-related services.
+                By using our website or services, you consent to the practices described in this policy.
               </p>
-            </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Information We Collect</h2>
-              
-              <h3 className="text-xl font-medium text-gray-800 mb-3">2.1 Personal Information</h3>
-              <p className="mb-4">We may collect the following personal information:</p>
-              <ul className="list-disc list-inside mb-4 space-y-2">
-                <li>Full name and contact information (email, phone number, address)</li>
-                <li>Passport details and travel documents</li>
-                <li>Financial information for visa processing</li>
-                <li>Employment and educational background</li>
-                <li>Travel history and intended travel plans</li>
-                <li>Emergency contact information</li>
+              <h2>2. Information We Collect</h2>
+              <ul>
+                <li><strong>Identity Information:</strong> Full name, date of birth, passport number</li>
+                <li><strong>Contact Details:</strong> Phone number, email, residential address</li>
+                <li><strong>Visa-related Documents:</strong> Scanned passport, photos, financial records, employment/invitation letters</li>
+                <li><strong>Travel Details:</strong> Purpose of travel, travel dates, accommodation details</li>
+                <li><strong>Payment Information:</strong> Billing details and transaction history (we do not store card details)</li>
               </ul>
 
-              <h3 className="text-xl font-medium text-gray-800 mb-3">2.2 Technical Information</h3>
-              <ul className="list-disc list-inside mb-4 space-y-2">
-                <li>IP address and browser information</li>
-                <li>Website usage data and analytics</li>
-                <li>Cookies and similar tracking technologies</li>
+              <h2>3. How We Use Your Information</h2>
+              <ul>
+                <li>To assist with visa application preparation and submission</li>
+                <li>To communicate updates, reminders, and confirmations</li>
+                <li>To book embassy appointments and third-party reservations</li>
+                <li>For customer support and dispute resolution</li>
+                <li>To improve service quality and user experience</li>
               </ul>
-            </section>
+              <p>We do not sell, rent, or trade your information to any third parties.</p>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. How We Use Your Information</h2>
-              <p className="mb-4">We use your information for the following purposes:</p>
-              <ul className="list-disc list-inside mb-4 space-y-2">
-                <li>Processing visa applications and related services</li>
-                <li>Communicating with you about your application status</li>
-                <li>Providing customer support and consultation</li>
-                <li>Complying with legal and regulatory requirements</li>
-                <li>Improving our services and website functionality</li>
-                <li>Sending important updates and notifications</li>
+              <h2>4. Sharing of Information</h2>
+              <p>We may share your data only with:</p>
+              <ul>
+                <li>Embassies, consulates, and visa processing centers as required</li>
+                <li>Trusted third-party providers for flight/hotel/insurance reservations</li>
+                <li>Legal authorities as required by applicable laws</li>
               </ul>
-            </section>
+              <p>All partners and vendors operate under strict data protection policies.</p>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. Information Sharing and Disclosure</h2>
-              <p className="mb-4">We may share your information with:</p>
-              <ul className="list-disc list-inside mb-4 space-y-2">
-                <li>Government agencies and embassies for visa processing</li>
-                <li>Authorized third-party service providers</li>
-                <li>Legal authorities when required by law</li>
-                <li>Business partners with your explicit consent</li>
+              <h2>5. Data Security</h2>
+              <p>
+                We implement technical, administrative, and physical safeguards to protect your information from unauthorized access or misuse.
+                Data is stored in secure systems with restricted access, encryption, and regular monitoring.
+              </p>
+
+              <h2>6. Data Retention</h2>
+              <p>
+                We retain your personal data only for as long as necessary to fulfill the purpose of your visa application or as required by law.
+                After this period, all sensitive documents are securely deleted or anonymized.
+              </p>
+
+              <h2>7. Your Rights</h2>
+              <ul>
+                <li>Access the personal data we hold about you</li>
+                <li>Request correction of inaccurate information</li>
+                <li>Request deletion of your data (where legally permissible)</li>
+                <li>Withdraw consent for non-essential data usage</li>
               </ul>
-              <p className="mb-4">
-                We do not sell, trade, or rent your personal information to third parties for marketing purposes.
-              </p>
-            </section>
+              <p>To exercise these rights, email us at <strong>info@axevia.com</strong>.</p>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Data Security</h2>
-              <p className="mb-4">
-                We implement appropriate technical and organizational security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. These measures include:
+              <h2>8. Cookies & Website Analytics</h2>
+              <p>
+                Our website may use cookies to enhance user experience, understand behavior, and improve services.
+                You may disable cookies via your browser settings.
               </p>
-              <ul className="list-disc list-inside mb-4 space-y-2">
-                <li>SSL encryption for data transmission</li>
-                <li>Secure servers and databases</li>
-                <li>Regular security audits and updates</li>
-                <li>Access controls and employee training</li>
-              </ul>
-            </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">6. Data Retention</h2>
-              <p className="mb-4">
-                We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy, comply with legal obligations, resolve disputes, and enforce our agreements. Typically, we retain visa application data for 7 years after completion of services.
+              <h2>9. Children’s Privacy</h2>
+              <p>
+                Our services are not intended for individuals under the age of 18.
+                We do not knowingly collect personal data from children.
               </p>
-            </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Your Rights</h2>
-              <p className="mb-4">You have the right to:</p>
-              <ul className="list-disc list-inside mb-4 space-y-2">
-                <li>Access your personal information</li>
-                <li>Correct inaccurate or incomplete data</li>
-                <li>Request deletion of your data (subject to legal requirements)</li>
-                <li>Object to processing of your information</li>
-                <li>Request data portability</li>
-                <li>Withdraw consent where applicable</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">8. Cookies and Tracking</h2>
-              <p className="mb-4">
-                Our website uses cookies to enhance user experience and analyze website traffic. You can control cookie preferences through your browser settings. Essential cookies necessary for website functionality cannot be disabled.
+              <h2>10. Changes to This Policy</h2>
+              <p>
+                We reserve the right to update this Privacy Policy at any time. All changes will be posted on this page with an updated effective date.
               </p>
-            </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">9. International Data Transfers</h2>
-              <p className="mb-4">
-                Your information may be transferred to and processed in countries outside of India for visa processing purposes. We ensure appropriate safeguards are in place to protect your data during such transfers.
-              </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. Changes to This Policy</h2>
-              <p className="mb-4">
-                We may update this Privacy Policy periodically. We will notify you of significant changes by posting the updated policy on our website and updating the "Last Updated" date.
-              </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">11. Contact Information</h2>
-              <p className="mb-4">
-                If you have questions about this Privacy Policy or wish to exercise your rights, please contact us:
-              </p>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p><strong>Axe Visa Technology</strong></p>
-                <p>123 Business Ave, Suite 500</p>
-                <p>New Delhi, India</p>
-                <p>Email: privacy@axevisa.com</p>
-                <p>Phone: +91 98765 43210</p>
+              <h2>11. Contact Us</h2>
+              <p>If you have questions or concerns regarding this policy or your data privacy, please contact:</p>
+              <div className="bg-gray-100 p-4 rounded-lg">
+                <p><strong>Email:</strong> info@axevia.com</p>
+                <p><strong>Phone:</strong> +91 99993 90696</p>
+                <p><strong>Address:</strong> Axe Visa Technology Private Limited,<br />
+                K-2/12 13 Peepal Chowk, Mohan Garden Uttam Nagar,<br />
+                Near Reliance Fresh, New Delhi, Delhi – 110059</p>
               </div>
-            </section>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <Footer />
+      <Footer />
     </>
   );
 }

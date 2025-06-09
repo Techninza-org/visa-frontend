@@ -167,6 +167,18 @@ export default function Footer() {
           </p>
           <div className="flex space-x-6">
             <Link
+              href="/copyright"
+              className="text-gray-900 hover:text-yellow-500 text-sm transition-colors"
+            >
+             © Copyright
+            </Link>
+            <Link
+              href="/disclaimer"
+              className="text-gray-900 hover:text-yellow-500 text-sm transition-colors"
+            >
+              Disclaimer
+            </Link>
+            <Link
               href="/privacy-policy"
               className="text-gray-900 hover:text-yellow-500 text-sm transition-colors"
             >
