@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 export const useRazorpayPayment = ({
   currentUser,
   totalAmount,
+  packageId,
   productId,
   selectedAddressId,
   router,
@@ -59,7 +60,7 @@ export const useRazorpayPayment = ({
 
       // Step 2: Initialize Razorpay payment
       const options = {
-        key:"rzp_test_eaw8FUWQWt0bHV",
+        key:"rzp_test_rA0MAFpr4GmwXK",
         amount: amountToPay,
         currency: "INR",
         name: "ShopNest",
@@ -79,6 +80,8 @@ export const useRazorpayPayment = ({
               response.razorpay_signature
               );
               verifyBody.append("product_id", productId);
+              verifyBody.append("package_id", packageId);
+              verifyBody.append("type_of_payment", "visa");
               verifyBody.append("amount", totalAmount.toString());
 
               const verifyRes = await fetch(
@@ -101,7 +104,7 @@ export const useRazorpayPayment = ({
                 "Payment verified and stored, application updated"
               ) {
               alert("Payment successful! Your order has been placed.");
-              router.push("/orders");
+              // router.push("/orders");
               } else {
               throw new Error("Payment verification failed");
               }

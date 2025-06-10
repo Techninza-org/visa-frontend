@@ -27,6 +27,7 @@ import DataTable from "@/components/DataTable";
 import PaymentButton from "@/components/PaymentButton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import PackageSelectionModal from "@/components/PaymentButton";
 
 interface VisaApplication {
   _id: string;
@@ -58,13 +59,11 @@ interface ChecklistItem {
   file?: string;
 }
 
-
-
 const VisaApplication = () => {
   const [visaApplications, setVisaApplications] = useState<any[]>([]);
 
-      const [fetchLoading, setFetchLoading] = useState(true);
-  
+  const [fetchLoading, setFetchLoading] = useState(true);
+
   const [activeModal, setActiveModal] = useState<{
     name: string;
     id?: string;
@@ -162,206 +161,207 @@ const VisaApplication = () => {
       setTotalApplications(res.data.data.total);
     } catch (error) {
       console.error("Failed to fetch visa applications", error);
-    }finally {
+    } finally {
       setFetchLoading(false);
     }
-
   }, [token, currentPage, filters]);
 
   useEffect(() => {
     fetchVisa();
   }, [fetchVisa]);
 
-interface StatusColorMap {
-  [key: string]: string;
-}
-
-const getStatusColor = (status: string): string => {
-  const colorMap: StatusColorMap = {
-    completed: "bg-emerald-50 text-emerald-700 border-emerald-200 ring-emerald-200/50",
-    pending: "bg-amber-50 text-amber-700 border-amber-200 ring-amber-200/50",
-    processing: "bg-blue-50 text-blue-700 border-blue-200 ring-blue-200/50",
-    failed: "bg-red-50 text-red-700 border-red-200 ring-red-200/50",
-  };
-  return colorMap[status] || "bg-gray-50 text-gray-700 border-gray-200 ring-gray-200/50";
-};
-
-
-const getStatusIcon = (status: string): JSX.Element => {
-  switch (status) {
-    case "completed":
-      return <CheckCircle className="h-4 w-4 text-emerald-600" />;
-    case "pending":
-      return <Clock className="h-4 w-4 text-amber-600" />;
-    case "processing":
-      return <Loader2 className="h-4 w-4 text-blue-600 animate-spin" />;
-    case "failed":
-      return <AlertCircle className="h-4 w-4 text-red-600" />;
-    default:
-      return <AlertCircle className="h-4 w-4 text-gray-600" />;
+  interface StatusColorMap {
+    [key: string]: string;
   }
-};
 
-interface VisaApplicationRow extends VisaApplication {
-  phone?: string;
-  email?: string;
-}
+  const getStatusColor = (status: string): string => {
+    const colorMap: StatusColorMap = {
+      completed:
+        "bg-emerald-50 text-emerald-700 border-emerald-200 ring-emerald-200/50",
+      pending: "bg-amber-50 text-amber-700 border-amber-200 ring-amber-200/50",
+      processing: "bg-blue-50 text-blue-700 border-blue-200 ring-blue-200/50",
+      failed: "bg-red-50 text-red-700 border-red-200 ring-red-200/50",
+    };
+    return (
+      colorMap[status] ||
+      "bg-gray-50 text-gray-700 border-gray-200 ring-gray-200/50"
+    );
+  };
 
-interface Column<T> {
-  key: string;
-  label: string;
-  render: (row: T) => React.ReactNode;
-}
+  const getStatusIcon = (status: string): JSX.Element => {
+    switch (status) {
+      case "completed":
+        return <CheckCircle className="h-4 w-4 text-emerald-600" />;
+      case "pending":
+        return <Clock className="h-4 w-4 text-amber-600" />;
+      case "processing":
+        return <Loader2 className="h-4 w-4 text-blue-600 animate-spin" />;
+      case "failed":
+        return <AlertCircle className="h-4 w-4 text-red-600" />;
+      default:
+        return <AlertCircle className="h-4 w-4 text-gray-600" />;
+    }
+  };
 
-const columns: Column<VisaApplicationRow>[] = [
-  { 
-    key: "fullName", 
-    label: "Full Name",
-    render: (row: VisaApplicationRow) => (
-      <div className="flex items-center space-x-3">
-        <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-          {row.fullName?.charAt(0)?.toUpperCase() || 'U'}
+  interface VisaApplicationRow extends VisaApplication {
+    phone?: string;
+    email?: string;
+  }
+
+  interface Column<T> {
+    key: string;
+    label: string;
+    render: (row: T) => React.ReactNode;
+  }
+
+  const columns: Column<VisaApplicationRow>[] = [
+    {
+      key: "fullName",
+      label: "Full Name",
+      render: (row: VisaApplicationRow) => (
+        <div className="flex items-center space-x-3">
+          <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+            {row.fullName?.charAt(0)?.toUpperCase() || "U"}
+          </div>
+          <div>
+            <p className="font-semibold text-gray-900">{row.fullName}</p>
+            <p className="text-sm text-gray-500">ID: {row._id?.slice(-6)}</p>
+          </div>
         </div>
-        <div>
-          <p className="font-semibold text-gray-900">{row.fullName}</p>
-          <p className="text-sm text-gray-500">ID: {row._id?.slice(-6)}</p>
-        </div>
-      </div>
-    )
-  },
-  { 
-    key: "destinationCountry", 
-    label: "Destination",
-    render: (row: VisaApplicationRow) => (
-      <div className="flex items-center space-x-2">
-        <div className="w-6 h-4 rounded-sm bg-gray-200 flex items-center justify-center">
-          <span className="text-xs">🌍</span>
-        </div>
-        <span className="font-medium text-gray-900">{row.destinationCountry || "N/A"}</span>
-      </div>
-    )
-  },
-  { 
-    key: "phone", 
-    label: "Contact",
-    render: (row: VisaApplicationRow) => (
-      <div className="space-y-1">
-        <div className="flex items-center space-x-2 text-sm">
-          <Phone className="h-3 w-3 text-gray-400" />
-          <span className="text-gray-900">{row.phone || "N/A"}</span>
-        </div>
-        <div className="flex items-center space-x-2 text-sm">
-          <Mail className="h-3 w-3 text-gray-400" />
-          <span className="text-gray-600 truncate max-w-32">{row.email || "N/A"}</span>
-        </div>
-      </div>
-    )
-  },
-  {
-    key: "travelDate",
-    label: "Travel Details",
-    render: (row: VisaApplicationRow) => (
-      <div className="space-y-1">
-        <div className="flex items-center space-x-2 text-sm">
-          <CalendarDays className="h-3 w-3 text-gray-400" />
-          <span className="text-gray-900 font-medium">
-            {new Date(row.travelDate).toLocaleDateString('en-US', { 
-              month: 'short', 
-              day: 'numeric',
-              year: 'numeric'
-            }) || "N/A"}
+      ),
+    },
+    {
+      key: "destinationCountry",
+      label: "Destination",
+      render: (row: VisaApplicationRow) => (
+        <div className="flex items-center space-x-2">
+          <div className="w-6 h-4 rounded-sm bg-gray-200 flex items-center justify-center">
+            <span className="text-xs">🌍</span>
+          </div>
+          <span className="font-medium text-gray-900">
+            {row.destinationCountry || "N/A"}
           </span>
         </div>
-        <div className="flex items-center space-x-2 text-sm">
-          <Clock className="h-3 w-3 text-gray-400" />
-          <span className="text-gray-600">{row.travelDurationInDays || "N/A"} days</span>
-        </div>
-      </div>
-    )
-  },
-  {
-    key: "status",
-    label: "Status",
-    render: (row: VisaApplicationRow) => (
-      <div className="flex flex-col space-y-2">
-        <div
-          className={`inline-flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold border ring-1 ${getStatusColor(
-            row.applicationStatus.toLowerCase()
-          )}`}
-        >
-          {getStatusIcon(row.applicationStatus.toLowerCase())}
-          <span className="capitalize">
-            {row.applicationStatus.toLowerCase()}
-          </span>
-        </div>
-        {row.paymentStatus === false && (
-          <div className="inline-flex items-center space-x-1 px-2 py-1 rounded-md text-xs bg-orange-50 text-orange-700 border border-orange-200">
-            <CreditCard className="h-3 w-3" />
-            <span>Payment Due</span>
+      ),
+    },
+    {
+      key: "phone",
+      label: "Contact",
+      render: (row: VisaApplicationRow) => (
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2 text-sm">
+            <Phone className="h-3 w-3 text-gray-400" />
+            <span className="text-gray-900">{row.phone || "N/A"}</span>
           </div>
-        )}
-      </div>
-    ),
-  },
-  {
-    key: "actions",
-    label: "Actions",
-    render: (row: VisaApplicationRow) => (
-      <div className="flex items-center justify-end space-x-2">
-        {/* Checklist Button */}
-        <button
-          className="group relative bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 hover:bg-gray-50 hover:border-gray-300 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-          onClick={() => handleCheckListModal(row.checklist || [], row._id)}
-          title="View Checklist"
-        >
-          <FileText className="w-4 h-4" />
-          <span className="sr-only">Checklist</span>
-        </button>
-
-        {/* Edit Button */}
-        <button
-          className="group relative bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 hover:bg-gray-50 hover:border-gray-300 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-          onClick={() => handleOpenModal("visa", row._id)}
-          title="Edit Application"
-        >
-          <Edit className="w-4 h-4" />
-          <span className="sr-only">Edit</span>
-        </button>
-
-        {/* Payment Button */}
-        {row.paymentStatus === false && (
-          <div className="relative">
-            <PaymentButton
-              token={token}
-              currentUser={row._id}
-              totalAmount={row.totalFee}
-              productId={row._id}
-              selectedAddressId={{ id: "addr_789" }}
-            />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+          <div className="flex items-center space-x-2 text-sm">
+            <Mail className="h-3 w-3 text-gray-400" />
+            <span className="text-gray-600 truncate max-w-32">
+              {row.email || "N/A"}
+            </span>
           </div>
-        )}
-
-        {/* View Details Button */}
-        <Button 
-          variant="outline" 
-          size="sm" 
-          asChild
-          className="bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm hover:shadow-md transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-        >
-          <Link 
-            href={`/pages/dashboard/client/visatrack?visa_id=${row._id}`}
-            className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+        </div>
+      ),
+    },
+    {
+      key: "travelDate",
+      label: "Travel Details",
+      render: (row: VisaApplicationRow) => (
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2 text-sm">
+            <CalendarDays className="h-3 w-3 text-gray-400" />
+            <span className="text-gray-900 font-medium">
+              {new Date(row.travelDate).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              }) || "N/A"}
+            </span>
+          </div>
+          <div className="flex items-center space-x-2 text-sm">
+            <Clock className="h-3 w-3 text-gray-400" />
+            <span className="text-gray-600">
+              {row.travelDurationInDays || "N/A"} days
+            </span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (row: VisaApplicationRow) => (
+        <div className="flex flex-col space-y-2">
+          <div
+            className={`inline-flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold border ring-1 ${getStatusColor(
+              row.applicationStatus.toLowerCase()
+            )}`}
           >
-            <Eye className="w-4 h-4" />
-            <span className="hidden sm:inline">View</span>
-          </Link>
-        </Button>
-      </div>
-    ),
-  },
-];
+            {getStatusIcon(row.applicationStatus.toLowerCase())}
+            <span className="capitalize">
+              {row.applicationStatus.toLowerCase()}
+            </span>
+          </div>
+          {row.paymentStatus !== "Paid" && (
+            <div className="inline-flex items-center space-x-1 px-2 py-1 rounded-md text-xs bg-orange-50 text-orange-700 border border-orange-200">
+              <CreditCard className="h-3 w-3" />
+              <span>Payment Due</span>
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (row: VisaApplicationRow) => (
+        <div className="flex items-center justify-end space-x-2">
+          {/* Checklist Button */}
+          <button
+            className="group relative bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 hover:bg-gray-50 hover:border-gray-300 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+            onClick={() => handleCheckListModal(row.checklist || [], row._id)}
+            title="View Checklist"
+          >
+            <FileText className="w-4 h-4" />
+            <span className="sr-only">Checklist</span>
+          </button>
 
+          {/* Edit Button */}
+          <button
+            className="group relative bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 hover:bg-gray-50 hover:border-gray-300 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+            onClick={() => handleOpenModal("visa", row._id)}
+            title="Edit Application"
+          >
+            <Edit className="w-4 h-4" />
+            <span className="sr-only">Edit</span>
+          </button>
+
+          {/* Payment Button */}
+          {row.paymentStatus !== "Paid" && (
+            <div className="relative">
+              <PackageSelectionModal productId={row._id} />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+            </div>
+          )}
+
+          {/* View Details Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm hover:shadow-md transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+          >
+            <Link
+              href={`/pages/dashboard/client/visatrack?visa_id=${row._id}`}
+              className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+            >
+              <Eye className="w-4 h-4" />
+              <span className="hidden sm:inline">View</span>
+            </Link>
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   if (fetchLoading) {
     return (
