@@ -1,13 +1,13 @@
 "use client";
 
-import { Textarea } from "@/components/ui/textarea";
-import { SelectItem } from "@/components/ui/select";
-import { SelectContent } from "@/components/ui/select";
-import { SelectValue } from "@/components/ui/select";
-import { SelectTrigger } from "@/components/ui/select";
-import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// import { Textarea } from "@/components/ui/textarea";
+// import { SelectItem } from "@/components/ui/select";
+// import { SelectContent } from "@/components/ui/select";
+// import { SelectValue } from "@/components/ui/select";
+// import { SelectTrigger } from "@/components/ui/select";
+// import { Select } from "@/components/ui/select";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
 import AddOnServices from "@/components/addservices";
 import TrustedBy from "@/components/trustedby";
 import HowItWorks from "@/components/visaworks";
@@ -16,8 +16,8 @@ import {
   Award,
   CheckCircle,
   Clock,
-  MapPin,
-  Phone,
+  // MapPin,
+  // Phone,
   Shield,
   Star,
   Users,

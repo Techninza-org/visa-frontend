@@ -120,7 +120,8 @@ export default function Footer() {
                   />
                 </svg>
                 <span className="text-gray-900">
-                  123 Business Ave, Suite 500, New Delhi, India
+                  K-2/12 13 Peepal Chowk, Mohan Garden Uttam Nagar, Near
+                  Reliance Fresh, New Delhi, Delhi – 110059
                 </span>
               </li>
               <li className="flex items-center gap-2">
@@ -137,7 +138,7 @@ export default function Footer() {
                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                   />
                 </svg>
-                <span className="text-gray-900">+91 98765 43210</span>
+                <span className="text-gray-900">+919999390696</span>
               </li>
               <li className="flex items-center gap-2">
                 <svg
@@ -170,7 +171,7 @@ export default function Footer() {
               href="/copyright"
               className="text-gray-900 hover:text-yellow-500 text-sm transition-colors"
             >
-             © Copyright
+              © Copyright
             </Link>
             <Link
               href="/disclaimer"

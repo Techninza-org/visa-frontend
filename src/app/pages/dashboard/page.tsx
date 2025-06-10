@@ -127,7 +127,7 @@ export default function ClientDashboard(): JSX.Element {
   const [userName, setUserName] = useState<string>(user.name || "User");
   const [memberSince, setMemberSince] = useState<string>("");
 
-  const whatsAppNumber: string = "+916392848646";
+  const whatsAppNumber: string = "+919999390696";
   const whatsAppMessage: string = "Hello! I need help with my visa application.";
   const whatsAppUrl: string = `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(
     whatsAppMessage

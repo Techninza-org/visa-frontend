@@ -43,7 +43,9 @@ export default function ContactPage() {
               <div>
                 <h4 className="text-lg font-semibold">Office Address</h4>
                 <p className="text-gray-600">
-                  B-122, Sector 63, Noida, Uttar Pradesh, India
+                 K-2/12 13 Peepal Chowk, Mohan Garden Uttam Nagar,
+Near Reliance Fresh, New Delhi, Delhi – 110059
+
                 </p>
               </div>
             </div>
@@ -52,7 +54,7 @@ export default function ContactPage() {
               <Phone className="text-amber-500 h-6 w-6 mt-1" />
               <div>
                 <h4 className="text-lg font-semibold">Phone Number</h4>
-                <p className="text-gray-600">+91 9876543210</p>
+                <p className="text-gray-600">+919999390696</p>
               </div>
             </div>
 
