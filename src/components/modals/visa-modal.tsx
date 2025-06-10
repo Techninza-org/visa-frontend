@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,22 +15,29 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { ModalWrapper } from "@/components/modals/modal-wrapper";
-import {
-  Stamp,
-  User,
-  FileText,
-  Globe,
-  Calendar,
-  MapPin,
-  Mail,
-  Phone,
-  Briefcase,
+import { 
+  Stamp, 
+  Globe, 
+  MapPin, 
+  User, 
+  Calendar, 
+  Mail, 
+  Phone, 
+  Building,
+  Check,
+  AlertCircle,
   Plane,
-  Clock,
-  Shield,
-  Send,
+  FileText,
+  Save,
+  Send
 } from "lucide-react";
 import Cookies from "js-cookie";
+
+interface Country {
+  name: string;
+  Iso2: string;
+  Iso3: string;
+}
 
 interface VisaModalProps {
   isOpen: boolean;
@@ -39,27 +46,52 @@ interface VisaModalProps {
   userId?: string;
 }
 
-export function VisaModal({ isOpen, onClose, onSubmit, userId }: VisaModalProps) {
+export function VisaModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  userId,
+}: VisaModalProps) {
+  console.log("VisaModal rendered with userId:", userId);
+
   const [applicationId, setApplicationId] = useState<string | null>(null);
   const [usedSessionDestination, setUsedSessionDestination] = useState(false);
-  const [countries, setCountries] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [loadingCountries, setLoadingCountries] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
+  // Fetch countries data
   useEffect(() => {
-    axios
-      .get("https://countriesnow.space/api/v0.1/countries/iso")
-      .then((res) => setCountries(res.data.data))
-      .catch((err) => console.error("Error fetching countries:", err));
+    const fetchCountries = async () => {
+      setLoadingCountries(true);
+      try {
+        const response = await axios.get("https://countriesnow.space/api/v0.1/countries/iso");
+        setCountries(response.data.data);
+      } catch (err) {
+        console.error("Error fetching countries:", err);
+      } finally {
+        setLoadingCountries(false);
+      }
+    };
+
+    fetchCountries();
   }, []);
 
-  let destinationCountries: string | null = null;
-  if (typeof window !== "undefined") {
-    destinationCountries = sessionStorage.getItem("selectedCountries");
-  }
+  // Retrieve destination countries from sessionStorage
+  const destinationCountries = sessionStorage.getItem("selectedCountries");
+  const parsedCountries = destinationCountries
+    ? JSON.parse(destinationCountries)
+    : [];
 
-  const parsedCountries = useMemo(() => {
-    return destinationCountries ? JSON.parse(destinationCountries) : [];
-  }, [destinationCountries]);
+  useEffect(() => {
+    if (parsedCountries.length && !usedSessionDestination) {
+      setFormData((prev) => ({
+        ...prev,
+        destinationCountry: parsedCountries[0]?.destination || "",
+      }));
+      setUsedSessionDestination(true);
+    }
+  }, [parsedCountries, usedSessionDestination]);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -78,15 +110,7 @@ export function VisaModal({ isOpen, onClose, onSubmit, userId }: VisaModalProps)
     employmentStatus: "Working",
   });
 
-  useEffect(() => {
-    if (parsedCountries.length && !usedSessionDestination) {
-      setFormData((prev) => ({
-        ...prev,
-        destinationCountry: parsedCountries[0]?.destination || "",
-      }));
-      setUsedSessionDestination(true);
-    }
-  }, [parsedCountries, usedSessionDestination]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchApplication = async () => {
@@ -128,19 +152,18 @@ export function VisaModal({ isOpen, onClose, onSubmit, userId }: VisaModalProps)
     if (isOpen) fetchApplication();
   }, [isOpen, userId]);
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    },
-    []
-  );
-
-  const handleSelectChange = useCallback((name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  }, []);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const isFormComplete = Object.values(formData).every((v) => v !== "");
+
+  // Calculate completion percentage
+  const completionPercentage = Math.round(
+    (Object.values(formData).filter((v) => v !== "").length / Object.values(formData).length) * 100
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,7 +193,9 @@ export function VisaModal({ isOpen, onClose, onSubmit, userId }: VisaModalProps)
         sessionStorage.removeItem("selectedCountries");
       }
 
-      alert(isFormComplete ? "Application submitted successfully." : "Draft saved.");
+      alert(
+        isFormComplete ? "Application submitted successfully." : "Draft saved."
+      );
       onSubmit();
       onClose();
     } catch (error: any) {
@@ -181,192 +206,359 @@ export function VisaModal({ isOpen, onClose, onSubmit, userId }: VisaModalProps)
     }
   };
 
-  const FormSection = ({
-    title,
-    icon: Icon,
-    children,
-    className = "",
-  }: any) => (
-    <div className={`bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 ${className}`}>
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-blue-50 rounded-lg">
-            <Icon className="h-5 w-5 text-blue-600" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+  const renderFormField = (name: string, label: string, type: string, icon?: React.ReactNode, required = true) => {
+    const value = (formData as any)[name];
+    const isEmpty = !value || value === "";
+    
+    return (
+      <div className="space-y-3 group">
+        <Label className="text-sm font-semibold text-slate-700 flex items-center gap-2" htmlFor={name}>
+          {icon}
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="relative">
+          <Input
+            type={type}
+            id={name}
+            name={name}
+            value={value}
+            onChange={handleChange}
+            className={`h-12 border-2 transition-all duration-300 bg-white/80 backdrop-blur-sm
+              ${isEmpty 
+                ? 'border-slate-200 hover:border-slate-300 focus:border-blue-500' 
+                : 'border-emerald-200 bg-emerald-50/30 focus:border-emerald-500'
+              }
+              focus:ring-4 focus:ring-blue-500/10 rounded-xl shadow-sm hover:shadow-md
+              placeholder:text-slate-400`}
+            placeholder={`Enter ${label.toLowerCase()}`}
+          />
+          {!isEmpty && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              <Check className="h-4 w-4 text-emerald-500" />
+            </div>
+          )}
         </div>
       </div>
-      <div className="p-6">{children}</div>
-    </div>
-  );
+    );
+  };
 
-  const InputField = ({ name, label, type, icon: Icon, ...props }: any) => (
-    <div className="space-y-2">
-      <Label className="text-sm font-medium text-gray-700 flex items-center space-x-2" htmlFor={name}>
-        {Icon && <Icon className="h-4 w-4 text-gray-500" />}
-        <span>{label}</span>
-      </Label>
-      <Input
-        type={type}
-        id={name}
-        name={name}
-        value={(formData as any)[name]}
-        onChange={handleChange}
-        className="border-gray-300 focus:border-blue-500 focus:ring-blue-500/20"
-        {...props}
-      />
-    </div>
-  );
+  const renderSelectField = (
+    name: string,
+    label: string,
+    options: string[] | Country[],
+    icon?: React.ReactNode,
+    isCountryField = false,
+    required = true
+  ) => {
+    const value = (formData as any)[name];
+    const isEmpty = !value || value === "";
+    
+    return (
+      <div className="space-y-3 group">
+        <Label className="text-sm font-semibold text-slate-700 flex items-center gap-2" htmlFor={name}>
+          {icon}
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="relative">
+          <Select
+            value={value}
+            onValueChange={(value) =>
+              setFormData((prev) => ({ ...prev, [name]: value }))
+            }
+          >
+            <SelectTrigger className={`h-12 border-2 transition-all duration-300 bg-white/80 backdrop-blur-sm rounded-xl
+              ${isEmpty 
+                ? 'border-slate-200 hover:border-slate-300 focus:border-blue-500' 
+                : 'border-emerald-200 bg-emerald-50/30 focus:border-emerald-500'
+              }
+              focus:ring-4 focus:ring-blue-500/10 shadow-sm hover:shadow-md`}>
+              <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
+            </SelectTrigger>
+            <SelectContent className="max-h-60 rounded-xl border-2 shadow-xl bg-white/95 backdrop-blur-sm">
+              {loadingCountries && isCountryField ? (
+                <SelectItem value="" disabled>Loading countries...</SelectItem>
+              ) : (
+                (isCountryField ? countries : options as string[]).map((item) => {
+                  const optionValue = isCountryField ? (item as Country).name : item as string;
+                  return (
+                    <SelectItem 
+                      key={optionValue} 
+                      value={optionValue}
+                      className="hover:bg-blue-50 focus:bg-blue-50 rounded-lg transition-colors duration-200"
+                    >
+                      {optionValue}
+                    </SelectItem>
+                  );
+                })
+              )}
+            </SelectContent>
+          </Select>
+          {!isEmpty && (
+            <div className="absolute right-10 top-1/2 -translate-y-1/2">
+              <Check className="h-4 w-4 text-emerald-500" />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
-  const SelectField = ({
-    name,
-    label,
-    icon: Icon,
-    options,
-    placeholder,
-    value,
-    onChange,
-  }: any) => (
-    <div className="space-y-2">
-      <Label className="text-sm font-medium text-gray-700 flex items-center space-x-2" htmlFor={name}>
-        {Icon && <Icon className="h-4 w-4 text-gray-500" />}
-        <span>{label}</span>
-      </Label>
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="border-gray-300 focus:border-blue-500 focus:ring-blue-500/20">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option: string) => (
-            <SelectItem key={option} value={option}>
-              {option}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
+  const sections = [
+    { id: 'personal', title: 'Personal Information', icon: User, color: 'blue' },
+    { id: 'passport', title: 'Passport Information', icon: FileText, color: 'purple' },
+    { id: 'travel', title: 'Travel Information', icon: Plane, color: 'green' },
+    { id: 'address', title: 'Address Information', icon: MapPin, color: 'orange' }
+  ];
 
   return (
-    <ModalWrapper isOpen={isOpen} onClose={onClose} title="" size="large">
-      <div className="min-h-screen bg-gray-50">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-8 rounded-2xl mb-8">
-          <div className="flex items-center space-x-4">
-            <div className="p-3 bg-white/20 rounded-xl">
-              <Stamp className="h-8 w-8" />
+    <ModalWrapper
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Visa Application"
+      size="large"
+    >
+      {/* Enhanced Header with Progress */}
+      <div className="mb-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-emerald-500/10 rounded-2xl blur-xl"></div>
+        <div className="relative">
+          {/* Main Header */}
+          <div className="flex items-center p-8 bg-gradient-to-br from-white/90 to-slate-50/90 backdrop-blur-sm rounded-2xl border-2 border-white/50 shadow-xl">
+            <div className="mr-6 relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl blur-lg opacity-30"></div>
+              <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 p-4 rounded-2xl shadow-lg">
+                <Stamp className="h-8 w-8 text-white" />
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold">Visa Application</h1>
-              <p className="text-blue-100 mt-1">Fill out your travel application form</p>
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-2">
+                Visa Application
+              </h3>
+              <p className="text-slate-600 mb-4">
+                Complete your visa application details to proceed with your travel plans
+              </p>
+              
+              {/* Progress Bar */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-slate-600">
+                    Completion Progress
+                  </span>
+                  <span className="text-sm font-bold text-slate-800">
+                    {completionPercentage}%
+                  </span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full transition-all duration-500 ease-out shadow-sm"
+                    style={{ width: `${completionPercentage}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Status Indicator */}
+          <div className="mt-4 flex items-center justify-center">
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              isFormComplete 
+                ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
+                : 'bg-amber-100 text-amber-700 border border-amber-200'
+            }`}>
+              {isFormComplete ? (
+                <>
+                  <Check className="h-4 w-4" />
+                  Ready to Submit
+                </>
+              ) : (
+                <>
+                  <AlertCircle className="h-4 w-4" />
+                  {Object.values(formData).filter(v => v === "").length} fields remaining
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Personal Information Section */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 rounded-2xl blur-xl group-hover:blur-none transition-all duration-500"></div>
+          <div className="relative bg-gradient-to-br from-blue-50/80 to-cyan-50/80 backdrop-blur-sm p-8 rounded-2xl border-2 border-blue-100/50 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg">
+                <User className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h4 className="text-xl font-bold text-slate-800">Personal Information</h4>
+                <p className="text-sm text-slate-600">Your basic personal details</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {renderFormField("fullName", "Full Name", "text", <User className="h-4 w-4 text-slate-500" />)}
+              {renderFormField("dob", "Date of Birth", "date", <Calendar className="h-4 w-4 text-slate-500" />)}
+              {renderSelectField("nationality", "Nationality", countries, <Globe className="h-4 w-4 text-slate-500" />, true)}
+              {renderFormField("email", "Email Address", "email", <Mail className="h-4 w-4 text-slate-500" />)}
+              {renderFormField("phone", "Phone Number", "text", <Phone className="h-4 w-4 text-slate-500" />)}
+              {renderSelectField("employmentStatus", "Employment Status", [
+                "Working",
+                "Business", 
+                "Student",
+                "Unemployed",
+                "Retired",
+                "Other",
+              ], <Building className="h-4 w-4 text-slate-500" />)}
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Personal Info */}
-          <FormSection title="Personal Information" icon={User}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <InputField name="fullName" label="Full Name" type="text" icon={User} />
-              <InputField name="dob" label="Date of Birth" type="date" icon={Calendar} />
-              <SelectField
-                name="nationality"
-                label="Nationality"
-                icon={Globe}
-                value={formData.nationality}
-                onChange={(value: string) => handleSelectChange("nationality", value)}
-                options={countries.map((c) => c.name)}
-                placeholder="Select Country"
-              />
+        {/* Passport Information Section */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 rounded-2xl blur-xl group-hover:blur-none transition-all duration-500"></div>
+          <div className="relative bg-gradient-to-br from-purple-50/80 to-pink-50/80 backdrop-blur-sm p-8 rounded-2xl border-2 border-purple-100/50 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg">
+                <FileText className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h4 className="text-xl font-bold text-slate-800">Passport Information</h4>
+                <p className="text-sm text-slate-600">Your passport and identification details</p>
+              </div>
             </div>
-          </FormSection>
-
-          {/* Passport Info */}
-          <FormSection title="Passport Information" icon={FileText}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <InputField name="passportNumber" label="Passport Number" type="text" icon={Shield} />
-              <InputField name="passportIssueDate" label="Issue Date" type="date" icon={Calendar} />
-              <InputField name="passportExpiryDate" label="Expiry Date" type="date" icon={Calendar} />
-            </div>
-          </FormSection>
-
-          {/* Travel Info */}
-          <FormSection title="Travel Details" icon={Plane}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <SelectField
-                name="destinationCountry"
-                label="Destination Country"
-                icon={MapPin}
-                value={formData.destinationCountry}
-                onChange={(value: string) => handleSelectChange("destinationCountry", value)}
-                options={countries.map((c) => c.name)}
-                placeholder="Select Country"
-              />
-              <SelectField
-                name="travelPurpose"
-                label="Travel Purpose"
-                icon={Briefcase}
-                value={formData.travelPurpose}
-                onChange={(value: string) => handleSelectChange("travelPurpose", value)}
-                options={["Tourism", "Business", "Study", "Medical", "Transit", "Other"]}
-                placeholder="Select Travel Purpose"
-              />
-              <InputField name="travelDate" label="Travel Date" type="date" icon={Calendar} />
-              <InputField name="travelDurationInDays" label="Duration (Days)" type="number" icon={Clock} />
+              {renderFormField("passportNumber", "Passport Number", "text", <FileText className="h-4 w-4 text-slate-500" />)}
+              {renderFormField("passportIssueDate", "Passport Issue Date", "date", <Calendar className="h-4 w-4 text-slate-500" />)}
+              {renderFormField("passportExpiryDate", "Passport Expiry Date", "date", <Calendar className="h-4 w-4 text-slate-500" />)}
             </div>
-          </FormSection>
-
-          {/* Contact Info */}
-          <FormSection title="Contact & Employment" icon={Mail}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <InputField name="email" label="Email Address" type="email" icon={Mail} />
-              <InputField name="phone" label="Phone Number" type="text" icon={Phone} />
-              <SelectField
-                name="employmentStatus"
-                label="Employment Status"
-                icon={Briefcase}
-                value={formData.employmentStatus}
-                onChange={(value: string) => handleSelectChange("employmentStatus", value)}
-                options={["Working", "Business", "Student", "Unemployed", "Retired", "Other"]}
-                placeholder="Select Employment Status"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700 flex items-center space-x-2" htmlFor="address">
-                <MapPin className="h-4 w-4 text-gray-500" />
-                <span>Address</span>
-              </Label>
-              <Textarea
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className="border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 min-h-[100px]"
-                placeholder="Enter your complete address..."
-              />
-            </div>
-          </FormSection>
-
-          <div className="flex justify-center pt-6">
-            <Button
-              type="submit"
-              disabled={loading}
-              className="bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-semibold px-12 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
-            >
-              {loading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white"></div>
-                  <span>Submitting...</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <Send className="h-4 w-4" />
-                  <span>{isFormComplete ? "Submit Application" : "Save Draft"}</span>
-                </div>
-              )}
-            </Button>
           </div>
-        </form>
-      </div>
+        </div>
+
+        {/* Travel Information Section */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 rounded-2xl blur-xl group-hover:blur-none transition-all duration-500"></div>
+          <div className="relative bg-gradient-to-br from-emerald-50/80 to-teal-50/80 backdrop-blur-sm p-8 rounded-2xl border-2 border-emerald-100/50 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl shadow-lg">
+                <Plane className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h4 className="text-xl font-bold text-slate-800">Travel Information</h4>
+                <p className="text-sm text-slate-600">Your travel plans and destination details</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {renderSelectField("destinationCountry", "Destination Country", countries, <MapPin className="h-4 w-4 text-slate-500" />, true)}
+              {renderSelectField("travelPurpose", "Travel Purpose", [
+                "Tourism",
+                "Business",
+                "Study", 
+                "Medical",
+                "Transit",
+                "Other",
+              ], <Plane className="h-4 w-4 text-slate-500" />)}
+              {renderFormField("travelDate", "Travel Date", "date", <Calendar className="h-4 w-4 text-slate-500" />)}
+              {renderFormField("travelDurationInDays", "Travel Duration (Days)", "number", <Calendar className="h-4 w-4 text-slate-500" />)}
+            </div>
+          </div>
+        </div>
+
+        {/* Address Section */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-red-500/5 rounded-2xl blur-xl group-hover:blur-none transition-all duration-500"></div>
+          <div className="relative bg-gradient-to-br from-orange-50/80 to-red-50/80 backdrop-blur-sm p-8 rounded-2xl border-2 border-orange-100/50 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl shadow-lg">
+                <MapPin className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h4 className="text-xl font-bold text-slate-800">Address Information</h4>
+                <p className="text-sm text-slate-600">Your current residential address</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-slate-700" htmlFor="address">
+                Complete Address <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <div className="relative">
+                <Textarea
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className={`min-h-32 border-2 transition-all duration-300 bg-white/80 backdrop-blur-sm rounded-xl
+                    ${!formData.address 
+                      ? 'border-slate-200 hover:border-slate-300 focus:border-orange-500' 
+                      : 'border-emerald-200 bg-emerald-50/30 focus:border-emerald-500'
+                    }
+                    focus:ring-4 focus:ring-orange-500/10 shadow-sm hover:shadow-md
+                    placeholder:text-slate-400 resize-none`}
+                  placeholder="Enter your complete address including street, city, state, and postal code"
+                />
+                {formData.address && (
+                  <div className="absolute right-3 top-3">
+                    <Check className="h-4 w-4 text-emerald-500" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced Submit Section */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-100 to-slate-50 rounded-2xl"></div>
+          <div className="relative flex flex-col sm:flex-row gap-4 justify-between items-center pt-8 pb-6 px-8 border-t-2 border-slate-200">
+            <div className="flex items-center gap-3 text-sm text-slate-600">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                Auto-save enabled
+              </div>
+              <span>•</span>
+              <span>Form {isFormComplete ? 'complete' : 'in progress'}</span>
+            </div>
+            
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                className="px-6 py-3 rounded-xl border-2 border-slate-200 hover:border-slate-300 transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                onClick={onClose}
+              >
+                Cancel
+              </Button>
+              
+              <Button
+                className={`px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 ${
+                  isFormComplete
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white'
+                    : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
+                }`}
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="flex items-center gap-3">
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                    <span>Processing...</span>
+                  </div>
+                ) : isFormComplete ? (
+                  <div className="flex items-center gap-3">
+                    <Send className="h-5 w-5" />
+                    <span>Submit Application</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <Save className="h-5 w-5" />
+                    <span>Save Draft</span>
+                  </div>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </form>
     </ModalWrapper>
   );
 }

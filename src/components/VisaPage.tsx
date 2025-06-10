@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import CountryCard from "@/components/CountryCard";
 import { Button } from "@/components/ui/button";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const visaData = [
   {
@@ -45,6 +47,17 @@ const visaData = [
 
 const VisaPage = () => {
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const router = useRouter();
+
+    const handleClick = () => {
+      const token = Cookies.get("token"); // replace 'token' with your actual cookie key
+
+      if (token) {
+        router.push("/pages/dashboard");
+      } else {
+        router.push("/pages/login");
+      }
+    };
 
   const filteredData =
     selectedFilter === "All"
@@ -53,7 +66,7 @@ const VisaPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8 mt-10">
-      <h1 className="text-5xl font-bold text-center bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+      <h1 className="text-5xl font-bold text-center bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent pb-5">
         Trending Visas
       </h1>
 
@@ -82,7 +95,7 @@ const VisaPage = () => {
             country={item.country}
             image={item.image}
             visaType={item.visaType}
-            onClick={() => alert(`More details about ${item.country}`)}
+            onClick={() => handleClick()}
           />
         ))}
       </div>

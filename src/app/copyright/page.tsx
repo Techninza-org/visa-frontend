@@ -91,7 +91,7 @@ export default function Copyright() {
                 published by us, please report it to:
               </p>
               <p className="text-gray-600 mt-2">
-                📧 <a href="mailto:legal@axevia.com" className="text-blue-600 underline">legal@axevia.com</a> <br />
+                📧 <a href="mailto:Info@axevisa.com" className="text-blue-600 underline">Info@axevisa.com</a> <br />
                 📞 <a href="tel:+919999390696" className="text-blue-600 underline">+91 99993 90696</a>
               </p>
             </section>

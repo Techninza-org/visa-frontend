@@ -3,40 +3,40 @@ import React from "react";
 const AddOnServices = () => {
   const services = [
     {
-      title: "Professional Review",
-      price: "US$99",
+      title: "✅ Professional Review",
+      price: "₹3,999",
       description:
-        "Expert advisor thoroughly reviews your application and provides personalized guidance for success",
+        "Comprehensive document evaluation by a visa expert with detailed, personalized feedback",
     },
     {
-      title: "Travel Insurance",
-      price: "US$25",
+      title: "🛡️ Travel Insurance",
+      price: "₹1,999",
       description:
-        "Complete peace of mind with comprehensive coverage that meets all embassy requirements",
+        "Embassy-approved insurance plan offering complete coverage and peace of mind for your travel period",
     },
     {
-      title: "Appointment Booking",
-      price: "US$49",
+      title: "📅 Appointment Booking",
+      price: "₹2,999",
       description:
-        "Our global team monitors and secures the earliest available embassy appointment slots for you",
+        "Hassle-free embassy/VFS appointment scheduling through our global expert team",
     },
     {
-      title: "Hotel Reservations",
-      price: "US$75",
+      title: "🏨 Hotel Reservations",
+      price: "₹1,999",
       description:
-        "Real, verifiable hotel booking confirmations that meet embassy requirements",
+        "Embassy-compliant hotel reservation confirmation strictly for visa submission purposes",
     },
     {
-      title: "Form-filling Service",
-      price: "US$99",
+      title: "📝 Form-Filling Service",
+      price: "₹2,999",
       description:
-        "Professional assistance with your visa application forms, ensuring accuracy and completeness",
+        "Professional assistance to complete visa forms with accuracy, ensuring embassy standards are met",
     },
     {
-      title: "Flight Reservations",
-      price: "US$75",
+      title: "✈️ Flight Reservations",
+      price: "₹1,999",
       description:
-        "IATA-certified flight booking confirmations required by many embassies",
+        "IATA-certified dummy tickets crafted specifically for visa application purposes",
     },
   ];
 

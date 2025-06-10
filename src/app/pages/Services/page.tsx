@@ -5,6 +5,7 @@ import Footer from "@/components/footer";
 import { ShieldCheck, Clock, Globe2, Users } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";
+import ExpertServices from "@/components/GetPackage";
 
 // Types
 interface Service {
@@ -147,6 +148,12 @@ export default function ServicesPage() {
           </div>
         </div>
       </section>
+
+       <section className="bg-gray-50 py-20 px-4">
+          <div className="max-w-7xl mx-auto">
+            <ExpertServices />
+          </div>
+        </section>
       <Footer />
     </main>
   );

@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { Check } from "lucide-react";
+// import Image from "next/image";
+// import { Check } from "lucide-react";
 
 interface Country {
   name: string;

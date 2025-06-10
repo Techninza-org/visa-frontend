@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
+import ExpertServices from "@/components/GetPackage";
 
  function USVisaIndiaPassportContent() {
   const [activeTab, setActiveTab] = useState("tourist");
@@ -93,34 +94,6 @@ import { Suspense } from "react";
     },
   ];
 
-  // const successStats = [
-  //   { label: "Success Rate", value: "96.8%", icon: "✅" },
-  //   { label: "Processing Time", value: "7-15 days", icon: "⏱️" },
-  //   { label: "Applications Processed", value: "50,000+", icon: "📊" },
-  //   { label: "Expert Support", value: "24/7", icon: "🎯" },
-  // ];
-
-  const expertServices = [
-    {
-      title: "Document Review",
-      description:
-        "Professional review of all your documents before submission",
-      price: "$49",
-      popular: false,
-    },
-    {
-      title: "Interview Preparation",
-      description: "One-on-one mock interview session with visa experts",
-      price: "$99",
-      popular: true,
-    },
-    {
-      title: "Priority Processing",
-      description: "Expedited application review and submission",
-      price: "$149",
-      popular: false,
-    },
-  ];
 
   // Function to render visa requirement section
   const renderVisaRequirementSection = () => {
@@ -650,7 +623,7 @@ import { Suspense } from "react";
             </section>
 
             {/* Expert Services Section */}
-            <section className="bg-white rounded-3xl shadow-xl p-8 border border-slate-200/50">
+            {/* <section className="bg-white rounded-3xl shadow-xl p-8 border border-slate-200/50">
               <h2 className="text-3xl font-bold text-slate-800 mb-8 flex items-center">
                 <span className="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg flex items-center justify-center text-white mr-4">
                   🎯
@@ -699,7 +672,9 @@ import { Suspense } from "react";
                   </div>
                 ))}
               </div>
-            </section>
+            </section> */}
+
+            {/* {<ExpertServices/>} */}
 
             {/* Testimonials Section */}
             {/* <section className="bg-white rounded-3xl shadow-xl p-8 border border-slate-200/50">
@@ -824,7 +799,7 @@ import { Suspense } from "react";
                 </p>
               </div>
 
-              <div className="border-t border-slate-200 pt-6">
+              {/* <div className="border-t border-slate-200 pt-6">
                 <div className="bg-slate-50 rounded-2xl p-6">
                   <h3 className="font-bold text-slate-800 mb-4">
                     Premium Service Pricing
@@ -852,13 +827,13 @@ import { Suspense } from "react";
                     </div>
                   </div>
                 </div>
-              </div>
-
+              </div> */}
+{/* 
               <a href="/pages/dashboard/client/applications">
                 <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   Start Premium Application
                 </Button>
-              </a>
+              </a> */}
 
               <div className="text-center">
                 <div className="flex items-center justify-center space-x-2 text-green-600 mb-2">

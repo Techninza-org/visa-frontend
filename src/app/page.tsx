@@ -29,6 +29,8 @@ import VisaPage from "@/components/VisaPage";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { cn } from "@/lib/utils";
+// import ExpertServices from "@/components/GetPackage";
+import ContactForm from "@/components/ContectUs";
 
 export default function Home() {
   return (
@@ -118,6 +120,12 @@ export default function Home() {
         <section className="bg-white">
           <AddOnServices />
         </section>
+
+        {/* Expert Services */}
+       
+
+
+       
 
         <section className="bg-white">
           <TrustedBy />
@@ -370,8 +378,10 @@ export default function Home() {
           </div>
         </section>
 
+        
+
         {/* Contact Section */}
-        <section className="bg-amber-50 mb-10">
+        {/* <section className="bg-amber-50 mb-10">
           <div className="max-w-7xl mx-auto py-20 px-4 bg-white shadow-lg border border-amber-500/10 rounded-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               <div className="space-y-6">
@@ -522,7 +532,9 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
+
+        <ContactForm/>
       </main>
 
       <Footer />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
@@ -28,62 +28,102 @@ export default function RegisterPage() {
     password: "",
   });
 
-  // const [profilePic, setProfilePic] = useState<File | null>(null);
+  const [countries, setCountries] = useState<any[]>([]);
+  const [filteredCountries, setFilteredCountries] = useState<any[]>([]);
+  const [countrySearch, setCountrySearch] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files[0]) {
-  //     setProfilePic(e.target.files[0]);
-  //   }
-  // };
-
-const handleSubmit = async () => {
-  const formData = new FormData();
-  Object.entries(form).forEach(([key, value]) => {
-    formData.append(key, value);
-  });
-
-  // if (profilePic) {
-  //   formData.append("profilePic", profilePic);
-  // }
-
-  setLoading(true);
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/public/user-register`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+  // Fetch countries data
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get(
+          "https://countriesnow.space/api/v0.1/countries/iso"
+        );
+        setCountries(response.data.data);
+        setFilteredCountries(response.data.data);
+      } catch (err) {
+        console.error("Error fetching countries:", err);
       }
-    );
+    };
 
-    console.log("Response:", response.data);
+    fetchCountries();
+  }, []);
 
-    if (response.data?.success) {
-      alert(response.data.message || "Registration successful!");
-      router.push("/pages/login");
+  // Filter countries based on search
+  useEffect(() => {
+    if (countrySearch.trim() === "") {
+      setFilteredCountries(countries);
     } else {
-      alert(`Registration failed: ${response.data?.message || "Unknown error"}`);
+      const filtered = countries.filter((country) =>
+        country.name.toLowerCase().includes(countrySearch.toLowerCase())
+      );
+      setFilteredCountries(filtered);
     }
-  } catch (error: any) {
-    const responseData = error.response?.data;
-    if (Array.isArray(responseData?.errors)) {
-      alert("Registration failed:\n" + responseData.errors.map((err: string) => `• ${err}`).join("\n"));
-    } else if (responseData?.message) {
-      alert(`Registration failed: ${responseData.message}`);
-    } else {
-      alert(`Registration failed: ${error.message || "Unknown error"}`);
+  }, [countrySearch, countries]);
+
+  const handleCountrySearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCountrySearch(e.target.value);
+    setShowDropdown(true);
+  };
+
+  const handleCountrySelect = (country: any) => {
+    setSelectedCountry(country);
+    setForm({ ...form, nationality: country.name });
+    setCountrySearch(country.name);
+    setShowDropdown(false);
+  };
+
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    Object.entries(form).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/public/user-register`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data?.success) {
+        alert(response.data.message || "Registration successful!");
+        router.push("/pages/login");
+      } else {
+        alert(
+          `Registration failed: ${response.data?.message || "Unknown error"}`
+        );
+      }
+    } catch (error: any) {
+      const responseData = error.response?.data;
+      if (Array.isArray(responseData?.errors)) {
+        alert(
+          "Registration failed:\n" +
+            responseData.errors.map((err: string) => `• ${err}`).join("\n")
+        );
+      } else if (responseData?.message) {
+        alert(`Registration failed: ${responseData.message}`);
+      } else {
+        alert(`Registration failed: ${error.message || "Unknown error"}`);
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div>
@@ -104,41 +144,128 @@ const handleSubmit = async () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
-              {[
-                { name: "name", label: "Full Name" },
-                { name: "email", label: "Email", type: "email" },
-                { name: "phone", label: "Phone Number", type: "tel" },
-                { name: "nationality", label: "Nationality" },
-                { name: "password", label: "Password", type: "password" },
-              ].map((field) => (
-                <div key={field.name}>
-                  <Label htmlFor={field.name} className="text-white mb-2">
-                    {field.label}
-                  </Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type={field.type || "text"}
-                    value={(form as any)[field.name]}
-                    onChange={handleChange}
-                    placeholder={field.label}
-                    className="bg-white/10 border border-white/20 placeholder-gray-300 text-white focus:ring-2 focus:ring-[#f6d365]"
-                  />
-                </div>
-              ))}
-{/* 
+              {/* Full Name */}
               <div>
-                <Label htmlFor="profilePic" className="text-white">
-                  Profile Picture (optional)
+                <Label htmlFor="name" className="text-white mb-2">
+                  Full Name
                 </Label>
                 <Input
-                  id="profilePic"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="text-white file:text-white file:bg-[#f6d365] file:border-none file:rounded-lg"
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Full Name"
+                  className="bg-white/10 border border-white/20 placeholder-gray-300 text-white focus:ring-2 focus:ring-[#f6d365]"
                 />
-              </div> */}
+              </div>
+
+              {/* Email */}
+              <div>
+                <Label htmlFor="email" className="text-white mb-2">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                  className="bg-white/10 border border-white/20 placeholder-gray-300 text-white focus:ring-2 focus:ring-[#f6d365]"
+                />
+              </div>
+
+              {/* Phone Number */}
+              <div>
+                <Label htmlFor="phone" className="text-white mb-2">
+                  Phone Number
+                </Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={form.phone}
+                  onChange={handleChange}
+                  placeholder="Phone Number"
+                  className="bg-white/10 border border-white/20 placeholder-gray-300 text-white focus:ring-2 focus:ring-[#f6d365]"
+                />
+              </div>
+
+              {/* Nationality Dropdown with Search */}
+              <div className="relative">
+                <Label htmlFor="nationality" className="text-white mb-2">
+                  Nationality
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="nationality"
+                    name="nationality"
+                    type="text"
+                    value={countrySearch}
+                    onChange={handleCountrySearch}
+                    onFocus={() => setShowDropdown(true)}
+                    placeholder="Search and select your nationality"
+                    className="bg-white/10 border border-white/20 placeholder-gray-300 text-white focus:ring-2 focus:ring-[#f6d365] pr-12"
+                  />
+                  {selectedCountry && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <img
+                        src={`https://flagcdn.com/w40/${selectedCountry.Iso2.toLowerCase()}.png`}
+                        className="w-6 h-4 rounded shadow"
+                        alt={selectedCountry.name}
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+                
+                {showDropdown && (
+                  <div className="absolute z-50 w-full mt-1 bg-white/95 backdrop-blur-sm border border-white/20 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                    {filteredCountries.length > 0 ? (
+                      filteredCountries.map((country) => (
+                        <div
+                          key={country.Iso2}
+                          className="flex items-center gap-3 px-3 py-2 hover:bg-white/10 cursor-pointer text-gray-900 hover:text-white transition-colors"
+                          onClick={() => handleCountrySelect(country)}
+                        >
+                          <img
+                            src={`https://flagcdn.com/w40/${country.Iso2.toLowerCase()}.png`}
+                            className="w-6 h-4 rounded shadow flex-shrink-0"
+                            alt={country.name}
+                            onError={(e) => {
+                              e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAyNCAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiBmaWxsPSIjQ0NDIiByeD0iMiIvPgo8L3N2Zz4K';
+                            }}
+                          />
+                          <span className="truncate text-gray-500">{country.name}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-3 py-2 text-gray-500 text-sm">
+                        No countries found
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Password */}
+              <div>
+                <Label htmlFor="password" className="text-white mb-2">
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="Password"
+                  className="bg-white/10 border border-white/20 placeholder-gray-300 text-white focus:ring-2 focus:ring-[#f6d365]"
+                />
+              </div>
             </CardContent>
             <CardFooter>
               <Button
