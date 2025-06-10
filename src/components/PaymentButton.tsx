@@ -125,7 +125,7 @@ const PackageSelectionModal = ({
           onClick={openModal}
           className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200"
         >
-          Choose Package & Pay
+         Pay Now
         </button>
       </div>
 

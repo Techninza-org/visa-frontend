@@ -278,20 +278,30 @@ export function VisaModal({
             </SelectTrigger>
             <SelectContent className="max-h-60 rounded-xl border-2 shadow-xl bg-white/95 backdrop-blur-sm">
               {loadingCountries && isCountryField ? (
-                <SelectItem value="" disabled>Loading countries...</SelectItem>
+              <SelectItem value="" disabled>Loading countries...</SelectItem>
               ) : (
-                (isCountryField ? countries : options as string[]).map((item) => {
-                  const optionValue = isCountryField ? (item as Country).name : item as string;
-                  return (
-                    <SelectItem 
-                      key={optionValue} 
-                      value={optionValue}
-                      className="hover:bg-blue-50 focus:bg-blue-50 rounded-lg transition-colors duration-200"
-                    >
-                      {optionValue}
-                    </SelectItem>
-                  );
-                })
+              (isCountryField ? countries : options as string[]).map((item) => {
+                const optionValue = isCountryField ? (item as Country).name : item as string;
+                return (
+                <SelectItem 
+                  key={optionValue} 
+                  value={optionValue}
+                  className="hover:bg-blue-50 focus:bg-blue-50 rounded-lg transition-colors duration-200 flex items-center gap-2"
+                >
+                  {isCountryField && (item as Country).Iso2 ? (
+                  <img
+                    src={`https://flagcdn.com/w40/${(item as Country).Iso2.toLowerCase()}.png`}
+                    className="w-6 h-4 rounded shadow flex-shrink-0 mr-2"
+                    alt={(item as Country).name}
+                    onError={(e) => {
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAyNCAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiBmaWxsPSIjQ0NDIiByeD0iMiIvPgo8L3N2Zz4K';
+                    }}
+                  />
+                  ) : null}
+                  {optionValue}
+                </SelectItem>
+                );
+              })
               )}
             </SelectContent>
           </Select>
