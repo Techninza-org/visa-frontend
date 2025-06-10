@@ -122,7 +122,7 @@ export default function ClientDashboard(): JSX.Element {
   const userCookie: string | undefined = Cookies.get("user");
   const user: User = userCookie ? JSON.parse(userCookie) : {};
 
-  console.log("User Data:", user.name);
+  // console.log("User Data:", user.name);
 
   const [userName, setUserName] = useState<string>(user.name || "User");
   const [memberSince, setMemberSince] = useState<string>("");
