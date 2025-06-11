@@ -4,7 +4,7 @@ import React from "react";
 const TrustedBy = () => {
   const companies = [
     { name: "Google", logo: "/google.png" },
-    { name: "LinkedIn", logo: "/Linkdin.png" },
+    { name: "LinkedIn", logo: "/linkdin.png" },
     { name: "Uber", logo: "/uber.png" },
     { name: "Expedia", logo: "/expedia.png" },
     { name: "Alliance University ", logo: "/alliance.jpg" },
@@ -18,7 +18,7 @@ const TrustedBy = () => {
     { name: "Salesforce", logo: "/salesforce.png" },
     { name: "Airbnb", logo: "/airbnb.png" },
     { name: "Oracle", logo: "/oracle.png" },
-    { name: "Spotify", logo: "/Spotify.png" },
+    { name: "Spotify", logo: "/spotify.png" },
     { name: "Adobe", logo: "/adobe.png" },
     { name: "Intel", logo: "/intel.png" },
     { name: "Shopify", logo: "/shopify.png" },
@@ -40,13 +40,13 @@ const TrustedBy = () => {
 
       {/* Infinite moving logos container */}
       <div className="relative overflow-hidden logo-container">
-        <div className="flex items-center animate-scroll-left h-18">
+        <div className="flex items-center animate-scroll-left h-21">
           {duplicatedCompanies.map((company, index) => (
             <div
               key={`${company.name}-${index}`}
               className="flex-shrink-0 mx-6 flex items-center justify-center min-w-[120px]"
             >
-              <div className="relative h-18 w-28 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+              <div className="relative h-21 w-28 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
                 <Image
                   src={company.logo}
                   alt={`${company.name} logo`}
