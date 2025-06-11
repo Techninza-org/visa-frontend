@@ -108,9 +108,9 @@ export default function TermsAndConditions() {
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">11. Contact</h2>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Email: info@axevia.com</li>
+                  <li>Email: info@axevisa.com</li>
                   <li>Phone: +91-9999390696</li>
-                  <li>Website: www.axevia.com</li>
+                  <li>Website: www.axevisa.com</li>
                 </ul>
               </section>
 

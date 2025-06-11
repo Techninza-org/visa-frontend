@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState,JSX } from "react";
+import { useEffect, useState, JSX } from "react";
 import Cookies from "js-cookie";
 import axios, { AxiosResponse } from "axios";
 
@@ -42,6 +42,7 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { VisaModal } from "@/components/modals/visa-modal";
+import Link from "next/link";
 // import { parse } from "path";
 
 // Type definitions
@@ -128,11 +129,12 @@ export default function ClientDashboard(): JSX.Element {
   const [memberSince, setMemberSince] = useState<string>("");
 
   const whatsAppNumber: string = "+919999390696";
-  const whatsAppMessage: string = "Hello! I need help with my visa application.";
+  const whatsAppMessage: string =
+    "Hello! I need help with my visa application.";
   const whatsAppUrl: string = `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(
     whatsAppMessage
   )}`;
-  
+
   const handleOpenModal = (modalName: string): void => {
     setActiveModal(modalName as ModalType);
   };
@@ -157,7 +159,11 @@ export default function ClientDashboard(): JSX.Element {
         );
         console.log("User Info:", res.data.data);
         // setUserName(res.data.name || "User");
-        setMemberSince(typeof res.data.data === 'string' ? res.data.data : JSON.stringify(res.data.data));
+        setMemberSince(
+          typeof res.data.data === "string"
+            ? res.data.data
+            : JSON.stringify(res.data.data)
+        );
       } catch (error: unknown) {
         console.error("Failed to fetch user info", error);
       }
@@ -168,7 +174,8 @@ export default function ClientDashboard(): JSX.Element {
   // Parse memberSince as an object if it's a stringified JSON
   let memberData: MemberData = {};
   try {
-    memberData = typeof memberSince === "string" ? JSON.parse(memberSince) : memberSince;
+    memberData =
+      typeof memberSince === "string" ? JSON.parse(memberSince) : memberSince;
   } catch {
     memberData = {};
   }
@@ -177,59 +184,58 @@ export default function ClientDashboard(): JSX.Element {
   const inProgressCount: number = memberData.totals?.pending || 0;
   const approvedCount: number = memberData.totals?.approved || 0;
   const underReviewCount: number = memberData.totals?.underReview || 0;
+const summaryCards: SummaryCardItem[] = [
+  {
+    title: "Total Applications",
+    icon: <FileText className="h-6 w-6" />,
+    value: totalApplications,
+    note: "+1 from last month",
+    color: "blue",
+    bgColor: "bg-gradient-to-br from-blue-100 to-blue-300",
+    borderColor: "border-blue-300",
+    iconBg: "bg-white",
+    iconColor: "text-blue-600",
+    textColor: "text-blue-800",
+  },
+  {
+    title: "In Progress",
+    icon: <Clock className="h-6 w-6" />,
+    value: inProgressCount,
+    note: "Estimated completion: 5 days",
+    color: "orange",
+    bgColor: "bg-gradient-to-br from-orange-100 to-orange-300",
+    borderColor: "border-orange-300",
+    iconBg: "bg-white",
+    iconColor: "text-orange-600",
+    textColor: "text-orange-800",
+  },
+  {
+    title: "Approved",
+    icon: <CheckCircle className="h-6 w-6" />,
+    value: approvedCount,
+    note: "Ready for download",
+    color: "green",
+    bgColor: "bg-gradient-to-br from-green-100 to-green-300",
+    borderColor: "border-green-300",
+    iconBg: "bg-white",
+    iconColor: "text-green-600",
+    textColor: "text-green-800",
+  },
+  {
+    title: "Under Review",
+    icon: <Eye className="h-6 w-6" />,
+    value: underReviewCount,
+    note: "Awaiting verification",
+    color: "purple",
+    bgColor: "bg-gradient-to-br from-purple-100 to-purple-300",
+    borderColor: "border-purple-300",
+    iconBg: "bg-white",
+    iconColor: "text-purple-600",
+    textColor: "text-purple-800",
+  },
+];
 
-  const summaryCards: SummaryCardItem[] = [
-    {
-      title: "Total Applications",
-      icon: <FileText className="h-5 w-5" />,
-      value: totalApplications,
-      note: "+1 from last month",
-      color: "blue",
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-200",
-      iconBg: "bg-blue-100",
-      iconColor: "text-blue-600",
-      textColor: "text-blue-800"
-    },
-    {
-      title: "In Progress",
-      icon: <Clock className="h-5 w-5" />,
-      value: inProgressCount,
-      note: "Estimated completion: 5 days",
-      color: "orange",
-      bgColor: "bg-orange-50",
-      borderColor: "border-orange-200",
-      iconBg: "bg-orange-100",
-      iconColor: "text-orange-600",
-      textColor: "text-orange-800"
-    },
-    {
-      title: "Approved",
-      icon: <CheckCircle className="h-5 w-5" />,
-      value: approvedCount,
-      note: "Ready for download",
-      color: "green",
-      bgColor: "bg-green-50",
-      borderColor: "border-green-200",
-      iconBg: "bg-green-100",
-      iconColor: "text-green-600",
-      textColor: "text-green-800"
-    },
-    {
-      title: "Under Review",
-      icon: <Eye className="h-5 w-5" />,
-      value: underReviewCount,
-      note: "Awaiting verification",
-      color: "purple",
-      bgColor: "bg-purple-50",
-      borderColor: "border-purple-200",
-      iconBg: "bg-purple-100",
-      iconColor: "text-purple-600",
-      textColor: "text-purple-800"
-    },
-  ];
-
-  const getActivityIcon = (type: RecentApplication['type']): JSX.Element => {
+  const getActivityIcon = (type: RecentApplication["type"]): JSX.Element => {
     switch (type) {
       case "visa":
         return <Globe className="h-4 w-4 text-blue-500" />;
@@ -278,7 +284,9 @@ export default function ClientDashboard(): JSX.Element {
               </p>
               <div className="flex items-center gap-2 mt-3">
                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span className="text-sm text-blue-100">All systems operational</span>
+                <span className="text-sm text-blue-100">
+                  All systems operational
+                </span>
               </div>
             </div>
             <div>
@@ -303,26 +311,35 @@ export default function ClientDashboard(): JSX.Element {
         {/* Summary Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {summaryCards.map((item: SummaryCardItem, idx: number) => (
-            <Card key={idx} className={`${item.bgColor} border-2 ${item.borderColor} shadow-md hover:shadow-lg transition-shadow duration-200`}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="space-y-1">
-                  <CardTitle className="text-sm font-medium text-gray-600 uppercase tracking-wide">
-                    {item.title}
-                  </CardTitle>
-                  <div className="text-xs text-gray-500">{item.note}</div>
-                </div>
-                <div className={`p-2 ${item.iconBg} rounded-lg border ${item.borderColor}`}>
-                  <div className={item.iconColor}>
-                    {item.icon}
+            <Link
+              href={`/pages/dashboard/client/visa-applications`}
+              className="no-underline"
+              key={idx}
+            >
+              <Card
+                key={idx}
+                className={`${item.bgColor} border-2 ${item.borderColor} shadow-md hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 ease-in-out`}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <div className="space-y-1">
+                    <CardTitle className="text-sm font-medium text-gray-700 uppercase tracking-wide">
+                      {item.title}
+                    </CardTitle>
+                    <div className="text-xs text-gray-500">{item.note}</div>
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className={`text-3xl font-bold ${item.textColor}`}>
-                  {item.value}
-                </div>
-              </CardContent>
-            </Card>
+                  <div
+                    className={`p-2 ${item.iconBg} rounded-lg border ${item.borderColor}`}
+                  >
+                    <div className={item.iconColor}>{item.icon}</div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className={`text-5xl font-bold ${item.textColor}`}>
+                    {item.value}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
 
@@ -336,7 +353,9 @@ export default function ClientDashboard(): JSX.Element {
                   <FileText className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg text-gray-800">Recent Activities</CardTitle>
+                  <CardTitle className="text-lg text-gray-800">
+                    Recent Activities
+                  </CardTitle>
                   <CardDescription className="text-gray-600">
                     Your latest travel document activities
                   </CardDescription>
@@ -345,36 +364,45 @@ export default function ClientDashboard(): JSX.Element {
             </CardHeader>
             <CardContent className="p-4">
               <div className="space-y-3">
-                {memberData.recentApplications && memberData.recentApplications.length > 0 ? (
-                  memberData.recentApplications.map((activity: RecentApplication, idx: number) => (
-                    <div
-                      key={activity.id || idx}
-                      className="flex items-center space-x-4 p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
-                    >
-                      <div className="flex-shrink-0">
-                        <div className="p-2 rounded-lg bg-white border border-gray-300 shadow-sm">
-                          {getActivityIcon(activity.type)}
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {activity.travelPurpose}
-                        </p>
-                        <p className="text-sm text-gray-600">{activity.destinationCountry}</p>
-                      </div>
-                      <Badge
-                        className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadgeClasses(activity.applicationStatus)}`}
+                {memberData.recentApplications &&
+                memberData.recentApplications.length > 0 ? (
+                  memberData.recentApplications.map(
+                    (activity: RecentApplication, idx: number) => (
+                      <div
+                        key={activity.id || idx}
+                        className="flex items-center space-x-4 p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
                       >
-                        {activity.applicationStatus}
-                      </Badge>
-                    </div>
-                  ))
+                        <div className="flex-shrink-0">
+                          <div className="p-2 rounded-lg bg-white border border-gray-300 shadow-sm">
+                            {getActivityIcon(activity.type)}
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {activity.travelPurpose}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {activity.destinationCountry}
+                          </p>
+                        </div>
+                        <Badge
+                          className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadgeClasses(
+                            activity.applicationStatus
+                          )}`}
+                        >
+                          {activity.applicationStatus}
+                        </Badge>
+                      </div>
+                    )
+                  )
                 ) : (
                   <div className="text-center py-6">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 border border-gray-200">
                       <FileText className="w-6 h-6 text-gray-400" />
                     </div>
-                    <p className="text-gray-500 text-sm">No recent activities</p>
+                    <p className="text-gray-500 text-sm">
+                      No recent activities
+                    </p>
                   </div>
                 )}
               </div>
@@ -404,9 +432,15 @@ export default function ClientDashboard(): JSX.Element {
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 border border-green-200">
                   <CheckCircle className="w-6 h-6 text-green-500" />
                 </div>
-                <h3 className="text-base font-medium text-gray-800 mb-1">All Clear!</h3>
-                <p className="text-gray-500 text-sm">No notifications at this time.</p>
-                <p className="text-xs text-gray-400 mt-1">We'll notify you of any important updates.</p>
+                <h3 className="text-base font-medium text-gray-800 mb-1">
+                  All Clear!
+                </h3>
+                <p className="text-gray-500 text-sm">
+                  No notifications at this time.
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  We'll notify you of any important updates.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -427,7 +461,10 @@ export default function ClientDashboard(): JSX.Element {
                   <MessageCircle className="w-7 h-7" />
                 </a>
               </TooltipTrigger>
-              <TooltipContent side="left" className="bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-700">
+              <TooltipContent
+                side="left"
+                className="bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-700"
+              >
                 <p className="font-medium">Need help? Chat with us!</p>
               </TooltipContent>
             </Tooltip>

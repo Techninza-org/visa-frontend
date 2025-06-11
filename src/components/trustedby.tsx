@@ -7,8 +7,12 @@ const TrustedBy = () => {
     { name: "LinkedIn", logo: "/Linkdin.png" },
     { name: "Uber", logo: "/uber.png" },
     { name: "Expedia", logo: "/expedia.png" },
-    // { name: "Agencia", logo: "/logos/agencia.svg" },
+    { name: "Alliance University ", logo: "/alliance.jpg" },
+    { name: "Bennet University", logo: "/bannett.jpg" },
+    { name: "SRM University’s ", logo: "/srm.png" },
+    { name: "Nalanda University ", logo: "/nalanda.jpg" },
     { name: "Amazon", logo: "/amazon.png" },
+
     { name: "Meta", logo: "/fb.png" },
     { name: "Microsoft", logo: "/microsoft.png" },
     { name: "Salesforce", logo: "/salesforce.png" },

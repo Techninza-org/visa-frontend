@@ -43,9 +43,8 @@ export default function ContactPage() {
               <div>
                 <h4 className="text-lg font-semibold">Office Address</h4>
                 <p className="text-gray-600">
-                 K-2/12 13 Peepal Chowk, Mohan Garden Uttam Nagar,
-Near Reliance Fresh, New Delhi, Delhi – 110059
-
+                  K-2/12 13 Peepal Chowk, Mohan Garden Uttam Nagar, Near
+                  Reliance Fresh, New Delhi, Delhi – 110059
                 </p>
               </div>
             </div>
@@ -62,7 +61,7 @@ Near Reliance Fresh, New Delhi, Delhi – 110059
               <Mail className="text-amber-500 h-6 w-6 mt-1" />
               <div>
                 <h4 className="text-lg font-semibold">Email</h4>
-                <p className="text-gray-600">support@axevista.com</p>
+                <p className="text-gray-600">info@axevisa.com</p>
               </div>
             </div>
           </div>
