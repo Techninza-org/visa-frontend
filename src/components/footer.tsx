@@ -197,6 +197,12 @@ export default function Footer() {
             >
               Terms & Conditions
             </Link>
+            <Link
+              href="/faq"
+              className="text-gray-900 hover:text-yellow-500 text-sm transition-colors"
+            >
+              Hepls
+            </Link>
           </div>
         </div>
       </div>
