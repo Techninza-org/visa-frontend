@@ -34,13 +34,13 @@ export default function Home() {
     />
   </div>
 
-  <div className="relative z-10 text-center w-full px-4">
+  <div className="relative z-10 text-center  w-full px-4">
     <div className="max-w-4xl mx-auto w-full">
       <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent mb-4 sm:mb-6">
         Simplify Your Global Journey
       </h1>
 
-      <div className="w-full max-w-2xl mx-auto">
+      <div className="w-full max-w-2xl mx-auto bg">
         <LocationForm />
       </div>
     </div>
