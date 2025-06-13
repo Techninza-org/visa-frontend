@@ -31,6 +31,7 @@ import Footer from "@/components/footer";
 import { cn } from "@/lib/utils";
 // import ExpertServices from "@/components/GetPackage";
 import ContactForm from "@/components/ContectUs";
+import TestimonialComponent from "@/components/Testimonial";
 
 export default function Home() {
   return (
@@ -314,7 +315,8 @@ export default function Home() {
         </section>
 
         {/* Testimonials */}
-        <section className="py-20 px-4 bg-amber-50">
+        <TestimonialComponent/>
+        {/* <section className="py-20 px-4 bg-amber-50">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent mb-4">
@@ -376,7 +378,7 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         
 
