@@ -266,37 +266,39 @@ const summaryCards: SummaryCardItem[] = [
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-6 space-y-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-5 lg:px-6 py-4 sm:py-5 md:py-6 space-y-4 sm:space-y-5 md:space-y-6">
         {/* Welcome Banner */}
-        <div className="bg-blue-600 rounded-lg p-6 text-white border-2 border-blue-700 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-500 rounded-lg border border-blue-400">
-                  <Sparkles className="w-5 h-5 text-white" />
+        <div className="bg-blue-600 rounded-lg p-4 sm:p-5 md:p-6 text-white border-2 border-blue-700 shadow-lg">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1 sm:space-y-2">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1 sm:p-2 bg-blue-500 rounded-lg border border-blue-400">
+                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
-                <h1 className="text-2xl font-bold">
+                <h1 className="text-xl sm:text-2xl font-bold">
                   Welcome back, {userName || "User"}!
                 </h1>
               </div>
-              <p className="text-blue-100">
+              <p className="text-sm sm:text-base text-blue-100">
                 Manage your travel documents with ease
               </p>
-              <div className="flex items-center gap-2 mt-3">
+              <div className="flex items-center gap-2 mt-1 sm:mt-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span className="text-sm text-blue-100">
+                <span className="text-xs sm:text-sm text-blue-100">
                   All systems operational
                 </span>
               </div>
             </div>
-            <div>
+            <div className="w-full sm:w-auto">
               <button
-                className="bg-gradient-to-r from-amber-400 to-amber-600 hover:bg-orange-600 text-white px-6 py-3 rounded-lg border-1 shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2"
+                className="w-full sm:w-auto bg-gradient-to-r from-amber-400 to-amber-600 hover:bg-orange-600 text-white px-4 py-2 sm:px-5 sm:py-2 md:px-6 md:py-3 rounded-lg border-1 shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
                 onClick={() => handleOpenModal("visa")}
                 type="button"
               >
-                <Upload className="w-5 h-5" />
-                <span className="font-semibold">Apply for Visa</span>
+                <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-sm sm:text-base font-semibold">
+                  Apply for Visa
+                </span>
               </button>
             </div>
           </div>
@@ -309,7 +311,7 @@ const summaryCards: SummaryCardItem[] = [
         />
 
         {/* Summary Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
           {summaryCards.map((item: SummaryCardItem, idx: number) => (
             <Link
               href={`/pages/dashboard/client/visa-applications`}
@@ -317,24 +319,23 @@ const summaryCards: SummaryCardItem[] = [
               key={idx}
             >
               <Card
-                key={idx}
-                className={`${item.bgColor} border-2 ${item.borderColor} shadow-md hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 ease-in-out`}
+                className={`${item.bgColor} border-2 ${item.borderColor} shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300 ease-in-out`}
               >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <div className="space-y-1">
-                    <CardTitle className="text-sm font-medium text-gray-700 uppercase tracking-wide">
+                    <CardTitle className="text-xs xs:text-sm sm:text-sm font-medium text-gray-700 uppercase tracking-wide">
                       {item.title}
                     </CardTitle>
                     <div className="text-xs text-gray-500">{item.note}</div>
                   </div>
                   <div
-                    className={`p-2 ${item.iconBg} rounded-lg border ${item.borderColor}`}
+                    className={`p-1 sm:p-2 ${item.iconBg} rounded-lg border ${item.borderColor}`}
                   >
                     <div className={item.iconColor}>{item.icon}</div>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className={`text-5xl font-bold ${item.textColor}`}>
+                  <div className={`text-3xl sm:text-4xl md:text-5xl font-bold ${item.textColor}`}>
                     {item.value}
                   </div>
                 </CardContent>
@@ -344,49 +345,49 @@ const summaryCards: SummaryCardItem[] = [
         </div>
 
         {/* Recent Activities & Notifications */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
           {/* Recent Activities */}
           <Card className="bg-white border-2 border-gray-200 shadow-lg">
-            <CardHeader className="bg-gray-50 border-b-2 border-gray-200">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg border border-blue-200">
-                  <FileText className="w-5 h-5 text-blue-600" />
+            <CardHeader className="bg-gray-50 border-b-2 border-gray-200 p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1 sm:p-2 bg-blue-100 rounded-lg border border-blue-200">
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg text-gray-800">
+                  <CardTitle className="text-base sm:text-lg text-gray-800">
                     Recent Activities
                   </CardTitle>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-xs sm:text-sm text-gray-600">
                     Your latest travel document activities
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-4">
-              <div className="space-y-3">
+            <CardContent className="p-2 sm:p-3 md:p-4">
+              <div className="space-y-2 sm:space-y-3">
                 {memberData.recentApplications &&
                 memberData.recentApplications.length > 0 ? (
                   memberData.recentApplications.map(
                     (activity: RecentApplication, idx: number) => (
                       <div
                         key={activity.id || idx}
-                        className="flex items-center space-x-4 p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
+                        className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
                       >
                         <div className="flex-shrink-0">
-                          <div className="p-2 rounded-lg bg-white border border-gray-300 shadow-sm">
+                          <div className="p-1 sm:p-2 rounded-lg bg-white border border-gray-300 shadow-sm">
                             {getActivityIcon(activity.type)}
                           </div>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
+                          <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">
                             {activity.travelPurpose}
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-xs sm:text-sm text-gray-600">
                             {activity.destinationCountry}
                           </p>
                         </div>
                         <Badge
-                          className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadgeClasses(
+                          className={`px-2 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium border ${getStatusBadgeClasses(
                             activity.applicationStatus
                           )}`}
                         >
@@ -396,11 +397,11 @@ const summaryCards: SummaryCardItem[] = [
                     )
                   )
                 ) : (
-                  <div className="text-center py-6">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 border border-gray-200">
-                      <FileText className="w-6 h-6 text-gray-400" />
+                  <div className="text-center py-4 sm:py-6">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 border border-gray-200">
+                      <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" />
                     </div>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-xs sm:text-sm text-gray-500">
                       No recent activities
                     </p>
                   </div>
@@ -411,31 +412,31 @@ const summaryCards: SummaryCardItem[] = [
 
           {/* Notifications */}
           <Card className="bg-white border-2 border-gray-200 shadow-lg">
-            <CardHeader className="bg-gray-50 border-b-2 border-gray-200">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg border border-orange-200">
-                  <AlertCircle className="w-5 h-5 text-orange-600" />
+            <CardHeader className="bg-gray-50 border-b-2 border-gray-200 p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1 sm:p-2 bg-orange-100 rounded-lg border border-orange-200">
+                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg text-gray-800 flex items-center gap-2">
+                  <CardTitle className="text-base sm:text-lg text-gray-800 flex items-center gap-2">
                     Notifications
                     <span className="w-2 h-2 bg-orange-400 rounded-full"></span>
                   </CardTitle>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-xs sm:text-sm text-gray-600">
                     Important updates and alerts
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-4">
-              <div className="text-center py-6">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 border border-green-200">
-                  <CheckCircle className="w-6 h-6 text-green-500" />
+            <CardContent className="p-2 sm:p-3 md:p-4">
+              <div className="text-center py-4 sm:py-6">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 border border-green-200">
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" />
                 </div>
-                <h3 className="text-base font-medium text-gray-800 mb-1">
+                <h3 className="text-sm sm:text-base font-medium text-gray-800 mb-1">
                   All Clear!
                 </h3>
-                <p className="text-gray-500 text-sm">
+                <p className="text-xs sm:text-sm text-gray-500">
                   No notifications at this time.
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
@@ -448,22 +449,22 @@ const summaryCards: SummaryCardItem[] = [
 
         {/* WhatsApp Floating Button */}
         <TooltipProvider>
-          <div className="fixed bottom-6 right-6 z-50">
+          <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
             <Tooltip>
               <TooltipTrigger asChild>
                 <a
                   href={whatsAppUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-green-600"
+                  className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-green-600"
                   aria-label="Chat on WhatsApp"
                 >
-                  <MessageCircle className="w-7 h-7" />
+                  <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
                 </a>
               </TooltipTrigger>
               <TooltipContent
                 side="left"
-                className="bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-700"
+                className="bg-gray-800 text-white px-2 py-1 sm:px-3 sm:py-2 rounded-lg border border-gray-700 text-xs sm:text-sm"
               >
                 <p className="font-medium">Need help? Chat with us!</p>
               </TooltipContent>
@@ -471,7 +472,7 @@ const summaryCards: SummaryCardItem[] = [
           </div>
         </TooltipProvider>
 
-        {/* Click Tracking Script */}
+        {/* Click Tracking Script (unchanged) */}
         <script
           dangerouslySetInnerHTML={{
             __html: `

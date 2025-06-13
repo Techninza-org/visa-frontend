@@ -22,31 +22,30 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero Section - Made responsive */}
-        <section className="relative flex h-[400px] sm:h-[500px] md:h-[600px] items-center justify-center mb-6 md:mb-10">
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/hero2.jpeg"
-              alt="Hero Background"
-              fill
-              className="object-cover brightness-75"
-              style={{ objectFit: "cover" }}
-              priority
-            />
-          </div>
+   <section className="relative flex md:h-[100vh] h-[80vh]  w-full items-center justify-center mb-6 md:mb-10">
+  <div className="absolute inset-0 z-0">
+    <Image
+      src="/hero2.jpeg"
+      alt="Hero Background"
+      fill
+      className="object-cover brightness-75"
+      style={{ objectFit: "cover" }}  
+      priority
+    />
+  </div>
 
-          <div className="relative z-10 text-center mb-5 px-4 w-full">
-            <div className="max-w-4xl mx-auto">
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent mb-4 sm:mb-6">
-                Simplify Your Global Journey
-              </h1>
+  <div className="relative z-10 text-center w-full px-4">
+    <div className="max-w-4xl mx-auto w-full">
+      <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent mb-4 sm:mb-6">
+        Simplify Your Global Journey
+      </h1>
 
-              <div className="flex flex-col sm:flex-row gap-4 items-center mt-12 sm:mt-20 bg-white px-4 sm:px-6 py-4 rounded-xl sm:rounded-2xl mx-2 sm:mx-0">
-                <LocationForm />
-              </div>
-            </div>
-          </div>
-        </section>
-
+      <div className="w-full max-w-2xl mx-auto">
+        <LocationForm />
+      </div>
+    </div>
+  </div>
+</section>
         {/* Trust Indicators - Made responsive */}
         <section className="py-2 px-4">
           <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">

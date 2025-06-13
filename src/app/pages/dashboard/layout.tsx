@@ -45,7 +45,7 @@ export default function DashboardLayout({
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Mobile sidebar overlay */}
       <div
-        className={`fixed inset-0 bg-black/50 z-10 lg:hidden transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/50 z-20 lg:hidden transition-opacity duration-300 ${
           sidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
         onClick={() => setSidebarOpen(false)}
@@ -53,23 +53,23 @@ export default function DashboardLayout({
 
       {/* Sidebar - Mobile */}
       <div
-        className={`fixed z-10 w-64 h-full bg-white border-r transition-transform duration-300 ease-in-out transform ${
+        className={`fixed z-20 w-64 h-full bg-white border-r transition-transform duration-300 ease-in-out transform ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:hidden`}
       >
-        <DashboardSidebar />
+        <DashboardSidebar  onLinkClick={() => setSidebarOpen(false)} />
       </div>
 
       {/* Sidebar - Desktop */}
       <div className="hidden lg:flex lg:flex-shrink-0">
         <div className="flex flex-col w-64 h-full">
-          <DashboardSidebar />
+          <DashboardSidebar  onLinkClick={() => setSidebarOpen(false)} />
         </div>
       </div>
 
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <DashboardHeader>
+        <DashboardHeader >
           <button
             type="button"
             className="lg:hidden p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100"

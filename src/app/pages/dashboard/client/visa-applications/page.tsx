@@ -373,58 +373,59 @@ const VisaApplication = () => {
 
   return (
     <div>
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">
-              Visa Management
-            </h1>
-            <p className="text-lg text-gray-600 flex items-center">
-              <FileText className="w-5 h-5 mr-2" />
-              Upload, view, and manage your Visa
-            </p>
-          </div>
+     <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 mb-4 sm:mb-6 md:mb-8">
+  <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row sm:items-center justify-between">
+    <div className="order-1 sm:order-none">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-1 sm:mb-2">
+        Visa Management
+      </h1>
+      <p className="text-sm sm:text-base md:text-lg text-gray-600 flex items-center">
+        <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+        Upload, view, and manage your Visa
+      </p>
+    </div>
 
-          <div className="flex items-center gap-4">
-            <button
-              className="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl shadow hover:shadow-md duration-200 flex items-center gap-2 hover:bg-gray-200 transition-colors"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <Filter className="w-4 h-4" />
-              Filters
-            </button>
+    <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 sm:gap-3 md:gap-4 order-3 sm:order-none">
+      <button
+        className="bg-gray-100 text-gray-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl shadow hover:shadow-md duration-200 flex items-center justify-center gap-1 sm:gap-2 hover:bg-gray-200 transition-colors text-sm sm:text-base"
+        onClick={() => setShowFilters(!showFilters)}
+      >
+        <Filter className="w-3 h-3 sm:w-4 sm:h-4" />
+        Filters
+      </button>
 
-            <button
-              className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl duration-200 flex items-center gap-2 space-x-2 hover:from-amber-500 hover:to-amber-700 transition-colors"
-              onClick={() => handleOpenModal("visa")}
-            >
-              <Upload className="w-5 h-5" />
-              Apply Visa Application
-            </button>
-          </div>
+      <button
+        className="bg-gradient-to-r from-amber-400 to-amber-600 text-white px-4 py-1.5 sm:px-6 sm:py-2 rounded-lg sm:rounded-xl shadow hover:shadow-xl duration-200 flex items-center justify-center gap-1 sm:gap-2 hover:from-amber-500 hover:to-amber-700 transition-colors text-sm sm:text-base"
+        onClick={() => handleOpenModal("visa")}
+      >
+        <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
+        <span>Apply Visa</span>
+        <span className="hidden sm:inline">Application</span>
+      </button>
+    </div>
 
-          <VisaModal
-            isOpen={activeModal?.name === "visa"}
-            onClose={handleCloseModal}
-            onSubmit={() => handleSubmitForm("visa")}
-            userId={activeModal?.id}
-          />
+    <VisaModal
+      isOpen={activeModal?.name === "visa"}
+      onClose={handleCloseModal}
+      onSubmit={() => handleSubmitForm("visa")}
+      userId={activeModal?.id}
+    />
 
-          {/* Add Checklist Modal */}
-          <ChecklistModal
-            isOpen={checklistModal.isOpen}
-            onClose={() =>
-              setChecklistModal({
-                isOpen: false,
-                checklist: [],
-                applicationId: "",
-              })
-            }
-            checklist={checklistModal.checklist}
-            applicationId={checklistModal.applicationId}
-          />
-        </div>
-      </div>
+    {/* Add Checklist Modal */}
+    <ChecklistModal
+      isOpen={checklistModal.isOpen}
+      onClose={() =>
+        setChecklistModal({
+          isOpen: false,
+          checklist: [],
+          applicationId: "",
+        })
+      }
+      checklist={checklistModal.checklist}
+      applicationId={checklistModal.applicationId}
+    />
+  </div>
+</div>
 
       {/* Filters Section */}
       {showFilters && (

@@ -63,7 +63,7 @@ export function DashboardHeader({ children }: DashboardHeaderProps) {
     //   setCurrentTime(new Date());
     // }, 60000);
 
-    return () => clearInterval(timer);
+    // return () => clearInterval(timer);
   }, []);
 
   const handleLogout = () => {

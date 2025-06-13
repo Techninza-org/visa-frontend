@@ -316,20 +316,20 @@ export default function Support() {
 
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-r from-amber-400 to-amber-600 text-white rounded-2xl flex items-center justify-center shadow-lg">
-                <MessageCircle className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-2">
-                  Support Center
-                </h1>
-                <p className="text-lg text-gray-600 flex items-center">
-                  <Ticket className="w-5 h-5 mr-2 text-blue-500" />
-                  Manage your support tickets and get help
-                </p>
-              </div>
-            </div>
+           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-amber-400 to-amber-600 text-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
+    <MessageCircle className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
+  </div>
+  <div>
+    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight mb-1 sm:mb-2">
+      Support Center
+    </h1>
+    <p className="text-base sm:text-lg text-gray-600 flex items-center">
+      <Ticket className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-blue-500" />
+      Manage your support tickets and get help
+    </p>
+  </div>
+</div>
 
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>

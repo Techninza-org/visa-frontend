@@ -23,7 +23,11 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-export function DashboardSidebar() {
+interface DashboardSidebarProps {
+  onLinkClick?: () => void; // Add this prop to handle sidebar closing
+}
+
+export function DashboardSidebar({ onLinkClick }: DashboardSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [username, setUsername] = useState("");
@@ -42,6 +46,10 @@ export function DashboardSidebar() {
       }
     }
   }, []);
+
+   const handleLinkClick = () => {
+    if (onLinkClick) onLinkClick(); // Close sidebar when any link is clicked
+  };
 
   const handleLogout = () => {
     Cookies.remove("token");
@@ -174,6 +182,7 @@ export function DashboardSidebar() {
               <div key={item.href} className="group">
                 <Link
                   href={item.href}
+                  onClick={handleLinkClick} // Close sidebar on link click
                   className={`relative flex items-center gap-4 p-3 rounded-xl transition-all duration-300 ease-out transform hover:scale-[1.01] ${
                     isActive
                       ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25"

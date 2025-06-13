@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
 import { Button } from "@/components/ui/button";
-  import { useCallback } from "react";
+import { useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -221,8 +221,6 @@ export default function TrackStatusPage() {
   // const [selectedDocument, setSelectedDocument] = useState<any>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateDocumentId, setUpdateDocumentId] = useState<string>("");
-
-
 
   const fetchDocuments = useCallback(async () => {
     try {
@@ -491,22 +489,23 @@ export default function TrackStatusPage() {
   return (
     <div>
       {/* Document Checklist */}
-      <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border border-white/50 p-8 mb-8 relative overflow-hidden">
+      <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border border-white/50 p-4 md:p-8 mb-8 relative overflow-hidden">
         {/* Background decoration */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full -translate-y-20 translate-x-20"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-indigo-500/10 to-cyan-500/10 rounded-full translate-y-12 -translate-x-12"></div>
-        <div className="p-6 border-slate-700">
-          <h2 className="text-xl font-bold text-gray-800 mb-1">
+        <div className="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full -translate-y-10 translate-x-10 md:-translate-y-20 md:translate-x-20"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 md:w-48 md:h-48 bg-gradient-to-tr from-indigo-500/10 to-cyan-500/10 rounded-full translate-y-6 -translate-x-6 md:translate-y-12 md:-translate-x-12"></div>
+
+        <div className="p-4 md:p-6 border-slate-700">
+          <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-1">
             Document Checklist
           </h2>
-          <p className="text-gray-500">
+          <p className="text-sm md:text-base text-gray-500">
             Upload all required documents for your visa application.
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="border rounded-lg border-gray-200 bg-white shadow-sm">
-          <div className="flex">
+        {/* Tabs - Made responsive with flex-wrap and adjusted padding */}
+        <div className="border rounded-lg border-gray-200 bg-white shadow-sm overflow-x-auto">
+          <div className="flex flex-wrap md:flex-nowrap">
             {[
               { key: "all", label: "All" },
               { key: "pending", label: "Pending" },
@@ -516,15 +515,17 @@ export default function TrackStatusPage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as any)}
-                className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+                className={`px-3 py-2 md:px-6 md:py-3 text-xs md:text-sm font-medium border-b-2 transition-colors flex-grow ${
                   activeTab === tab.key
                     ? "border-blue-500 text-white bg-blue-600 rounded-lg"
                     : "border-transparent text-gray-600 hover:text-white hover:bg-blue-600 rounded-lg"
                 }`}
               >
-                {tab.label}
-                <span className="ml-2 px-2 py-0.5 bg-gradient-to-r from-amber-400 to-amber-600 text-slate-300 text-xs rounded-full">
-                  {getTabCount(tab.key)}
+                <span className="whitespace-nowrap">
+                  {tab.label}
+                  <span className="ml-1 md:ml-2 px-1.5 md:px-2 py-0.5 bg-gradient-to-r from-amber-400 to-amber-600 text-slate-300 text-xs rounded-full">
+                    {getTabCount(tab.key)}
+                  </span>
                 </span>
               </button>
             ))}
@@ -532,117 +533,122 @@ export default function TrackStatusPage() {
         </div>
 
         {/* Document Lists by Category */}
-
-        
-        <div className="p-6">
+        <div className="p-2 md:p-6">
           {Object.entries(groupedDocuments).map(([category, docs]) => (
-            <div key={category} className="mb-8 last:mb-0">
-              <h3 className="text-lg font-semibold text-gray-600 mb-4 flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-400" />
+            <div key={category} className="mb-6 md:mb-8 last:mb-0">
+              <h3 className="text-base md:text-lg font-semibold text-gray-600 mb-3 md:mb-4 flex items-center">
+                <FileText className="w-4 h-4 md:w-5 md:h-5 mr-2 text-blue-400" />
                 {getCategoryTitle(category)}
               </h3>
 
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 {docs.map((doc) => (
                   <div
                     key={doc.id}
-                    className="bg-white rounded-lg p-4 border border-slate-600"
+                    className="bg-white rounded-lg p-3 md:p-4 border border-slate-600"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-3">
-                        <div className="flex-shrink-0 mt-1">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                      <div className="flex items-start space-x-2 md:space-x-3 flex-grow">
+                        <div className="flex-shrink-0 mt-0.5 md:mt-1">
                           {getStatusIcon(doc.status)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="text-gray-600 font-medium">
+                          <div className="flex flex-wrap items-center gap-1 md:gap-2 mb-1">
+                            <h4 className="text-sm md:text-base text-gray-600 font-medium">
                               {doc.name}
                             </h4>
                             {doc.required && (
-                              <span className="px-2 py-0.5 bg-red-100 text-red-800 text-xs font-medium rounded">
+                              <span className="px-1.5 py-0.5 bg-red-100 text-red-800 text-xs font-medium rounded">
                                 Required
                               </span>
                             )}
                             {getStatusBadge(doc.status)}
                           </div>
-                          <p className="text-gray-500 text-sm mb-2">
+                          <p className="text-xs md:text-sm text-gray-500 mb-2">
                             {doc.description}
                           </p>
 
-                          {doc.status === "uploaded" && "uploadedDate" in doc && doc.uploadedDate && (
-                            <div className="flex items-center text-xs text-gray-500 space-x-4">
-                              <span className="flex items-center">
-                                <FileText className="w-3 h-3 mr-1" />
-                                Document uploaded
-                              </span>
-                              <span className="flex items-center">
-                                <Calendar className="w-3 h-3 mr-1" />
-                                Uploaded: {doc.uploadedDate}
-                              </span>
-                            </div>
-                          )}
+                          {doc.status === "uploaded" &&
+                            "uploadedDate" in doc &&
+                            doc.uploadedDate && (
+                              <div className="flex flex-wrap items-center text-xs text-gray-500 gap-2 md:gap-4">
+                                <span className="flex items-center">
+                                  <FileText className="w-3 h-3 mr-1" />
+                                  Document uploaded
+                                </span>
+                                <span className="flex items-center">
+                                  <Calendar className="w-3 h-3 mr-1" />
+                                  Uploaded: {doc.uploadedDate}
+                                </span>
+                              </div>
+                            )}
 
-                          {doc.status === "issue"  && "issueDescription" in doc && doc.issueDescription && (
-                            <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-xs">
-                              <AlertTriangle className="w-3 h-3 inline mr-1" />
-                              {doc.issueDescription}
-                            </div>
-                          )}
+                          {doc.status === "issue" &&
+                            "issueDescription" in doc &&
+                            doc.issueDescription && (
+                              <div className="mt-1 md:mt-2 p-1.5 md:p-2 bg-red-50 border border-red-200 rounded text-red-700 text-xs">
+                                <AlertTriangle className="w-3 h-3 inline mr-1" />
+                                {doc.issueDescription}
+                              </div>
+                            )}
                         </div>
                       </div>
 
-                      <div className="flex items-center space-x-2 ml-4">
+                      <div className="flex flex-wrap md:flex-nowrap items-center gap-2 md:ml-4 justify-end md:justify-normal">
                         {doc.status === "uploaded" &&
                           "filePath" in doc &&
                           doc.filePath && (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => doc.filePath && handlePreview(doc.filePath)}
-                              className="text-gray-500 border-slate-600 hover:bg-blue-400 hover:text-white"
-                            >
-                              <Eye className="w-4 h-4 mr-1" />
-                              View
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                handleDownload(
-                                  doc.filePath!,
-                                  `${doc.documentType}.${(doc.filePath ?? "")
-                                    .split(".")
-                                    .pop()}`
-                                )
-                              }
-                              className="text-gray-500 border-slate-600 hover:bg-green-400 hover:text-white"
-                            >
-                              <Download className="w-4 h-4 mr-1" />
-                              Download
-                            </Button>
-                          </>
-                        )}
+                            <>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  doc.filePath && handlePreview(doc.filePath)
+                                }
+                                className="text-gray-500 border-slate-600 hover:bg-blue-400 hover:text-white text-xs md:text-sm"
+                              >
+                                <Eye className="w-3 h-3 md:w-4 md:h-4 mr-1" />
+                                View
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  handleDownload(
+                                    doc.filePath!,
+                                    `${doc.documentType}.${(doc.filePath ?? "")
+                                      .split(".")
+                                      .pop()}`
+                                  )
+                                }
+                                className="text-gray-500 border-slate-600 hover:bg-green-400 hover:text-white text-xs md:text-sm"
+                              >
+                                <Download className="w-3 h-3 md:w-4 md:h-4 mr-1" />
+                                Download
+                              </Button>
+                            </>
+                          )}
 
-                        {doc.status === "issue" && (!("isVerified" in doc) || !doc.isVerified) && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleReplace(doc)}
-                            className="text-gray-500 border-slate-600 hover:bg-orange-400 hover:text-white"
-                          >
-                            <RefreshCw className="w-4 h-4 mr-1" />
-                            Replace
-                          </Button>
-                        )}
+                        {doc.status === "issue" &&
+                          (!("isVerified" in doc) || !doc.isVerified) && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleReplace(doc)}
+                              className="text-gray-500 border-slate-600 hover:bg-orange-400 hover:text-white text-xs md:text-sm"
+                            >
+                              <RefreshCw className="w-3 h-3 md:w-4 md:h-4 mr-1" />
+                              Replace
+                            </Button>
+                          )}
 
                         {doc.status === "pending" && (
                           <Button
                             size="sm"
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm"
                             onClick={() => handleUpload(doc.name)}
                           >
-                            <Upload className="w-4 h-4 mr-1" />
+                            <Upload className="w-3 h-3 md:w-4 md:h-4 mr-1" />
                             Upload
                           </Button>
                         )}
