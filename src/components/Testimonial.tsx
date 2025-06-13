@@ -247,47 +247,47 @@ const TestimonialComponent: React.FC = () => {
   const current = testimonials[currentIndex];
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="text-center mb-8 sm:mb-12">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
           What Our Global Community Says
         </h2>
-        <p className="text-xl text-gray-600">
+        <p className="text-base sm:text-lg md:text-xl text-gray-600">
           Stories from professionals who transformed their careers internationally
         </p>
       </div>
 
-      <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div className="relative bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-2xl overflow-hidden">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50"></div>
         
         {/* Content */}
-        <div className="relative p-8 md:p-12">
+        <div className="relative p-6 sm:p-8 md:p-10 lg:p-12">
           <div className={`transition-all duration-300 ${isAnimating ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
             
             {/* Stars */}
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-4 sm:mb-6">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-6 h-6 text-yellow-400 fill-current" />
+                <Star key={i} className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 fill-current" />
               ))}
             </div>
 
             {/* Testimonial text */}
-            <blockquote className="text-xl md:text-2xl text-gray-700 text-center leading-relaxed mb-8 font-medium">
+            <blockquote className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 text-center leading-relaxed mb-6 sm:mb-8 font-medium">
               "{current.testimonial}"
             </blockquote>
 
             {/* User info */}
             <div className="flex items-center justify-center space-x-4 mb-6">
               <div className="text-center">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2">
                   {current.name}
                 </h3>
-                <div className="flex items-center justify-center space-x-2 text-gray-600">
-                  <span className="text-2xl">{current.nationalityFlag}</span>
+                <div className="flex items-center justify-center space-x-1 sm:space-x-2 text-sm sm:text-base text-gray-600">
+                  <span className="text-xl sm:text-2xl">{current.nationalityFlag}</span>
                   <span className="font-medium">{current.nationality}</span>
                   <span className="text-gray-400">→</span>
-                  <span className="text-2xl">{current.destinationFlag}</span>
+                  <span className="text-xl sm:text-2xl">{current.destinationFlag}</span>
                   <span className="font-medium">{current.destinationCountry}</span>
                 </div>
               </div>
@@ -297,55 +297,66 @@ const TestimonialComponent: React.FC = () => {
             <div className="flex items-center justify-between">
               <button
                 onClick={prevTestimonial}
-                className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 group"
+                className="p-2 sm:p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 group"
                 disabled={isAnimating}
+                aria-label="Previous testimonial"
               >
-                <ChevronLeft className="w-6 h-6 text-gray-600 group-hover:text-gray-800" />
+                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 group-hover:text-gray-800" />
               </button>
 
-              {/* Dots indicator */}
-              <div className="flex space-x-2">
-                {testimonials.map((_, index) => (
+              {/* Dots indicator - only show on larger screens */}
+              <div className="hidden sm:flex space-x-2">
+                {testimonials.slice(0, 8).map((_, index) => (
                   <button
                     key={index}
                     onClick={() => goToTestimonial(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                    className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-200 ${
                       index === currentIndex
                         ? 'bg-blue-600 scale-110'
                         : 'bg-gray-300 hover:bg-gray-400'
                     }`}
                     disabled={isAnimating}
+                    aria-label={`Go to testimonial ${index + 1}`}
                   />
                 ))}
+                {testimonials.length > 8 && (
+                  <span className="text-xs text-gray-500 self-center">+{testimonials.length - 8} more</span>
+                )}
+              </div>
+
+              {/* Mobile indicator - show current/total */}
+              <div className="sm:hidden text-sm text-gray-500">
+                {currentIndex + 1} / {testimonials.length}
               </div>
 
               <button
                 onClick={nextTestimonial}
-                className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 group"
+                className="p-2 sm:p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 group"
                 disabled={isAnimating}
+                aria-label="Next testimonial"
               >
-                <ChevronRight className="w-6 h-6 text-gray-600 group-hover:text-gray-800" />
+                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 group-hover:text-gray-800" />
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Stats section */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-        <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-          <div className="text-3xl font-bold text-blue-600 mb-2">25+</div>
-          <div className="text-gray-600">Countries Covered</div>
-        </div>
-        <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-          <div className="text-3xl font-bold text-green-600 mb-2">1000+</div>
-          <div className="text-gray-600">Success Stories</div>
-        </div>
-        <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-          <div className="text-3xl font-bold text-purple-600 mb-2">98%</div>
-          <div className="text-gray-600">Satisfaction Rate</div>
-        </div>
-      </div> */}
+      {/* Optional: Add a mobile-friendly swipe gesture area */}
+      <div 
+        className="sm:hidden w-full h-16 relative -mt-8"
+        onTouchStart={(e) => {
+          const touchX = e.touches[0].clientX;
+          const handleTouchEnd = (e: TouchEvent) => {
+            const diffX = e.changedTouches[0].clientX - touchX;
+            if (Math.abs(diffX) > 50) {
+              diffX > 0 ? prevTestimonial() : nextTestimonial();
+            }
+            document.removeEventListener('touchend', handleTouchEnd);
+          };
+          document.addEventListener('touchend', handleTouchEnd);
+        }}
+      />
     </div>
   );
 };

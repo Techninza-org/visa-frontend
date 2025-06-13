@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-// import Image from "next/image";
-// import { Check } from "lucide-react";
 
 interface Country {
   name: string;
@@ -12,20 +10,9 @@ interface Country {
 
 export default function LocationForm() {
   const [countries, setCountries] = useState<Country[]>([]);
-  const [selectedCountry1, setSelectedCountry1] = useState<Country | null>(
-    null
-  );
-  const [selectedCountry2, setSelectedCountry2] = useState<Country | null>(
-    null
-  );
+  const [selectedCountry1, setSelectedCountry1] = useState<Country | null>(null);
+  const [selectedCountry2, setSelectedCountry2] = useState<Country | null>(null);
   const [loader, setLoader] = useState<boolean>(false);
-
-
-  // console.log(selectedCountry1?.name, selectedCountry2?.name, "selected countries");
-
-
-
-
 
   // State for dropdowns
   const [isOpen1, setIsOpen1] = useState(false);
@@ -92,78 +79,73 @@ export default function LocationForm() {
       country.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // let selectedCountry = selected || null;
-     if (typeof window !== "undefined") {
-    sessionStorage.setItem(
-      "selectedCountries",
-      JSON.stringify({
-        source: selectedCountry1?.name || "",
-        destination: selectedCountry2?.name || "",
-      })
-    )
-  }
-
-
-//  sessionStorage.setItem(
-//     "selectedCountries",
-//     JSON.stringify({
-//       source: selectedCountry1?.name || "",
-//       destination: selectedCountry2?.name || "",
-//     })
-//   );
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(
+        "selectedCountries",
+        JSON.stringify({
+          source: selectedCountry1?.name || "",
+          destination: selectedCountry2?.name || "",
+        })
+      );
+    }
 
     return (
       <div className="relative w-full">
-        <label className="block mb-1">{label}</label>
+        <label className="block mb-1 text-sm sm:text-base">{label}</label>
         <div
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center justify-between px-3 py-3 rounded-xl bg-yellow-500/5 shadow-lg border border-amber-500/50 hover:border-amber-500/30 cursor-pointer"
+          className="flex items-center justify-between px-3 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-yellow-500/5 shadow-md sm:shadow-lg border border-amber-500/50 hover:border-amber-500/30 cursor-pointer"
         >
           {selected ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 overflow-hidden">
               <img
                 src={`https://flagcdn.com/w40/${selected.Iso2.toLowerCase()}.png`}
-                className="w-6 h-4 rounded shadow"
+                className="w-5 h-3 sm:w-6 sm:h-4 rounded shadow"
                 alt={selected.name}
+                loading="lazy"
               />
-              <span>{selected.name}</span>
+              <span className="truncate text-sm sm:text-base">
+                {selected.name}
+              </span>
             </div>
           ) : (
-            <span className="text-gray-800">Select Country</span>
+            <span className="text-gray-800 text-sm sm:text-base">
+              Select Country
+            </span>
           )}
-          <span>▾</span>
+          <span className="text-sm sm:text-base">▾</span>
         </div>
         {isOpen && (
-          <div className="absolute z-50 mt-2 max-h-72 overflow-y-auto w-full bg-white border border-gray-300 rounded-xl shadow-lg">
+          <div className="absolute z-50 mt-1 sm:mt-2 max-h-60 sm:max-h-72 overflow-y-auto w-full bg-white border border-gray-300 rounded-lg sm:rounded-xl shadow-md sm:shadow-lg">
             <input
               type="text"
               placeholder="Search country..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 border-b border-gray-300 focus:outline-none placeholder-black"
+              className="w-full px-2 sm:px-3 py-1 sm:py-2 border-b border-gray-300 focus:outline-none placeholder-gray-500 text-sm sm:text-base"
             />
             {filteredCountries.length > 0 ? (
               filteredCountries.map((country, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center px-4 py-2 gap-2 hover:bg-amber-100 cursor-pointer"
+                  className="flex items-center px-2 sm:px-4 py-1 sm:py-2 gap-2 hover:bg-amber-100 cursor-pointer"
                   onClick={() => {
                     setSelected(country);
                     setIsOpen(false);
-                    setSearchTerm(""); // Clear search after selection
+                    setSearchTerm("");
                   }}
                 >
                   <img
                     src={`https://flagcdn.com/w40/${country.Iso2.toLowerCase()}.png`}
-                    className="w-6 h-4 rounded shadow"
+                    className="w-5 h-3 sm:w-6 sm:h-4 rounded shadow"
                     alt={country.name}
-                    
+                    loading="lazy"
                   />
-                  <span>{country.name}</span>
+                  <span className="text-sm sm:text-base">{country.name}</span>
                 </div>
               ))
             ) : (
-              <div className="p-4 text-center text-gray-400">
+              <div className="p-2 sm:p-4 text-center text-gray-400 text-sm sm:text-base">
                 No countries found
               </div>
             )}
@@ -174,10 +156,10 @@ export default function LocationForm() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto text-gray-800 p-4">
+    <div className="w-full max-w-4xl mx-auto text-gray-800 p-2 sm:p-4">
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="flex flex-col md:flex-row items-stretch md:items-end justify-between gap-4"
+        className="flex flex-col sm:flex-row items-stretch sm:items-end justify-between gap-3 sm:gap-4"
       >
         {renderDropdown(
           "Your Nationality",
@@ -201,35 +183,18 @@ export default function LocationForm() {
           type="button"
           onClick={handleVisaCheck}
           disabled={loader}
-          className={`bg-amber-500 text-white px-8 py-2 rounded-xl shadow-md hover:bg-amber-600 transition-all duration-200 flex items-center gap-2 w-full ${
+          className={`bg-amber-500 text-white px-4 sm:px-8 py-2 rounded-lg sm:rounded-xl shadow-md hover:bg-amber-600 transition-all duration-200 flex items-center justify-center gap-2 w-full sm:w-auto ${
             loader ? "opacity-50 cursor-not-allowed" : ""
           }`}
-          style={{ maxWidth: "150px", height: "50px" }}
+          style={{ minHeight: "44px", maxWidth: "none", sm: { maxWidth: "150px" } }}
         >
           {loader ? (
-        "  Checking.... "
+            <span className="text-sm sm:text-base">Checking...</span>
           ) : (
-            "Check Visa"
+            <span className="text-sm sm:text-base">Check Visa</span>
           )}
         </button>
-
-        {/* <button
-          type="button"
-          onClick={handleVisaCheck}
-          className="bg-amber-500 text-white px-8 py-2 rounded-xl shadow-md hover:bg-amber-600 transition-all duration-200 flex items-center gap-2 w-full"
-          style={{ maxWidth: "150px", height: "50px" }}
-        >
-          Check Visa
-        </button> */}
       </form>
-
-      {/* {visaResult && (
-        <div className="mt-6 p-4 border border-green-400 bg-green-50 rounded-xl">
-          <pre className="text-sm text-gray-700 whitespace-pre-wrap">
-            {JSON.stringify(visaResult, null, 2)}
-          </pre>
-        </div>
-      )} */}
     </div>
   );
 }
