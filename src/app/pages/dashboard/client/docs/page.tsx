@@ -777,6 +777,7 @@ export default function TrackStatusPage() {
       {/* Image Preview Modal */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] p-0 bg-black rounded-2xl overflow-hidden">
+          
           <div className="relative">
             <button
               onClick={() => setPreviewOpen(false)}
