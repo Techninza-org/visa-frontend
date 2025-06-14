@@ -52,47 +52,53 @@ import ExpertServices from "@/components/GetPackage";
     },
   ];
 
-  const requirements = [
-    "Original passport valid for at least 6 months",
-    "Previous passports (if any)",
-    "DS-160 confirmation page",
-    "One photograph (5cm x 5cm, white background)",
-    "Visa fee payment receipt",
-    "Interview appointment letter",
-  ];
+ const requirements = [
+  "Original passport with at least 6 months validity",
+  "All previous passports (if available)",
+  "Completed and signed visa application form",
+  "Recent passport-sized photograph (as per specifications)",
+  "Visa fee payment receipt or proof of payment",
+  "Appointment confirmation or interview letter (if applicable)",
+  "Proof of travel purpose (e.g., invitation letter, itinerary, hotel booking)",
+  "Financial documents to prove sufficient funds",
+  "Travel insurance covering the duration of stay (if required)",
+  "Any additional documents required by the specific embassy or consulate",
+];
+
 
   const processSteps = [
-    {
-      step: 1,
-      title: "Complete DS-160 Form",
-      description: "Fill out the online nonimmigrant visa application form",
-      duration: "30-45 minutes",
-    },
-    {
-      step: 2,
-      title: "Pay Visa Fee",
-      description: "Pay the non-refundable visa application fee",
-      duration: "5 minutes",
-    },
-    {
-      step: 3,
-      title: "Schedule Interview",
-      description: "Schedule your visa interview at the ${source} embassy",
-      duration: "10 minutes",
-    },
-    {
-      step: 4,
-      title: "Prepare Documents",
-      description: "Gather all required documents for your interview",
-      duration: "1-2 days",
-    },
-    {
-      step: 5,
-      title: "Attend Interview",
-      description: "Visit the embassy on your appointment date and time",
-      duration: "2-3 hours",
-    },
-  ];
+  {
+    step: 1,
+    title: "Submit Application Form",
+    description: "Fill out and submit your visa application using AXE Visa Technology or the official embassy platform.",
+    duration: "5–10 minutes",
+  },
+  {
+    step: 2,
+    title: "Pay Visa Fee",
+    description: "Pay the required non-refundable visa fee through the available payment methods.",
+    duration: "5–10 minutes",
+  },
+  {
+    step: 3,
+    title: "Upload/Submit Required Documents",
+    description: "Submit all necessary documents online or at your nearest visa processing center, depending on embassy requirements.",
+    duration: "10–30 minutes",
+  },
+  {
+    step: 4,
+    title: "Attend Visa Interview (If Required)",
+    description: "Visit the embassy or consulate on your scheduled date and time for a personal interview.",
+    duration: "2–3 hours",
+  },
+  {
+    step: 5,
+    title: "Receive Your Visa",
+    description: "Once approved, your visa will be stamped or delivered to you as per the embassy's process.",
+    duration: "Varies by embassy",
+  },
+];
+
 
 
   // Function to render visa requirement section
@@ -722,135 +728,97 @@ import ExpertServices from "@/components/GetPackage";
             </section> */}
           </div>
 
-          {/* Premium Right Column */}
-          <div className="bg-white rounded-3xl shadow-2xl p-8 border border-slate-200/50 h-fit sticky top-8">
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4">
-                📄
-              </div>
-              <h2 className="text-2xl font-bold text-slate-800">
-                Document Checklist
-              </h2>
-              <p className="text-slate-600">Everything you need for success</p>
-            </div>
+        {/* Premium Right Column */}
+<div className="bg-white rounded-3xl shadow-2xl p-8 border border-slate-200/50 h-fit sticky top-8">
+  <div className="text-center mb-6">
+    <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4">
+      📎
+    </div>
+    <h2 className="text-2xl font-bold text-slate-800">Visa Document Checklist</h2>
+    <p className="text-slate-600">Reviewed & accepted worldwide</p>
+  </div>
 
-            <div className="space-y-6">
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200">
-                <h3 className="font-bold text-green-800 mb-4 flex items-center">
-                  <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
-                    ✓
-                  </span>
-                  Mandatory Documents
-                </h3>
-                <ul className="space-y-3">
-                  <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Passport (valid for at least 6 months after {source})
-                  </li>
-                  <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    DS-160 confirmation page
-                  </li>
-                  <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Application fee payment receipt
-                  </li>
-                  <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Appointment confirmation letter
-                  </li>
-                  <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Passport Photo (see Photo Requirements)
-                  </li>
-                </ul>
-              </div>
+  <div className="space-y-6">
+    {/* Mandatory Section */}
+    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200">
+      <h3 className="font-bold text-green-800 mb-4 flex items-center">
+        <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
+          ✓
+        </span>
+        Mandatory Documents
+      </h3>
+      <ul className="space-y-3">
+        <li className="flex items-start text-slate-700">
+          <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+          Original Passport (valid for at least 6 months)
+        </li>
+        <li className="flex items-start text-slate-700">
+          <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+          Completed Application Form (e.g. DS-160 or country-specific form)
+        </li>
+        <li className="flex items-start text-slate-700">
+          <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+          Recent Passport-Size Photograph (as per official specifications)
+        </li>
+        <li className="flex items-start text-slate-700">
+          <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+          Visa Fee Payment Receipt
+        </li>
+        <li className="flex items-start text-slate-700">
+          <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+          Appointment Confirmation Letter (if required)
+        </li>
+      </ul>
+    </div>
 
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
-                <h3 className="font-bold text-blue-800 mb-4 flex items-center">
-                  <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
-                    +
-                  </span>
-                  Recommended Documents
-                </h3>
-                <ul className="space-y-3">
-                  {[
-                    "Bank statements",
-                    "Employment/student proof",
-                    "Travel Itinerary",
-                    "Invitation Letter",
-                    "Property ownership proof",
-                    "Photos at tourist attractions",
-                    "Old passports with stamps/visas",
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-start text-slate-700">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+    {/* Recommended Section */}
+    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
+      <h3 className="font-bold text-blue-800 mb-4 flex items-center">
+        <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
+          +
+        </span>
+        Recommended Documents
+      </h3>
+      <ul className="space-y-3">
+        {[
+          "Bank Statements (last 3–6 months)",
+          "Employment or Student Verification Letter",
+          "Travel Itinerary (flight and hotel bookings)",
+          "Invitation Letter (if applicable)",
+          "Property or Asset Proof (land, house, etc.)",
+          "Old Passports with Travel History",
+          "Proof of Ties to Home Country (family, job, studies)"
+        ].map((item, index) => (
+          <li key={index} className="flex items-start text-slate-700">
+            <span className="w-2 h-2 bg-blue-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
 
-              <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-4 border border-amber-200">
-                <p className="text-amber-800 text-sm font-medium">
-                  💡 <strong>Expert Tip:</strong> Our team reviews each case
-                  individually and suggests additional documents to strengthen
-                  your application.
-                </p>
-              </div>
+    {/* Tip */}
+    <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-4 border border-amber-200">
+      <p className="text-amber-800 text-sm font-medium">
+        💡 <strong>Pro Tip:</strong> We review every case personally and help you gather extra documents to boost your approval chances.
+      </p>
+    </div>
 
-              {/* <div className="border-t border-slate-200 pt-6">
-                <div className="bg-slate-50 rounded-2xl p-6">
-                  <h3 className="font-bold text-slate-800 mb-4">
-                    Premium Service Pricing
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-600">
-                        Visa Application Fee
-                      </span>
-                      <span className="font-semibold">$185</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-600">
-                        Premium Service Fee
-                      </span>
-                      <span className="font-semibold">$145</span>
-                    </div>
-                    <div className="border-t border-slate-200 pt-3">
-                      <div className="flex justify-between items-center">
-                        <span className="font-bold text-lg">Total</span>
-                        <span className="font-bold text-xl text-slate-800">
-                          $330
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
-{/* 
-              <a href="/pages/dashboard/client/applications">
-                <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                  Start Premium Application
-                </Button>
-              </a> */}
+    {/* Guarantee Note */}
+    <div className="text-center">
+      <div className="flex items-center justify-center space-x-2 text-green-600 mb-2">
+        <span className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">
+          ✓
+        </span>
+        <span className="text-sm font-medium">100% Money-back Guarantee</span>
+      </div>
+      <p className="text-slate-500 text-xs">
+        By starting your application, you agree to our terms & privacy policy.
+      </p>
+    </div>
+  </div>
+</div>
 
-              <div className="text-center">
-                <div className="flex items-center justify-center space-x-2 text-green-600 mb-2">
-                  <span className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">
-                    ✓
-                  </span>
-                  <span className="text-sm font-medium">
-                    100% Money-back Guarantee
-                  </span>
-                </div>
-                <p className="text-slate-500 text-xs">
-                  By placing your order, you agree to our privacy policy and
-                  terms of use.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </main>
 
