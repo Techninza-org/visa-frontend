@@ -70,7 +70,7 @@ export function DashboardSidebar({ onLinkClick }: DashboardSidebarProps) {
       icon: Briefcase,
       label: "Visa Applications",
       href: "/pages/dashboard/client/visa-applications",
-      badge: "3",
+      badge: null,
       description: "Track your visa progress",
       color: "from-emerald-500 to-emerald-600",
     },
@@ -86,7 +86,7 @@ export function DashboardSidebar({ onLinkClick }: DashboardSidebarProps) {
       icon: FileText,
       label: "Documents",
       href: "/pages/dashboard/client/docs",
-      badge: "2",
+      badge: null,
       description: "Upload & manage files",
       color: "from-orange-500 to-orange-600",
     },
@@ -185,20 +185,20 @@ export function DashboardSidebar({ onLinkClick }: DashboardSidebarProps) {
                   onClick={handleLinkClick} // Close sidebar on link click
                   className={`relative flex items-center gap-4 p-3 rounded-xl transition-all duration-300 ease-out transform hover:scale-[1.01] ${
                     isActive
-                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25"
+                      ? "bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200 shadow-sm shadow-blue-500/25"
                       : "text-gray-700 hover:bg-gray-50 hover:text-gray-900 hover:shadow-sm"
                   }`}
                 >
                   {/* Active indicator */}
                   {isActive && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-lg" />
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8  rounded-r-full shadow-lg" />
                   )}
                   
                   {/* Icon with gradient background */}
                   <div
                     className={`relative p-2 rounded-lg transition-all duration-300 ${
                       isActive
-                        ? "bg-white/20 shadow-lg"
+                        ? "bg-blue-600/50 shadow-lg"
                         : `bg-gradient-to-br ${item.color} opacity-90 group-hover:opacity-100 group-hover:shadow-md`
                     }`}
                   >
@@ -220,8 +220,8 @@ export function DashboardSidebar({ onLinkClick }: DashboardSidebarProps) {
                           variant="secondary"
                           className={`ml-2 text-xs font-bold px-2 py-0.5 ${
                             isActive
-                              ? "bg-white/20 text-white"
-                              : "bg-red-500 text-white shadow-sm"
+                              ? "bg-white/20 text-blue-600 shadow-sm"
+                              : "bg-red-500 text-blue-600 shadow-sm"
                           }`}
                         >
                           {item.badge}
@@ -229,7 +229,7 @@ export function DashboardSidebar({ onLinkClick }: DashboardSidebarProps) {
                       )}
                     </div>
                     <p className={`text-xs mt-0.5 truncate ${
-                      isActive ? "text-blue-100" : "text-gray-500"
+                      isActive ? "text-blue-500" : "text-gray-500"
                     }`}>
                       {item.description}
                     </p>
@@ -239,7 +239,7 @@ export function DashboardSidebar({ onLinkClick }: DashboardSidebarProps) {
                   <ChevronRight
                     className={`h-4 w-4 transition-all duration-300 ${
                       isActive
-                        ? "opacity-100 translate-x-0 text-white"
+                        ? "opacity-100 translate-x-0 text-blue-500"
                         : "opacity-0 -translate-x-2 group-hover:opacity-60 group-hover:translate-x-0 text-gray-400"
                     }`}
                   />

@@ -8,21 +8,17 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
-import ExpertServices from "@/components/GetPackage";
+// import ExpertServices from "@/components/GetPackage";
 
- function USVisaIndiaPassportContent() {
+function USVisaIndiaPassportContent() {
   const [activeTab, setActiveTab] = useState("tourist");
   const searchParams = useSearchParams();
   const [visaResult, setVisaResult] = useState<any>(null);
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
+  const [openFaq, setOpenFaq] = useState(null);
+  const [activeFaqCategory, setActiveFaqCategory] = useState("visa-required");
   const [visaType, setVisaType] = useState<string>(""); // "e-visa", "visa-required", or number for visa-free
-
-
-  
-
-
-  
 
   const visaTypes = [
     {
@@ -52,14 +48,106 @@ import ExpertServices from "@/components/GetPackage";
     },
   ];
 
-  const requirements = [
-    "Original passport valid for at least 6 months",
-    "Previous passports (if any)",
-    "DS-160 confirmation page",
-    "One photograph (5cm x 5cm, white background)",
-    "Visa fee payment receipt",
-    "Interview appointment letter",
-  ];
+  // const requirements = [
+  //   "Original passport valid for at least 6 months",
+  //   "Previous passports (if any)",
+  //   "DS-160 confirmation page",
+  //   "One photograph (5cm x 5cm, white background)",
+  //   "Visa fee payment receipt",
+  //   "Interview appointment letter",
+  // ];
+
+  // FAQ Data
+  const faqData = {
+    "visa-required": [
+      {
+        q: "How early should I apply before my travel date?",
+        a: "Ideally, 2–3 months in advance to accommodate embassy processing times and avoid delays.",
+      },
+      {
+        q: "Do I need to visit the embassy in person?",
+        a: "It depends on the country. For many visas, biometrics or interviews are required at an embassy or VFS/BLS/TLS center.",
+      },
+      {
+        q: "Can I apply for my family together?",
+        a: "Yes. We assist with group or family visa applications, ensuring documentation is aligned.",
+      },
+      {
+        q: "What happens if I miss my visa appointment?",
+        a: "We can help you reschedule, but repeated no-shows can impact your future applications.",
+      },
+      {
+        q: "What if my visa is rejected?",
+        a: "We analyze the reason for rejection and guide you through a stronger reapplication or alternative solution.",
+      },
+    ],
+    "e-visa": [
+      {
+        q: "Is eVisa applicable for all passport holders?",
+        a: "No. Eligibility depends on nationality and destination rules. We check your eligibility first.",
+      },
+      {
+        q: "Can I apply eVisa urgently?",
+        a: "Yes, many countries offer express or super express processing for an extra fee.",
+      },
+      {
+        q: "What format should my documents be in?",
+        a: "PDFs for passport and photos (JPG/PNG). We help resize or format them correctly.",
+      },
+      {
+        q: "Do I need to print the eVisa?",
+        a: "Yes, it's highly recommended to carry a physical printout along with a soft copy.",
+      },
+      {
+        q: "Is eVisa valid for multiple entries?",
+        a: "Some eVisas are single-entry only. We inform you of the rules for your selected country.",
+      },
+    ],
+    "visa-on-arrival": [
+      {
+        q: "Will the visa be granted 100% at the airport?",
+        a: "Not guaranteed. You must meet all entry conditions. We help you prepare properly.",
+      },
+      {
+        q: "What if the visa fee is in a currency I don't have?",
+        a: "Some countries accept USD, but not all. Always carry extra cash or check with us first.",
+      },
+      {
+        q: "Can I stay as long as I want with visa on arrival?",
+        a: "No. Stay durations are limited — typically 15 to 30 days.",
+      },
+      {
+        q: "Is travel insurance required for visa on arrival?",
+        a: "Some countries do require it. We recommend it in all cases.",
+      },
+      {
+        q: "What if I don't have hotel booking proof?",
+        a: "You may be denied entry. We can provide embassy-compliant bookings in advance.",
+      },
+    ],
+    "visa-free": [
+      {
+        q: "Do I still need a passport to travel visa-free?",
+        a: "Yes. Your passport must be valid for at least 6 months from the date of travel.",
+      },
+      {
+        q: "Can I enter multiple times during visa-free stay?",
+        a: "Some countries allow multiple entries; others don't. We help clarify rules for your destination.",
+      },
+      {
+        q: "Is return flight mandatory?",
+        a: "Many airlines and border officers ask for proof of return or onward travel.",
+      },
+      {
+        q: "What if I want to extend my stay?",
+        a: "In most visa-free countries, extensions are not allowed. You must exit and re-enter after a gap.",
+      },
+      {
+        q: "Do I need travel insurance for visa-free travel?",
+        a: "Not always mandatory, but strongly recommended. We offer visa-compliant policies instantly.",
+      },
+    ],
+  };
 
   const processSteps = [
     {
@@ -94,6 +182,83 @@ import ExpertServices from "@/components/GetPackage";
     },
   ];
 
+  const renderFaqSection = () => {
+    const faqCategories = [
+      { id: "visa-required", name: "Visa Required", icon: "🔴" },
+      { id: "e-visa", name: "eVisa Required", icon: "🌐" },
+      { id: "visa-on-arrival", name: "Visa on Arrival", icon: "🛬" },
+      { id: "visa-free", name: "Visa-Free", icon: "🟢" },
+    ];
+
+    return (
+      <section className="bg-white rounded-3xl shadow-xl p-8 border border-slate-200/50">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4">
+            ❓
+          </div>
+          <h2 className="text-3xl font-bold text-slate-800">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-slate-600">Get answers to common visa questions</p>
+        </div>
+
+        {/* FAQ Category Tabs */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {faqCategories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setActiveFaqCategory(category.id)}
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                activeFaqCategory === category.id
+                  ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              }`}
+            >
+              <span className="mr-2">{category.icon}</span>
+              {category.name}
+            </button>
+          ))}
+        </div>
+
+        {/* FAQ Content */}
+        <div className="space-y-4">
+          {faqData[activeFaqCategory]?.map((faq, index) => (
+            <div
+              key={index}
+              className="border border-slate-200 rounded-xl overflow-hidden"
+            >
+              <button
+                onClick={() =>
+                  setOpenFaq(
+                    openFaq === `${activeFaqCategory}-${index}`
+                      ? null
+                      : `${activeFaqCategory}-${index}`
+                  )
+                }
+                className="w-full px-6 py-4 text-left bg-slate-50 hover:bg-slate-100 transition-colors duration-200 flex justify-between items-center"
+              >
+                <span className="font-semibold text-slate-800">{faq.q}</span>
+                <span
+                  className={`transform transition-transform duration-200 ${
+                    openFaq === `${activeFaqCategory}-${index}`
+                      ? "rotate-180"
+                      : ""
+                  }`}
+                >
+                  ⌄
+                </span>
+              </button>
+              {openFaq === `${activeFaqCategory}-${index}` && (
+                <div className="px-6 py-4 bg-white border-t border-slate-200">
+                  <p className="text-slate-700 leading-relaxed">{faq.a}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  };
 
   // Function to render visa requirement section
   const renderVisaRequirementSection = () => {
@@ -129,24 +294,6 @@ import ExpertServices from "@/components/GetPackage";
               required!
             </p>
 
-            {/* <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">⚡</div>
-                <div className="font-bold text-lg">Quick Processing</div>
-                <div className="text-green-100">2-5 business days</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">💳</div>
-                <div className="font-bold text-lg">Online Payment</div>
-                <div className="text-green-100">Secure & convenient</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">📧</div>
-                <div className="font-bold text-lg">Email Delivery</div>
-                <div className="text-green-100">Instant notification</div>
-              </div>
-            </div> */}
-
             <Button
               onClick={handleClick}
               className="bg-white text-green-600 hover:bg-green-50 px-12 py-4 text-xl font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
@@ -173,24 +320,6 @@ import ExpertServices from "@/components/GetPackage";
               Let our experts handle your visa application process
               professionally
             </p>
-
-            {/* <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">📋</div>
-                <div className="font-bold text-lg">Document Prep</div>
-                <div className="text-blue-100">Professional review</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">🎯</div>
-                <div className="font-bold text-lg">Expert Guidance</div>
-                <div className="text-blue-100">96.8% success rate</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">🏆</div>
-                <div className="font-bold text-lg">Premium Service</div>
-                <div className="text-blue-100">End-to-end support</div>
-              </div>
-            </div> */}
 
             <Button
               onClick={handleClick}
@@ -219,24 +348,6 @@ import ExpertServices from "@/components/GetPackage";
               Let our experts handle your visa application process
               professionally
             </p>
-            {/* 
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">📋</div>
-                <div className="font-bold text-lg">Document Prep</div>
-                <div className="text-blue-100">Professional review</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">🎯</div>
-                <div className="font-bold text-lg">Expert Guidance</div>
-                <div className="text-blue-100">96.8% success rate</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">🏆</div>
-                <div className="font-bold text-lg">Premium Service</div>
-                <div className="text-blue-100">End-to-end support</div>
-              </div>
-            </div> */}
 
             <Button
               onClick={handleClick}
@@ -290,31 +401,6 @@ import ExpertServices from "@/components/GetPackage";
               Excellent! {source} passport holders can visit {destination}{" "}
               without a visa
             </p>
-            {/* <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-2xl px-8 py-4 mb-8">
-              <span className="text-5xl font-bold mr-4">{visaResult}</span>
-              <div className="text-left">
-                <div className="text-2xl font-bold"> Days</div>
-                <div className="text-purple-100">Visa-free stay</div>
-              </div>
-            </div> */}
-
-            {/* <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">✈️</div>
-                <div className="font-bold text-lg">Just Fly</div>
-                <div className="text-purple-100">No visa needed</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">💰</div>
-                <div className="font-bold text-lg">Save Money</div>
-                <div className="text-purple-100">No visa fees</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl mb-2">⏰</div>
-                <div className="font-bold text-lg">Save Time</div>
-                <div className="text-purple-100">No processing wait</div>
-              </div>
-            </div> */}
 
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
               <h3 className="text-xl font-bold mb-4">Important Reminders:</h3>
@@ -337,10 +423,6 @@ import ExpertServices from "@/components/GetPackage";
                 </li>
               </ul>
             </div>
-
-            {/* <Button className="bg-white text-purple-600 hover:bg-purple-50 px-12 py-4 text-xl font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-              Plan Your Trip Now
-            </Button> */}
           </div>
         </section>
       );
@@ -411,56 +493,14 @@ import ExpertServices from "@/components/GetPackage";
                   ? "Visa Free"
                   : "Visa"}{" "}
               </span>
-              for {source} Holders
+              for {source} Passport Holders
             </h1>
 
             <p className="text-xl md:text-2xl mb-8 text-blue-100 font-light">
               Premium visa application services through {source} Embassy
             </p>
 
-            {/* Premium Stats */}
-            {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-              {successStats.map((stat, index) => (
-                <div
-                  key={index}
-                  className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
-                >
-                  <div className="text-2xl mb-2">{stat.icon}</div>
-                  <div className="text-2xl font-bold text-white">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-blue-200">{stat.label}</div>
-                </div>
-              ))}
-            </div> */}
-
             {renderVisaRequirementSection()}
-
-            {/* Premium Visa Type Selection */}
-            {/* <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20">
-              <h3 className="text-lg font-semibold mb-4 text-blue-100">
-                Select Your Visa Type
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                {visaTypes.map((type) => (
-                  <button
-                    key={type.id}
-                    onClick={() => setActiveTab(type.id)}
-                    className={`p-4 rounded-xl transition-all duration-300 border-2 ${
-                      activeTab === type.id
-                        ? "bg-white text-slate-900 border-white shadow-lg transform scale-105"
-                        : "bg-white/10 text-white border-white/30 hover:bg-white/20 hover:border-white/50"
-                    }`}
-                  >
-                    <div className="text-2xl mb-2">{type.icon}</div>
-                    <div className="font-semibold text-sm">{type.name}</div>
-                    <div className="text-xs opacity-75 mt-1">
-                      {type.duration}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div> */}
           </div>
         </div>
       </section>
@@ -535,47 +575,154 @@ import ExpertServices from "@/components/GetPackage";
               </h2>
 
               <div className="grid md:grid-cols-2 gap-6">
-                {requirements.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start p-4 bg-slate-50 rounded-xl border border-slate-200"
-                  >
-                    <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white mr-4 mt-1 flex-shrink-0">
-                      <svg
-                        className="w-4 h-4"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                {/* Type-Specific Requirements */}
+                {visaResult === "visa required" &&
+                  [
+                    "Visa application form",
+                    "Appointment confirmation",
+                    "Cover letter",
+                    "Employment/student proof",
+                    "Previous passports (if any)",
+                    "Visa fee payment receipt",
+                  ].map((item, index) => (
+                    <div
+                      key={`required-${index}`}
+                      className="flex items-start p-4 bg-slate-50 rounded-xl border border-slate-200"
+                    >
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white mr-4 mt-1 flex-shrink-0">
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-slate-700 font-medium">{item}</span>
                     </div>
-                    <span className="text-slate-700 font-medium">{item}</span>
-                  </div>
-                ))}
+                  ))}
+
+                {visaResult === "e-visa" &&
+                  [
+                    "Scanned passport copy",
+                    "Digital photograph",
+                    "Email ID for eVisa delivery",
+                    "Credit card for payment",
+                    "eVisa printout (after approval)",
+                  ].map((item, index) => (
+                    <div
+                      key={`evisa-${index}`}
+                      className="flex items-start p-4 bg-slate-50 rounded-xl border border-slate-200"
+                    >
+                      <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-violet-600 rounded-full flex items-center justify-center text-white mr-4 mt-1 flex-shrink-0">
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-slate-700 font-medium">{item}</span>
+                    </div>
+                  ))}
+
+                {visaResult === "visa on arrival" &&
+                  [
+                    "Return/onward flight ticket",
+                    "Visa fee in cash (correct currency)",
+                    "Passport-size photos (quantity varies)",
+                    "Local currency for expenses",
+                    "Visa on arrival form (if applicable)",
+                  ].map((item, index) => (
+                    <div
+                      key={`arrival-${index}`}
+                      className="flex items-start p-4 bg-slate-50 rounded-xl border border-slate-200"
+                    >
+                      <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full flex items-center justify-center text-white mr-4 mt-1 flex-shrink-0">
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-slate-700 font-medium">{item}</span>
+                    </div>
+                  ))}
+
+                {visaResult === "visa free" &&
+                  [
+                    "Return/onward flight ticket",
+                    "Proof of sufficient funds",
+                    "Hotel/accommodation details",
+                    "Travel insurance (recommended)",
+                    "Visa-free entry confirmation",
+                  ].map((item, index) => (
+                    <div
+                      key={`free-${index}`}
+                      className="flex items-start p-4 bg-slate-50 rounded-xl border border-slate-200"
+                    >
+                      <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center text-white mr-4 mt-1 flex-shrink-0">
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-slate-700 font-medium">{item}</span>
+                    </div>
+                  ))}
               </div>
 
               <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-6">
                 <h3 className="text-xl font-bold text-blue-800 mb-4 flex items-center">
                   <span className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white mr-3">
-                    {visaTypes.find((v) => v.id === activeTab)?.icon}
+                    {activeTab === "visaRequired"
+                      ? "📋"
+                      : activeTab === "eVisa"
+                      ? "🌐"
+                      : activeTab === "visaOnArrival"
+                      ? "🛬"
+                      : "🟢"}
                   </span>
-                  Additional Requirements for{" "}
-                  {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Visa
+                  Additional Notes for{" "}
+                  {activeTab === "visaRequired"
+                    ? "Visa Required"
+                    : activeTab === "eVisa"
+                    ? "eVisa"
+                    : activeTab === "visaOnArrival"
+                    ? "Visa on Arrival"
+                    : "Visa-Free"}{" "}
+                  Entry
                 </h3>
                 <p className="text-slate-700 leading-relaxed">
-                  {activeTab === "tourist"
-                    ? "Proof of sufficient funds, travel itinerary, and ties to (employment, property, family)"
-                    : activeTab === "business"
-                    ? "Letter from employer, invitation, and details of business activities"
-                    : activeTab === "student"
-                    ? "Form I-20, SEVIS fee receipt, academic transcripts, and proof of financial support"
-                    : activeTab === "work"
-                    ? "Approved petition (such as H1B, L1), labor certification, and employment contract"
-                    : "Confirmed tickets to final destination and visa for that country (if required)"}
+                  {activeTab === "visaRequired"
+                    ? "Processing times vary by embassy (typically 15-30 days). Some countries require biometrics or interviews. We can help with appointment scheduling and document preparation."
+                    : activeTab === "eVisa"
+                    ? "eVisas typically process within 3-7 business days. Approval is at the discretion of immigration authorities. Always carry a printed copy of your eVisa approval."
+                    : activeTab === "visaOnArrival"
+                    ? "Visa on arrival is not guaranteed - you must meet all entry requirements. Have all documents organized for quick presentation at immigration. Fees must be paid in exact currency."
+                    : "Even for visa-free entry, border officers may ask for proof of onward travel and sufficient funds. Maximum stay durations vary by country (typically 30-90 days)."}
                 </p>
               </div>
             </section>
@@ -621,105 +768,7 @@ import ExpertServices from "@/components/GetPackage";
                 ))}
               </div>
             </section>
-
-            {/* Expert Services Section */}
-            {/* <section className="bg-white rounded-3xl shadow-xl p-8 border border-slate-200/50">
-              <h2 className="text-3xl font-bold text-slate-800 mb-8 flex items-center">
-                <span className="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg flex items-center justify-center text-white mr-4">
-                  🎯
-                </span>
-                Expert Services
-              </h2>
-
-              <div className="grid md:grid-cols-3 gap-6">
-                {expertServices.map((service, index) => (
-                  <div
-                    key={index}
-                    className={`relative rounded-2xl p-6 border-2 transition-all duration-300 hover:shadow-xl ${
-                      service.popular
-                        ? "border-purple-300 bg-gradient-to-br from-purple-50 to-pink-50"
-                        : "border-slate-200 bg-slate-50"
-                    }`}
-                  >
-                    {service.popular && (
-                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                        <span className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-4 py-1 rounded-full text-sm font-medium whitespace-nowrap">
-                          Most Popular
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="text-center">
-                      <h3 className="text-xl font-bold text-slate-800 mb-3">
-                        {service.title}
-                      </h3>
-                      <p className="text-slate-600 mb-4 leading-relaxed">
-                        {service.description}
-                      </p>
-                      <div className="text-3xl font-bold text-slate-800 mb-4">
-                        {service.price}
-                      </div>
-                      <Button
-                        className={`w-full py-3 rounded-xl font-medium transition-all duration-300 ${
-                          service.popular
-                            ? "bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white"
-                            : "bg-slate-800 hover:bg-slate-700 text-white"
-                        }`}
-                      >
-                        Add Service
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section> */}
-
-            {/* {<ExpertServices/>} */}
-
-            {/* Testimonials Section */}
-            {/* <section className="bg-white rounded-3xl shadow-xl p-8 border border-slate-200/50">
-              <h2 className="text-3xl font-bold text-slate-800 mb-8 flex items-center">
-                <span className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center text-white mr-4">
-                  ⭐
-                </span>
-                Success Stories
-              </h2>
-
-              <div className="grid md:grid-cols-3 gap-6">
-                {testimonials.map((testimonial, index) => (
-                  <div
-                    key={index}
-                    className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl p-6 border border-slate-200"
-                  >
-                    <div className="flex items-center mb-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-4">
-                        {testimonial.name.charAt(0)}
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-slate-800">
-                          {testimonial.name}
-                        </h4>
-                        <p className="text-slate-600 text-sm">
-                          {testimonial.location}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex mb-3">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <span key={i} className="text-yellow-400 text-lg">
-                          ⭐
-                        </span>
-                      ))}
-                    </div>
-
-                    <p className="text-slate-700 leading-relaxed">
-                      "{testimonial.text}"
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section> */}
+            {renderFaqSection()}
           </div>
 
           {/* Premium Right Column */}
@@ -735,36 +784,173 @@ import ExpertServices from "@/components/GetPackage";
             </div>
 
             <div className="space-y-6">
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200">
-                <h3 className="font-bold text-green-800 mb-4 flex items-center">
-                  <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
+                {/* Mandatory Documents & Guidance Section */}
+                {visaResult === "visa required" && (
+                <>
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200 mb-6">
+                  <h3 className="font-bold text-green-800 mb-4 flex items-center">
+                    <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
                     ✓
-                  </span>
-                  Mandatory Documents
-                </h3>
-                <ul className="space-y-3">
-                  <li className="flex items-start text-slate-700">
+                    </span>
+                    Mandatory Documents
+                  </h3>
+                  <ul className="space-y-3">
+                    <li className="flex items-start text-slate-700">
                     <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
                     Passport (valid for at least 6 months after {source})
-                  </li>
-                  <li className="flex items-start text-slate-700">
+                    </li>
+                    <li className="flex items-start text-slate-700">
                     <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
                     DS-160 confirmation page
-                  </li>
-                  <li className="flex items-start text-slate-700">
+                    </li>
+                    <li className="flex items-start text-slate-700">
                     <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
                     Application fee payment receipt
-                  </li>
-                  <li className="flex items-start text-slate-700">
+                    </li>
+                    <li className="flex items-start text-slate-700">
                     <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
                     Appointment confirmation letter
-                  </li>
-                  <li className="flex items-start text-slate-700">
+                    </li>
+                    <li className="flex items-start text-slate-700">
                     <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
                     Passport Photo (see Photo Requirements)
-                  </li>
-                </ul>
-              </div>
+                    </li>
+                  </ul>
+                  </div>
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200 mb-6">
+                  <h4 className="font-bold text-blue-800 mb-2 flex items-center">
+                    <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
+                    🛡️
+                    </span>
+                    How Our Experts Help
+                  </h4>
+                  <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                    <li>Review your nationality, travel history &amp; purpose</li>
+                    <li>Evaluate your employment, finances &amp; past rejections (if any)</li>
+                    <li>Prepare a personalized visa checklist based on embassy guidelines</li>
+                    <li>Help you avoid over-documentation or missing papers</li>
+                    <li>Ensure 100% embassy-compliant submission</li>
+                  </ul>
+                  </div>
+                </>
+                )}
+
+                {visaResult === "e-visa" && (
+                <>
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200 mb-6">
+                  <h3 className="font-bold text-green-800 mb-4 flex items-center">
+                    <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
+                    ✓
+                    </span>
+                    Mandatory Documents
+                  </h3>
+                  <ul className="space-y-3">
+                    <li className="flex items-start text-slate-700">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                    Scanned passport copy
+                    </li>
+                    <li className="flex items-start text-slate-700">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                    Digital photograph
+                    </li>
+                    <li className="flex items-start text-slate-700">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                    Email ID for eVisa delivery
+                    </li>
+                    <li className="flex items-start text-slate-700">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                    Credit card for payment
+                    </li>
+                    <li className="flex items-start text-slate-700">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                    eVisa printout (after approval)
+                    </li>
+                  </ul>
+                  </div>
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200 mb-4">
+                  <h4 className="font-bold text-blue-800 mb-2 flex items-center">
+                    <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
+                    ⚙️
+                    </span>
+                    What We Do
+                  </h4>
+                  <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                    <li>Verify eligibility and country rules</li>
+                    <li>Fill &amp; submit your eVisa application</li>
+                    <li>Upload documents correctly</li>
+                    <li>Track eVisa status</li>
+                    <li>Send you the eVisa copy</li>
+                  </ul>
+                  </div>
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
+                  <h4 className="font-bold text-purple-800 mb-2 flex items-center">
+                    <span className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-white mr-2">
+                    🔍
+                    </span>
+                    Tailored eVisa Guidance by Visa Experts
+                  </h4>
+                  <p className="text-slate-700 mb-2">
+                    While eVisa seems simple, small errors can lead to rejection. That’s why our experts provide precision-driven assistance.
+                  </p>
+                  <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                    <li>Confirm eVisa eligibility based on your nationality</li>
+                    <li>Review your documents for correct size, clarity &amp; format</li>
+                    <li>Handle the entire eVisa application on your behalf</li>
+                    <li>Track approval status and keep you updated</li>
+                    <li>Share final approved eVisa with clear travel instructions</li>
+                  </ul>
+                  </div>
+                </>
+                )}
+
+                {visaResult === "visa on arrival" && (
+                <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl p-6 border border-yellow-200 mb-6">
+                  <h4 className="font-bold text-yellow-800 mb-2 flex items-center">
+                  <span className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center text-white mr-2">
+                    💡
+                  </span>
+                  Important Notes
+                  </h4>
+                  <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                  <li>Entry may be denied if you lack any document</li>
+                  <li>Queue times at immigration may vary</li>
+                  <li>We recommend pre-arranged support</li>
+                  </ul>
+                </div>
+                )}
+
+                {visaResult === "visa free" && (
+                <>
+                  <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-6 border border-green-200 mb-6">
+                  <h4 className="font-bold text-green-800 mb-2 flex items-center">
+                    <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
+                    🟢
+                    </span>
+                    Entry Guidelines
+                  </h4>
+                  <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                    <li>Stay allowed: Up to 90 days (varies by country)</li>
+                    <li>Passport must be valid at least 6 months</li>
+                    <li>May need return flight ticket</li>
+                    <li>Proof of accommodation (sometimes checked)</li>
+                  </ul>
+                  </div>
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
+                  <h4 className="font-bold text-blue-800 mb-2 flex items-center">
+                    <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
+                    🧳
+                    </span>
+                    We Can Still Help You With
+                  </h4>
+                  <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                    <li>Travel insurance that covers COVID &amp; delays</li>
+                    <li>Flight &amp; hotel bookings</li>
+                    <li>Visa-free entry confirmation letter (for airlines)</li>
+                    <li>Currency exchange &amp; airport pickup</li>
+                  </ul>
+                  </div>
+                </>
+                )}
 
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
                 <h3 className="font-bold text-blue-800 mb-4 flex items-center">
@@ -799,42 +985,6 @@ import ExpertServices from "@/components/GetPackage";
                 </p>
               </div>
 
-              {/* <div className="border-t border-slate-200 pt-6">
-                <div className="bg-slate-50 rounded-2xl p-6">
-                  <h3 className="font-bold text-slate-800 mb-4">
-                    Premium Service Pricing
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-600">
-                        Visa Application Fee
-                      </span>
-                      <span className="font-semibold">$185</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-600">
-                        Premium Service Fee
-                      </span>
-                      <span className="font-semibold">$145</span>
-                    </div>
-                    <div className="border-t border-slate-200 pt-3">
-                      <div className="flex justify-between items-center">
-                        <span className="font-bold text-lg">Total</span>
-                        <span className="font-bold text-xl text-slate-800">
-                          $330
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
-{/* 
-              <a href="/pages/dashboard/client/applications">
-                <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                  Start Premium Application
-                </Button>
-              </a> */}
-
               <div className="text-center">
                 <div className="flex items-center justify-center space-x-2 text-green-600 mb-2">
                   <span className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">
@@ -858,8 +1008,6 @@ import ExpertServices from "@/components/GetPackage";
     </div>
   );
 }
-
-
 
 export default function USVisaIndiaPassport() {
   return (

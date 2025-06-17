@@ -429,20 +429,57 @@ const summaryCards: SummaryCardItem[] = [
               </div>
             </CardHeader>
             <CardContent className="p-2 sm:p-3 md:p-4">
+              {Array.isArray(memberData.notifications) && memberData.notifications.length > 0 ? (
+              <div className="space-y-3">
+                {memberData.notifications.map(
+                (
+                  notif: {
+                  _id?: string;
+                  title?: string;
+                  message?: string;
+                  createdAt?: string;
+                  [key: string]: any;
+                  },
+                  idx: number
+                ) => (
+                  <div
+                  key={notif._id || idx}
+                  className="flex items-start gap-2 bg-orange-50 border border-orange-200 rounded-lg p-2"
+                  >
+                  <AlertCircle className="w-4 h-4 text-orange-500 mt-1" />
+                  <div>
+                    <div className="text-xs sm:text-sm text-gray-900 font-semibold">
+                    {notif.title}
+                    </div>
+                    {notif.message && (
+                    <div className="text-xs sm:text-sm text-gray-800">{notif.message}</div>
+                    )}
+                    {notif.createdAt && (
+                    <div className="text-xs text-gray-400">
+                      {new Date(notif.createdAt).toLocaleString()}
+                    </div>
+                    )}
+                  </div>
+                  </div>
+                )
+                )}
+              </div>
+              ) : (
               <div className="text-center py-4 sm:py-6">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 border border-green-200">
-                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" />
+                <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" />
                 </div>
                 <h3 className="text-sm sm:text-base font-medium text-gray-800 mb-1">
-                  All Clear!
+                All Clear!
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-500">
-                  No notifications at this time.
+                No notifications at this time.
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
-                  We'll notify you of any important updates.
+                We'll notify you of any important updates.
                 </p>
               </div>
+              )}
             </CardContent>
           </Card>
         </div>

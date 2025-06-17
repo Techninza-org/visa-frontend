@@ -13,7 +13,8 @@ const TrustedBy = () => {
     { name: "Nalanda University ", logo: "/nalanda.jpg" },
     { name: "Amazon", logo: "/amazon.png" },
     { name: "One Plus", logo: "/oneplus.png" },
-    // { name: "Facebook", logo: "/.png" },
+    { name: "Udemy ", logo: "/udemy.jpg" },
+    { name: " Amity University ", logo: "/amity-university.jpg" },
 
     { name: "Facebook", logo: "/fb.png" },
     { name: "Microsoft", logo: "/microsoft.png" },
@@ -34,10 +35,11 @@ const TrustedBy = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 overflow-hidden">
       <h1 className="text-2xl font-bold text-center mb-6">
-        We are proud to have served as a trusted partner to leading global organizations
+       Trusted by Professionals from the World’s Leading Companies
+
       </h1>
       <p className="text-center mb-12 text-gray-600">
-        Including these industry leaders who trust us with their visa needs
+       Since 2018, our visa experts have been delivering personalized visa solutions to professionals from top global organizations—helping them travel, relocate, and work seamlessly across borders
       </p>
 
       {/* Infinite moving logos container */}
