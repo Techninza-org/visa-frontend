@@ -148,6 +148,19 @@ function USVisaIndiaPassportContent() {
       },
     ],
   };
+ const requirements = [
+  "Original passport with at least 6 months validity",
+  "All previous passports (if available)",
+  "Completed and signed visa application form",
+  "Recent passport-sized photograph (as per specifications)",
+  "Visa fee payment receipt or proof of payment",
+  "Appointment confirmation or interview letter (if applicable)",
+  "Proof of travel purpose (e.g., invitation letter, itinerary, hotel booking)",
+  "Financial documents to prove sufficient funds",
+  "Travel insurance covering the duration of stay (if required)",
+  "Any additional documents required by the specific embassy or consulate",
+];
+
 
   const processSteps = [
     {
@@ -771,17 +784,15 @@ function USVisaIndiaPassportContent() {
             {renderFaqSection()}
           </div>
 
-          {/* Premium Right Column */}
-          <div className="bg-white rounded-3xl shadow-2xl p-8 border border-slate-200/50 h-fit sticky top-8">
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4">
-                📄
-              </div>
-              <h2 className="text-2xl font-bold text-slate-800">
-                Document Checklist
-              </h2>
-              <p className="text-slate-600">Everything you need for success</p>
-            </div>
+        {/* Premium Right Column */}
+<div className="bg-white rounded-3xl shadow-2xl p-8 border border-slate-200/50 h-fit sticky top-8">
+  <div className="text-center mb-6">
+    <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4">
+      📎
+    </div>
+    <h2 className="text-2xl font-bold text-slate-800">Visa Document Checklist</h2>
+    <p className="text-slate-600">Reviewed & accepted worldwide</p>
+  </div>
 
             <div className="space-y-6">
                 {/* Mandatory Documents & Guidance Section */}
@@ -952,30 +963,31 @@ function USVisaIndiaPassportContent() {
                 </>
                 )}
 
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
-                <h3 className="font-bold text-blue-800 mb-4 flex items-center">
-                  <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
-                    +
-                  </span>
-                  Recommended Documents
-                </h3>
-                <ul className="space-y-3">
-                  {[
-                    "Bank statements",
-                    "Employment/student proof",
-                    "Travel Itinerary",
-                    "Invitation Letter",
-                    "Property ownership proof",
-                    "Photos at tourist attractions",
-                    "Old passports with stamps/visas",
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-start text-slate-700">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+    {/* Recommended Section */}
+    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
+      <h3 className="font-bold text-blue-800 mb-4 flex items-center">
+        <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
+          +
+        </span>
+        Recommended Documents
+      </h3>
+      <ul className="space-y-3">
+        {[
+          "Bank Statements (last 3–6 months)",
+          "Employment or Student Verification Letter",
+          "Travel Itinerary (flight and hotel bookings)",
+          "Invitation Letter (if applicable)",
+          "Property or Asset Proof (land, house, etc.)",
+          "Old Passports with Travel History",
+          "Proof of Ties to Home Country (family, job, studies)"
+        ].map((item, index) => (
+          <li key={index} className="flex items-start text-slate-700">
+            <span className="w-2 h-2 bg-blue-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
 
               <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-4 border border-amber-200">
                 <p className="text-amber-800 text-sm font-medium">

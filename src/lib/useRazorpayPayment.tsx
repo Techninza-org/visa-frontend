@@ -99,9 +99,7 @@ export const useRazorpayPayment = ({
               const verifyData = await verifyRes.json();
               console.log("Verification Data:", verifyData);
               if (
-              verifyRes.status === 200 &&
-              verifyData.message ===
-                "Payment verified and stored, application updated"
+              verifyData.success === true
               ) {
               alert("Payment successful! Your order has been placed.");
               // router.push("/orders");
