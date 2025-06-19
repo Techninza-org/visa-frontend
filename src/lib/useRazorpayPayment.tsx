@@ -1,14 +1,23 @@
 import { useState } from "react";
 import Cookies from "js-cookie";
 
+type UseRazorpayPaymentProps = {
+  currentUser: {
+    username?: string;
+    email?: string;
+    phone?: string;
+  };
+  totalAmount: number;
+  packageId: string;
+  productId: string;
+};
+
 export const useRazorpayPayment = ({
   currentUser,
   totalAmount,
   packageId,
   productId,
-  selectedAddressId,
-  router,
-}) => {
+}: UseRazorpayPaymentProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const loadRazorpayScript = () =>
@@ -60,7 +69,7 @@ export const useRazorpayPayment = ({
 
       // Step 2: Initialize Razorpay payment
       const options = {
-        key:"rzp_test_rA0MAFpr4GmwXK",
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: amountToPay,
         currency: "INR",
         name: "ShopNest",

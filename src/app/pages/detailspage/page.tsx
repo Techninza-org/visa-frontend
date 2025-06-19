@@ -148,19 +148,18 @@ function USVisaIndiaPassportContent() {
       },
     ],
   };
- const requirements = [
-  "Original passport with at least 6 months validity",
-  "All previous passports (if available)",
-  "Completed and signed visa application form",
-  "Recent passport-sized photograph (as per specifications)",
-  "Visa fee payment receipt or proof of payment",
-  "Appointment confirmation or interview letter (if applicable)",
-  "Proof of travel purpose (e.g., invitation letter, itinerary, hotel booking)",
-  "Financial documents to prove sufficient funds",
-  "Travel insurance covering the duration of stay (if required)",
-  "Any additional documents required by the specific embassy or consulate",
-];
-
+  const requirements = [
+    "Original passport with at least 6 months validity",
+    "All previous passports (if available)",
+    "Completed and signed visa application form",
+    "Recent passport-sized photograph (as per specifications)",
+    "Visa fee payment receipt or proof of payment",
+    "Appointment confirmation or interview letter (if applicable)",
+    "Proof of travel purpose (e.g., invitation letter, itinerary, hotel booking)",
+    "Financial documents to prove sufficient funds",
+    "Travel insurance covering the duration of stay (if required)",
+    "Any additional documents required by the specific embassy or consulate",
+  ];
 
   const processSteps = [
     {
@@ -784,210 +783,236 @@ function USVisaIndiaPassportContent() {
             {renderFaqSection()}
           </div>
 
-        {/* Premium Right Column */}
-<div className="bg-white rounded-3xl shadow-2xl p-8 border border-slate-200/50 h-fit sticky top-8">
-  <div className="text-center mb-6">
-    <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4">
-      📎
-    </div>
-    <h2 className="text-2xl font-bold text-slate-800">Visa Document Checklist</h2>
-    <p className="text-slate-600">Reviewed & accepted worldwide</p>
-  </div>
+          {/* Premium Right Column */}
+          <div className="bg-white rounded-3xl shadow-2xl p-8 border border-slate-200/50 h-fit sticky top-8">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4">
+                📎
+              </div>
+              <h2 className="text-2xl font-bold text-slate-800">
+                Visa Document Checklist
+              </h2>
+              <p className="text-slate-600">Reviewed & accepted worldwide</p>
+            </div>
 
             <div className="space-y-6">
-                {/* Mandatory Documents & Guidance Section */}
-                {visaResult === "visa required" && (
+              {/* Mandatory Documents & Guidance Section */}
+              {visaResult === "visa required" && (
                 <>
                   <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200 mb-6">
-                  <h3 className="font-bold text-green-800 mb-4 flex items-center">
-                    <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
-                    ✓
-                    </span>
-                    Mandatory Documents
-                  </h3>
-                  <ul className="space-y-3">
-                    <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Passport (valid for at least 6 months after {source})
-                    </li>
-                    <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    DS-160 confirmation page
-                    </li>
-                    <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Application fee payment receipt
-                    </li>
-                    <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Appointment confirmation letter
-                    </li>
-                    <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Passport Photo (see Photo Requirements)
-                    </li>
-                  </ul>
+                    <h3 className="font-bold text-green-800 mb-4 flex items-center">
+                      <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
+                        ✓
+                      </span>
+                      Mandatory Documents
+                    </h3>
+                    <ul className="space-y-3">
+                      <li className="flex items-start text-slate-700">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                        Passport (valid for at least 6 months after {source})
+                      </li>
+                      <li className="flex items-start text-slate-700">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                        DS-160 confirmation page
+                      </li>
+                      <li className="flex items-start text-slate-700">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                        Application fee payment receipt
+                      </li>
+                      <li className="flex items-start text-slate-700">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                        Appointment confirmation letter
+                      </li>
+                      <li className="flex items-start text-slate-700">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                        Passport Photo (see Photo Requirements)
+                      </li>
+                    </ul>
                   </div>
                   <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200 mb-6">
-                  <h4 className="font-bold text-blue-800 mb-2 flex items-center">
-                    <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
-                    🛡️
-                    </span>
-                    How Our Experts Help
-                  </h4>
-                  <ul className="list-disc pl-6 text-slate-700 space-y-2">
-                    <li>Review your nationality, travel history &amp; purpose</li>
-                    <li>Evaluate your employment, finances &amp; past rejections (if any)</li>
-                    <li>Prepare a personalized visa checklist based on embassy guidelines</li>
-                    <li>Help you avoid over-documentation or missing papers</li>
-                    <li>Ensure 100% embassy-compliant submission</li>
-                  </ul>
+                    <h4 className="font-bold text-blue-800 mb-2 flex items-center">
+                      <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
+                        🛡️
+                      </span>
+                      How Our Experts Help
+                    </h4>
+                    <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                      <li>
+                        Review your nationality, travel history &amp; purpose
+                      </li>
+                      <li>
+                        Evaluate your employment, finances &amp; past rejections
+                        (if any)
+                      </li>
+                      <li>
+                        Prepare a personalized visa checklist based on embassy
+                        guidelines
+                      </li>
+                      <li>
+                        Help you avoid over-documentation or missing papers
+                      </li>
+                      <li>Ensure 100% embassy-compliant submission</li>
+                    </ul>
                   </div>
                 </>
-                )}
+              )}
 
-                {visaResult === "e-visa" && (
+              {visaResult === "e-visa" && (
                 <>
                   <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200 mb-6">
-                  <h3 className="font-bold text-green-800 mb-4 flex items-center">
-                    <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
-                    ✓
-                    </span>
-                    Mandatory Documents
-                  </h3>
-                  <ul className="space-y-3">
-                    <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Scanned passport copy
-                    </li>
-                    <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Digital photograph
-                    </li>
-                    <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Email ID for eVisa delivery
-                    </li>
-                    <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    Credit card for payment
-                    </li>
-                    <li className="flex items-start text-slate-700">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-                    eVisa printout (after approval)
-                    </li>
-                  </ul>
+                    <h3 className="font-bold text-green-800 mb-4 flex items-center">
+                      <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
+                        ✓
+                      </span>
+                      Mandatory Documents
+                    </h3>
+                    <ul className="space-y-3">
+                      <li className="flex items-start text-slate-700">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                        Scanned passport copy
+                      </li>
+                      <li className="flex items-start text-slate-700">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                        Digital photograph
+                      </li>
+                      <li className="flex items-start text-slate-700">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                        Email ID for eVisa delivery
+                      </li>
+                      <li className="flex items-start text-slate-700">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                        Credit card for payment
+                      </li>
+                      <li className="flex items-start text-slate-700">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                        eVisa printout (after approval)
+                      </li>
+                    </ul>
                   </div>
                   <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200 mb-4">
-                  <h4 className="font-bold text-blue-800 mb-2 flex items-center">
-                    <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
-                    ⚙️
-                    </span>
-                    What We Do
-                  </h4>
-                  <ul className="list-disc pl-6 text-slate-700 space-y-2">
-                    <li>Verify eligibility and country rules</li>
-                    <li>Fill &amp; submit your eVisa application</li>
-                    <li>Upload documents correctly</li>
-                    <li>Track eVisa status</li>
-                    <li>Send you the eVisa copy</li>
-                  </ul>
+                    <h4 className="font-bold text-blue-800 mb-2 flex items-center">
+                      <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
+                        ⚙️
+                      </span>
+                      What We Do
+                    </h4>
+                    <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                      <li>Verify eligibility and country rules</li>
+                      <li>Fill &amp; submit your eVisa application</li>
+                      <li>Upload documents correctly</li>
+                      <li>Track eVisa status</li>
+                      <li>Send you the eVisa copy</li>
+                    </ul>
                   </div>
                   <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
-                  <h4 className="font-bold text-purple-800 mb-2 flex items-center">
-                    <span className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-white mr-2">
-                    🔍
-                    </span>
-                    Tailored eVisa Guidance by Visa Experts
-                  </h4>
-                  <p className="text-slate-700 mb-2">
-                    While eVisa seems simple, small errors can lead to rejection. That’s why our experts provide precision-driven assistance.
-                  </p>
-                  <ul className="list-disc pl-6 text-slate-700 space-y-2">
-                    <li>Confirm eVisa eligibility based on your nationality</li>
-                    <li>Review your documents for correct size, clarity &amp; format</li>
-                    <li>Handle the entire eVisa application on your behalf</li>
-                    <li>Track approval status and keep you updated</li>
-                    <li>Share final approved eVisa with clear travel instructions</li>
-                  </ul>
+                    <h4 className="font-bold text-purple-800 mb-2 flex items-center">
+                      <span className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-white mr-2">
+                        🔍
+                      </span>
+                      Tailored eVisa Guidance by Visa Experts
+                    </h4>
+                    <p className="text-slate-700 mb-2">
+                      While eVisa seems simple, small errors can lead to
+                      rejection. That’s why our experts provide precision-driven
+                      assistance.
+                    </p>
+                    <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                      <li>
+                        Confirm eVisa eligibility based on your nationality
+                      </li>
+                      <li>
+                        Review your documents for correct size, clarity &amp;
+                        format
+                      </li>
+                      <li>
+                        Handle the entire eVisa application on your behalf
+                      </li>
+                      <li>Track approval status and keep you updated</li>
+                      <li>
+                        Share final approved eVisa with clear travel
+                        instructions
+                      </li>
+                    </ul>
                   </div>
                 </>
-                )}
+              )}
 
-                {visaResult === "visa on arrival" && (
+              {visaResult === "visa on arrival" && (
                 <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl p-6 border border-yellow-200 mb-6">
                   <h4 className="font-bold text-yellow-800 mb-2 flex items-center">
-                  <span className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center text-white mr-2">
-                    💡
-                  </span>
-                  Important Notes
+                    <span className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center text-white mr-2">
+                      💡
+                    </span>
+                    Important Notes
                   </h4>
                   <ul className="list-disc pl-6 text-slate-700 space-y-2">
-                  <li>Entry may be denied if you lack any document</li>
-                  <li>Queue times at immigration may vary</li>
-                  <li>We recommend pre-arranged support</li>
+                    <li>Entry may be denied if you lack any document</li>
+                    <li>Queue times at immigration may vary</li>
+                    <li>We recommend pre-arranged support</li>
                   </ul>
                 </div>
-                )}
+              )}
 
-                {visaResult === "visa free" && (
+              {visaResult === "visa free" && (
                 <>
                   <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-6 border border-green-200 mb-6">
-                  <h4 className="font-bold text-green-800 mb-2 flex items-center">
-                    <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
-                    🟢
-                    </span>
-                    Entry Guidelines
-                  </h4>
-                  <ul className="list-disc pl-6 text-slate-700 space-y-2">
-                    <li>Stay allowed: Up to 90 days (varies by country)</li>
-                    <li>Passport must be valid at least 6 months</li>
-                    <li>May need return flight ticket</li>
-                    <li>Proof of accommodation (sometimes checked)</li>
-                  </ul>
+                    <h4 className="font-bold text-green-800 mb-2 flex items-center">
+                      <span className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white mr-2">
+                        🟢
+                      </span>
+                      Entry Guidelines
+                    </h4>
+                    <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                      <li>Stay allowed: Up to 90 days (varies by country)</li>
+                      <li>Passport must be valid at least 6 months</li>
+                      <li>May need return flight ticket</li>
+                      <li>Proof of accommodation (sometimes checked)</li>
+                    </ul>
                   </div>
                   <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
-                  <h4 className="font-bold text-blue-800 mb-2 flex items-center">
-                    <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
-                    🧳
-                    </span>
-                    We Can Still Help You With
-                  </h4>
-                  <ul className="list-disc pl-6 text-slate-700 space-y-2">
-                    <li>Travel insurance that covers COVID &amp; delays</li>
-                    <li>Flight &amp; hotel bookings</li>
-                    <li>Visa-free entry confirmation letter (for airlines)</li>
-                    <li>Currency exchange &amp; airport pickup</li>
-                  </ul>
+                    <h4 className="font-bold text-blue-800 mb-2 flex items-center">
+                      <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
+                        🧳
+                      </span>
+                      We Can Still Help You With
+                    </h4>
+                    <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                      <li>Travel insurance that covers COVID &amp; delays</li>
+                      <li>Flight &amp; hotel bookings</li>
+                      <li>
+                        Visa-free entry confirmation letter (for airlines)
+                      </li>
+                      <li>Currency exchange &amp; airport pickup</li>
+                    </ul>
                   </div>
                 </>
-                )}
+              )}
 
-    {/* Recommended Section */}
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
-      <h3 className="font-bold text-blue-800 mb-4 flex items-center">
-        <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
-          +
-        </span>
-        Recommended Documents
-      </h3>
-      <ul className="space-y-3">
-        {[
-          "Bank Statements (last 3–6 months)",
-          "Employment or Student Verification Letter",
-          "Travel Itinerary (flight and hotel bookings)",
-          "Invitation Letter (if applicable)",
-          "Property or Asset Proof (land, house, etc.)",
-          "Old Passports with Travel History",
-          "Proof of Ties to Home Country (family, job, studies)"
-        ].map((item, index) => (
-          <li key={index} className="flex items-start text-slate-700">
-            <span className="w-2 h-2 bg-blue-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
-            {item}
-          </li>
-        ))}
-      </ul>
-    </div>
+              {/* Recommended Section */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
+                <h3 className="font-bold text-blue-800 mb-4 flex items-center">
+                  <span className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white mr-2">
+                    +
+                  </span>
+                  Recommended Documents
+                </h3>
+                <ul className="space-y-3">
+                  {[
+                    "Bank Statements (last 3–6 months)",
+                    "Employment or Student Verification Letter",
+                    "Travel Itinerary (flight and hotel bookings)",
+                    "Invitation Letter (if applicable)",
+                    "Property or Asset Proof (land, house, etc.)",
+                    "Old Passports with Travel History",
+                    "Proof of Ties to Home Country (family, job, studies)",
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-start text-slate-700">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
               <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-4 border border-amber-200">
                 <p className="text-amber-800 text-sm font-medium">
